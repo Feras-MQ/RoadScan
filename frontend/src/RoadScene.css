@@ -1,0 +1,39 @@
+.road-scene,.road-scene *,.road-scene:before,.road-scene *:before,.road-scene *:after{--road-motion:none}
+.road-scene{position:relative;isolation:isolate;inline-size:100%;block-size:460px;min-inline-size:0;margin:0;overflow:hidden;color:#e6f5f5;background:radial-gradient(ellipse at 53% 45%,#17313c50,transparent 66%);border-radius:22px}
+.road-scene:before{content:'';position:absolute;inset:7% 2% 16%;z-index:-1;border-radius:50%;background:radial-gradient(ellipse,#7be5f514,transparent 67%);--road-motion:roadSceneAmbient 8s ease-in-out infinite;animation:var(--road-motion);pointer-events:none}
+.road-scene-art{display:block;inline-size:100%;block-size:calc(100% - 48px);overflow:visible}
+.road-scene-card-title{fill:#e0f4ed;font-family:inherit;font-size:11px;font-weight:650;letter-spacing:1.1px}
+.road-scene-card-note{fill:#8ca9b4;font-family:inherit;font-size:12px}
+[dir=rtl] .road-scene-card-title{letter-spacing:0;font-size:13px}
+.road-scene-topography{--road-motion:roadSceneContour 8s ease-in-out infinite;animation:var(--road-motion)}
+.road-scene-orbit{transform-origin:478px 322px;--road-motion:roadSceneOrbit 8s ease-in-out infinite;animation:var(--road-motion)}
+.road-scene-lanes{--road-motion:roadSceneLanes 2s linear infinite;animation:var(--road-motion)}
+.road-scene-traffic{--road-motion:roadSceneTraffic 8s linear infinite;animation:var(--road-motion)}
+.road-scene-traffic-return{--road-motion:roadSceneTraffic 8s linear infinite reverse}
+.road-scene-beam{opacity:0;--road-motion:roadSceneScan 8s cubic-bezier(.4,0,.2,1) infinite;animation:var(--road-motion)}
+.road-scene-detection{opacity:1;--road-motion:roadSceneDetection 8s ease-in-out infinite;animation:var(--road-motion)}
+.road-scene-detection-line{stroke-dashoffset:0;--road-motion:roadSceneOutline 8s ease-out infinite;animation:var(--road-motion)}
+.road-scene-callout{filter:drop-shadow(0 10px 9px #0005)}
+.road-scene-callout-main{--road-motion:roadSceneCallout 8s ease-in-out infinite;animation:var(--road-motion)}
+.road-scene-callout-secondary{--road-motion:roadSceneFloat 8s ease-in-out infinite;animation:var(--road-motion)}
+.road-scene-radar-sweep{transform-origin:0 0;--road-motion:roadSceneRadar 8s linear infinite;animation:var(--road-motion)}
+.road-scene-caption{position:absolute;inset-inline:20px;inset-block-end:14px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:11px 0;border-block-start:1px solid #89ccda20;font-size:10px;line-height:1.5;color:#9db6bf}
+.road-scene-caption>span{display:flex;align-items:center;gap:7px}
+.road-scene-caption-dot{display:block;flex:none;inline-size:4px;block-size:4px;background:#75e5f5;border-radius:50%;box-shadow:0 0 8px #75e5f555}
+.road-scene-motion{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-block-size:32px;padding-block:5px;padding-inline:9px;border:1px solid #89ccda35;border-radius:6px;color:#c1d8dd;background:#0b1b24cc;font:inherit;cursor:pointer;transition:background .18s,border-color .18s}
+.road-scene-motion:hover{background:#17313d;border-color:#75e5f577}
+.road-scene-motion:focus-visible{outline:2px solid #d8f561;outline-offset:3px}
+.road-scene.is-paused,.road-scene.is-paused *,.road-scene.is-paused:before,.road-scene.is-paused *:before,.road-scene.is-paused *:after{animation-play-state:paused!important;transition:none!important}
+@keyframes roadSceneAmbient{0%,100%{opacity:.4;transform:scale(.95)}50%{opacity:1;transform:scale(1.04)}}
+@keyframes roadSceneContour{0%,100%{stroke-opacity:.14}45%,70%{stroke-opacity:.3}}
+@keyframes roadSceneOrbit{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes roadSceneLanes{to{stroke-dashoffset:-46}}
+@keyframes roadSceneTraffic{to{stroke-dashoffset:-620}}
+@keyframes roadSceneScan{0%,8%{opacity:0;transform:translate(-60px,45px)}14%{opacity:.9}62%{opacity:.75}72%,100%{opacity:0;transform:translate(490px,-380px)}}
+@keyframes roadSceneDetection{0%,26%{opacity:0}37%,86%{opacity:1}100%{opacity:0}}
+@keyframes roadSceneOutline{0%,27%{stroke-dashoffset:350}43%,100%{stroke-dashoffset:0}}
+@keyframes roadSceneCallout{0%,31%{opacity:0;transform:translateY(9px)}43%,84%{opacity:1;transform:translateY(0)}97%,100%{opacity:0;transform:translateY(-5px)}}
+@keyframes roadSceneFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes roadSceneRadar{to{transform:rotate(360deg)}}
+@media(max-width:640px){.road-scene{block-size:320px;border-radius:14px}.road-scene-art{inline-size:114%;max-inline-size:none;margin-inline-start:-7%;block-size:calc(100% - 50px)}.road-scene-caption{inset-inline:9px;inset-block-end:9px;gap:7px;font-size:9px}.road-scene-motion{padding-inline:7px;min-block-size:34px;max-inline-size:45%;white-space:normal}.road-scene-card-title{font-size:12px}.road-scene-card-note{font-size:13px}}
+.road-scene.is-playing,.road-scene.is-playing *,.road-scene.is-playing:before,.road-scene.is-playing *:before,.road-scene.is-playing *:after{animation:var(--road-motion,none)!important}
