@@ -27,7 +27,7 @@ RUN if [ "$ROADSCAN_WITH_DETECTOR" = "1" ]; then \
       pip install --no-cache-dir faiss-cpu==1.15.1 -c requirements-detector-lock.txt -c requirements-lock.txt && \
       python tools/fetch_dinov2.py /opt/roadscan-models/dinov2_vits14_pretrain.pth && pip check; \
     fi
-LABEL io.roadscan.release="2026-10-26.2"
+LABEL io.roadscan.release="2026-10-27.1"
 COPY roadscan/ ./roadscan/
 COPY runpod/ ./runpod/
 COPY priority.py duplicate_finder.py accuracy_report.py ./
