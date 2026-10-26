@@ -1,0 +1,14 @@
+classes: [D00, D10, D20, D40]
+source: RDD2022
+license_verified: false
+local_test_only: true
+split_policy: grouped_by_sequence
+held_out_country: TO_BE_SELECTED_BEFORE_TRAINING
+experiments:
+  E1: {variants: [multilabel_classifier, detector]}
+  E2: {image_sizes: [640, 960]}
+  E3: {variants: [minimal, realistic_hsv_horizontal_flip, mosaic]}
+  E4: {evaluation: [held_out_country, separate_local_test]}
+  E5: {embeddings: [phash_dct, resnet_imagenet, dinov2_small]}
+priority_draft_weights: {type: 0.40, area: 0.25, count: 0.20, confidence: 0.15}
+priority_weight_sensitivity: [-0.20, 0.20]
