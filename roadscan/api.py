@@ -12,7 +12,6 @@ from fastapi.responses import FileResponse
 from starlette.background import BackgroundTask
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
-from PIL import Image
 from .core import *
 from .inference import LocalDetector
 from .review import validate_detections
@@ -20,7 +19,7 @@ from .workflow import validate_transition
 from functools import lru_cache
 from sqlalchemy import or_, func, update as sql_update
 from starlette.concurrency import run_in_threadpool
-from .imaging import decode_image
+from .imaging import decode_image, pillow_open
 from .model_library import ModelLibrary, ModelRuntime, MAX_IMPORT
 from .training_data import TrainingApproval, current_approval, approve, training_summary, export_dataset
 
@@ -261,8 +260,10 @@ def image(rid:str,actor:str=Depends(read_access),session=Depends(db)):
     return FileResponse(path,media_type='image/jpeg',headers={'Cache-Control':'no-store'})
 
 def report_image_size(report):
+    path=STORAGE/Path(report.image_ref).name
+    if not path.is_file():raise HTTPException(404,'Report image file is missing')
     try:
-        with Image.open(STORAGE/Path(report.image_ref).name) as image:
+        with pillow_open(path, formats=('JPEG', 'PNG', 'WEBP')) as image:
             return image.size
     except FileNotFoundError as exc:
         raise HTTPException(404,'Report image file is missing') from exc
