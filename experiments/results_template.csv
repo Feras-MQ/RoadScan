@@ -1,0 +1,1 @@
+experiment,run_id,split,country,model_version,hardware,images,map50,map50_95,ap_D00,ap_D10,ap_D20,ap_D40,precision,recall,confusion_matrix_file,f1_confidence_curve_file,dup_recall1,dup_recall5,dup_threshold_precision,dup_threshold_recall,roc_file,cpu_inference_ms,e2e_ms,notes
