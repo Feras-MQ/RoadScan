@@ -1,0 +1,26 @@
+services:
+  roadscan:
+    build:
+      context: .
+      args:
+        ROADSCAN_WITH_DETECTOR: ${ROADSCAN_WITH_DETECTOR:-0}
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      ROADSCAN_API_KEY: ${ROADSCAN_API_KEY:?Create a local .env with ROADSCAN_API_KEY}
+      ROADSCAN_MAX_UPLOAD_MB: ${ROADSCAN_MAX_UPLOAD_MB:-50}
+      ROADSCAN_YOLO_WEIGHTS: ${ROADSCAN_YOLO_WEIGHTS:-/models/roadscan_best.pt}
+      ROADSCAN_YOLO_SHA256: ${ROADSCAN_YOLO_SHA256:-}
+      ROADSCAN_CONFIDENCE: ${ROADSCAN_CONFIDENCE:-0.25}
+      ROADSCAN_INFERENCE_THREADS: ${ROADSCAN_INFERENCE_THREADS:-2}
+    volumes:
+      - roadscan_data:/data
+      - ./models:/models:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health',timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+volumes:
+  roadscan_data:
