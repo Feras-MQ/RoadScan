@@ -1,0 +1,248 @@
+[
+  {
+    "name": "e2-nano",
+    "module": "detector_train",
+    "args": [
+      "--dataset-root",
+      "/data/roadscan/rdd-train-val",
+      "--weights",
+      "/weights/yolo26n.pt",
+      "--train",
+      "--epochs",
+      "40",
+      "--imgsz",
+      "640",
+      "--seed",
+      "0",
+      "--augmentation",
+      "standard",
+      "--project",
+      "/experiments/detectors",
+      "--name",
+      "e2-nano"
+    ]
+  },
+  {
+    "name": "e2-small",
+    "module": "detector_train",
+    "args": [
+      "--dataset-root",
+      "/data/roadscan/rdd-train-val",
+      "--weights",
+      "/weights/yolo26s.pt",
+      "--train",
+      "--epochs",
+      "40",
+      "--imgsz",
+      "640",
+      "--seed",
+      "0",
+      "--augmentation",
+      "standard",
+      "--project",
+      "/experiments/detectors",
+      "--name",
+      "e2-small"
+    ]
+  },
+  {
+    "name": "e3-no-augmentation",
+    "module": "detector_train",
+    "args": [
+      "--dataset-root",
+      "/data/roadscan/rdd-train-val",
+      "--weights",
+      "/weights/yolo26s.pt",
+      "--train",
+      "--epochs",
+      "40",
+      "--imgsz",
+      "640",
+      "--seed",
+      "0",
+      "--augmentation",
+      "none",
+      "--project",
+      "/experiments/detectors",
+      "--name",
+      "e3-no-augmentation"
+    ]
+  },
+  {
+    "name": "e3-vertical-flip",
+    "module": "detector_train",
+    "args": [
+      "--dataset-root",
+      "/data/roadscan/rdd-train-val",
+      "--weights",
+      "/weights/yolo26s.pt",
+      "--train",
+      "--epochs",
+      "40",
+      "--imgsz",
+      "640",
+      "--seed",
+      "0",
+      "--augmentation",
+      "vertical_flip",
+      "--project",
+      "/experiments/detectors",
+      "--name",
+      "e3-vertical-flip"
+    ]
+  },
+  {
+    "name": "e4-india-heldout",
+    "module": "detector_train",
+    "args": [
+      "--dataset-root",
+      "/data/roadscan/india-excluded-train-val",
+      "--weights",
+      "/weights/yolo26s.pt",
+      "--train",
+      "--epochs",
+      "40",
+      "--imgsz",
+      "640",
+      "--seed",
+      "0",
+      "--augmentation",
+      "standard",
+      "--project",
+      "/experiments/detectors",
+      "--name",
+      "e4-india-heldout"
+    ]
+  },
+  {
+    "name": "main",
+    "module": "detector_train",
+    "args": [
+      "--dataset-root",
+      "/data/roadscan/main-train-val",
+      "--weights",
+      "/weights/yolo26s.pt",
+      "--train",
+      "--epochs",
+      "120",
+      "--imgsz",
+      "1024",
+      "--seed",
+      "0",
+      "--augmentation",
+      "standard",
+      "--project",
+      "/experiments/detectors",
+      "--name",
+      "main"
+    ]
+  },
+  {
+    "name": "e1-resnet18",
+    "module": "resnet_baseline",
+    "args": [
+      "--manifest",
+      "/data/roadscan/classifier.csv",
+      "--image-root",
+      "/data/roadscan/classifier-images",
+      "--checkpoint",
+      "/weights/baseline_resnet18.pt",
+      "--output",
+      "/experiments/resnet18"
+    ]
+  },
+  {
+    "name": "main-val",
+    "module": "accuracy_report",
+    "args": [
+      "--checkpoint",
+      "/experiments/detectors/main/weights/best.pt",
+      "--dataset",
+      "/data/roadscan/evaluation.yaml",
+      "--split",
+      "val",
+      "--imgsz",
+      "1024",
+      "--output",
+      "/experiments/main-val"
+    ]
+  },
+  {
+    "name": "main-test",
+    "module": "accuracy_report",
+    "args": [
+      "--checkpoint",
+      "/experiments/detectors/main/weights/best.pt",
+      "--dataset",
+      "/data/roadscan/evaluation.yaml",
+      "--split",
+      "test",
+      "--imgsz",
+      "1024",
+      "--output",
+      "/experiments/main-test"
+    ]
+  },
+  {
+    "name": "e5-phash",
+    "module": "retrieval_eval",
+    "args": [
+      "--queries",
+      "/data/roadscan/duplicate-queries.csv",
+      "--gallery",
+      "/data/roadscan/duplicate-gallery.csv",
+      "--image-root",
+      "/data/roadscan/damage-crops",
+      "--split",
+      "test",
+      "--method",
+      "phash"
+    ]
+  },
+  {
+    "name": "e5-resnet18",
+    "module": "retrieval_eval",
+    "args": [
+      "--queries",
+      "/data/roadscan/duplicate-queries.csv",
+      "--gallery",
+      "/data/roadscan/duplicate-gallery.csv",
+      "--image-root",
+      "/data/roadscan/damage-crops",
+      "--split",
+      "test",
+      "--method",
+      "resnet18",
+      "--checkpoint",
+      "/weights/baseline_resnet18.pt"
+    ]
+  },
+  {
+    "name": "e5-dinov2_vits14",
+    "module": "retrieval_eval",
+    "args": [
+      "--queries",
+      "/data/roadscan/duplicate-queries.csv",
+      "--gallery",
+      "/data/roadscan/duplicate-gallery.csv",
+      "--image-root",
+      "/data/roadscan/damage-crops",
+      "--split",
+      "test",
+      "--method",
+      "dinov2_vits14",
+      "--checkpoint",
+      "/opt/roadscan-models/dinov2_vits14_pretrain.pth"
+    ]
+  },
+  {
+    "name": "priority-sensitivity",
+    "module": "priority",
+    "args": [
+      "--input",
+      "/data/roadscan/reports.json",
+      "--output",
+      "/experiments/priority.json"
+    ]
+  }
+]
