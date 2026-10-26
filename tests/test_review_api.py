@@ -153,12 +153,28 @@ def test_conditional_write_rejects_change_committed_after_revision_check(review_
     assert len(client.get(endpoint + '/audit', headers=headers).json()['items']) == 1
 
 
-def test_missing_image_gives_structured_errors_without_saving(review_client):
+def test_missing_image_gives_structured_errors_without_saving(review_client, monkeypatch):
     client, headers, rid = review_client
     endpoint = '/api/reports/' + rid
     before = client.get(endpoint, headers=headers).json()
     next(api.STORAGE.iterdir()).unlink()
+    def fail_if_open(*args, **kwargs):
+        raise AssertionError('Missing files must be checked before optional image decoders')
+    monkeypatch.setattr(api, 'pillow_open', fail_if_open)
     assert client.get(endpoint + '/image', headers=headers).status_code == 404
     assert client.get(endpoint + '/sensitivity', headers=headers).status_code == 404
     assert client.patch(endpoint, headers=headers, json={'revision': before['revision'], 'detections': []}).status_code == 404
+    assert client.get(endpoint, headers=headers).json()['revision'] == before['revision']
+
+
+def test_corrupt_image_is_reported_without_optional_detector_decoders(review_client, monkeypatch):
+    client, headers, rid = review_client
+    endpoint = '/api/reports/' + rid
+    before = client.get(endpoint, headers=headers).json()
+    next(api.STORAGE.iterdir()).write_bytes(b'corrupt synthetic fixture')
+    def detector_fallback(*args, **kwargs):
+        raise ModuleNotFoundError('pi_heif')
+    monkeypatch.setattr(Image, 'open', detector_fallback)
+    assert client.get(endpoint + '/sensitivity', headers=headers).status_code == 409
+    assert client.patch(endpoint, headers=headers, json={'revision': before['revision'], 'detections': []}).status_code == 409
     assert client.get(endpoint, headers=headers).json()['revision'] == before['revision']
