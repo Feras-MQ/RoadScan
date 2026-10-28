@@ -50,7 +50,8 @@
       "exported_after_epoch": 37,
       "evidence": "source-packet/baseline/training/experiment_manifest.json",
       "evidence_sha256": "3533600043ce5d48f63118219ef46461ca0210e6e976d9d944eb9cae1b016bb0",
-      "training_source_status": "Original recovery notebook and matching original bootstrap recovered; no reconstructed training history."
+      "training_source_status": "Original recovery notebook and matching original bootstrap recovered; no reconstructed training history.",
+      "checkpoint_framework_version": "8.4.175"
     }
   },
   {
@@ -79,7 +80,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     }
   },
   {
@@ -108,7 +110,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     }
   },
   {
@@ -137,7 +140,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     }
   },
   {
@@ -166,7 +170,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     }
   },
   {
@@ -197,7 +202,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     }
   },
   {
@@ -226,7 +232,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     }
   },
   {
@@ -257,7 +264,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.178"
     }
   },
   {
@@ -288,7 +296,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     }
   },
   {
@@ -319,7 +328,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     }
   },
   {
@@ -350,7 +360,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     }
   },
   {
@@ -381,7 +392,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     }
   },
   {
@@ -412,7 +424,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     }
   },
   {
@@ -443,7 +456,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     }
   },
   {
@@ -474,7 +488,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     }
   },
   {
@@ -505,7 +520,8 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     }
   }
 ]

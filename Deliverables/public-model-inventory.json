@@ -11,7 +11,7 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "Checkpoint explicitly carries AGPL-3.0; original source and unchanged upstream license recovered. Narrow source grant remains to be established.",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
     "eligibility": "prepared_pending_scoped_source_terms_and_adjacent_public_source",
     "official_upstream_url": null,
     "family": "yolo",
@@ -68,12 +68,27 @@
       "exported_after_epoch": 37,
       "evidence": "source-packet/baseline/training/experiment_manifest.json",
       "evidence_sha256": "3533600043ce5d48f63118219ef46461ca0210e6e976d9d944eb9cae1b016bb0",
-      "training_source_status": "Original recovery notebook and matching original bootstrap recovered; no reconstructed training history."
+      "training_source_status": "Original recovery notebook and matching original bootstrap recovered; no reconstructed training history.",
+      "checkpoint_framework_version": "8.4.175"
     },
     "remaining_conditions": [
       "Confirm existing source-license evidence or authorize AGPL-v3 for the specifically listed RoadScan-owned baseline notebook/scripts/configuration; no whole-project license choice is required.",
       "Publish the original baseline source packet with clear adjacent source access and preserved upstream license/notices."
-    ]
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.175"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo11n.pt"
+      ]
+    }
   },
   {
     "id": "bda15131e5f6",
@@ -87,8 +102,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "Exact artifact terms unresolved; Ultralytics compatibility does not establish the original training implementation/version or Apache-only eligibility.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "rtdetr",
     "ranking_required": false,
@@ -119,13 +134,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.175"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks RTDETRDetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "rtdetr-x.pt"
+      ]
+    }
   },
   {
     "id": "edb35d3cf7b1",
@@ -139,8 +168,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "Exact artifact terms unresolved; Ultralytics compatibility does not establish the original training implementation/version or Apache-only eligibility.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "rtdetr",
     "ranking_required": false,
@@ -171,13 +200,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.175"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks RTDETRDetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "rtdetr-x.pt"
+      ]
+    }
   },
   {
     "id": "9e2a0484d6f4",
@@ -191,8 +234,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -223,13 +266,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.175"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo11m.pt"
+      ]
+    }
   },
   {
     "id": "9a13443ad7a3",
@@ -243,8 +300,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -275,13 +332,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.175"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolov8m.pt"
+      ]
+    }
   },
   {
     "id": "b636269a3035",
@@ -295,8 +366,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "Exact artifact terms unresolved; Ultralytics compatibility does not establish the original training implementation/version or Apache-only eligibility.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "rtdetr",
     "ranking_required": false,
@@ -329,13 +400,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.177"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks RTDETRDetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "rtdetr-l.pt"
+      ]
+    }
   },
   {
     "id": "11602fd792d5",
@@ -349,8 +434,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "Exact artifact terms unresolved; Ultralytics compatibility does not establish the original training implementation/version or Apache-only eligibility.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "rtdetr",
     "ranking_required": false,
@@ -381,13 +466,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.175"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks RTDETRDetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "rtdetr-x.pt"
+      ]
+    }
   },
   {
     "id": "e1937609619f",
@@ -401,8 +500,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -435,13 +534,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.178"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.178"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo11s.pt"
+      ]
+    }
   },
   {
     "id": "4e14d23d45da",
@@ -455,8 +568,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -489,13 +602,25 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.175"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.175"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": []
+    }
   },
   {
     "id": "0ebbc80d4a76",
@@ -541,8 +666,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -575,13 +700,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.177"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo26s.pt"
+      ]
+    }
   },
   {
     "id": "1bb6724ee2d0",
@@ -595,8 +734,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -629,13 +768,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.177"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo26s.pt"
+      ]
+    }
   },
   {
     "id": "9f940caa9222",
@@ -649,8 +802,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -683,13 +836,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.177"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo26s.pt"
+      ]
+    }
   },
   {
     "id": "3be62681e3ec",
@@ -703,8 +870,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -737,13 +904,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.177"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo26n.pt"
+      ]
+    }
   },
   {
     "id": "3ef405bf22a9",
@@ -757,8 +938,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -791,13 +972,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.177"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo26s.pt"
+      ]
+    }
   },
   {
     "id": "63d2099e766f",
@@ -811,8 +1006,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -845,13 +1040,25 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.177"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": []
+    }
   },
   {
     "id": "fa148e7109aa",
@@ -865,8 +1072,8 @@
     "rank_or_top5_privacy_hold": false,
     "availability": "not_uploaded",
     "public_url": null,
-    "license_assessment": "AGPL-3.0 upstream YOLO default; source compliance incomplete.",
-    "eligibility": "hold_asset_provenance_and_corresponding_source",
+    "license_assessment": "Explicit embedded AGPL-3.0 notice and serialized Ultralytics implementation inspected safely; original/custom training source completeness remains separate.",
+    "eligibility": "embedded_agpl_source_packet_pending",
     "official_upstream_url": null,
     "family": "yolo",
     "ranking_required": false,
@@ -899,13 +1106,27 @@
       "train_args": null,
       "evidence": "SHA-bound imported-model catalog metadata",
       "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
-      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives.",
+      "checkpoint_framework_version": "8.4.177"
     },
     "remaining_conditions": [
-      "Supply the actual training implementation/version and initializer provenance, or evidence sufficient to establish applicable asset terms.",
-      "Provide complete corresponding source where required, with applicable notices and a scoped license; original historical filenames or Git history are not separate license requirements.",
-      "Review original checkpoint metadata for private data before upload; no new weight deserialization was performed."
-    ]
+      "Supply complete corresponding training/preparation source and notices; establish any custom changes and actual initializer provenance.",
+      "Establish the required source grant for RoadScan-owned portions and publish clear adjacent source access. No new whole-project license is selected."
+    ],
+    "embedded_metadata": {
+      "license_strings": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "framework_version_values": [
+        "8.4.177"
+      ],
+      "serialized_model_class": [
+        "ultralytics.nn.tasks DetectionModel"
+      ],
+      "initializer_filename_candidates": [
+        "yolo26s.pt"
+      ]
+    }
   },
   {
     "id": "267c1eefc78d",

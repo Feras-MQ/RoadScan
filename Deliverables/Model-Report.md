@@ -208,10 +208,10 @@ All 19 original weights are authorized for publication; no ranking or top-five p
 | Asset group | Release route / remaining condition |
 | --- | --- |
 | DINOv2 ViT-S/14 | Published unchanged at the [model-resources release](https://github.com/Feras-MQ/RoadScan/releases/tag/model-resources-2026-10-28), with Apache-2.0 license/attribution packet and SHA256SUMS. Anonymous download hashes verified. |
-| Stock COCO YOLO11n | Official upstream link is eligible. A mirror needs the applicable AGPL notices and corresponding-source access. |
+| Stock COCO YOLO11n | Official upstream download and SHA256 verified. A mirror still needs applicable AGPL notices and corresponding-source access. |
 | RoadScan YOLO11n baseline | Original source evidence packet is assembled. Complete the scoped source terms and adjacent public corresponding-source access under applicable AGPL terms. |
-| Other 11 trained YOLO detectors | Confirm initializer/implementation evidence and supply required corresponding source and notices. |
-| Four trained RT-DETR detectors | Confirm actual implementation/version, initializer and exact artifact terms; compatible metadata alone does not establish Apache-only eligibility. |
+| Other 11 trained YOLO detectors | Embedded AGPL-3.0 and Ultralytics metadata verified. Complete original/custom training source, initializer provenance and notices. |
+| Four trained RT-DETR detectors | All four explicitly carry AGPL-3.0 and serialized Ultralytics classes. Complete original/custom source and initializer provenance. |
 | ResNet18 classifier | Establish actual initializer and pretrained-weight terms. A code-library license alone does not settle checkpoint terms. |
 
 The absence of a repository-root LICENSE is not by itself a blanket prohibition on releasing a separately licensed asset. Existing asset terms, covered modifications, required notices and corresponding source still matter. Missing historical Git history is not a separate licensing ban; missing training provenance can still prevent the team from establishing the applicable terms. See the [AGPL text](https://raw.githubusercontent.com/ultralytics/ultralytics/v8.4.175/LICENSE) and [Ultralytics licensing policy](https://www.ultralytics.com/license).

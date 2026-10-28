@@ -11,11 +11,13 @@ The [CSV inventory](public-model-inventory.csv) and [JSON inventory](public-mode
 
 | Group | Release condition |
 |---|---|
-| 12 trained YOLO detectors | Assemble the applicable Ultralytics license/notices and corresponding training/source information; the team's contribution license is not yet declared |
-| 4 RT-DETR detectors | Confirm the exact training implementation, initialization and applicable license/source packet |
+| 12 trained YOLO detectors | Embedded AGPL-3.0 notices and Ultralytics metadata verified; complete corresponding source and scoped team-source terms |
+| 4 RT-DETR detectors | Embedded AGPL-3.0 notices and serialized Ultralytics classes verified; complete original/custom training source and initializer provenance |
 | ResNet18 classifier | Confirm initialization and redistribution provenance |
 | Stock COCO initializer | Official upstream download and original hash verified; no mirror uploaded |
 | DINOv2 backbone | Published unchanged with Apache-2.0 license/provenance; anonymous download verified |
+
+Safe pickle-bytecode inspection identified explicit AGPL-3.0 notices in all 16 detectors, with saved framework versions 8.4.175, 8.4.177 or 8.4.178. These saved versions and initializer filename candidates do not prove the complete original training environment or absence of custom code. No model was executed for this inspection.
 
 The combined weight size is **1,562,050,919 bytes**. Large files should be supplied as verified release assets rather than embedded in ordinary source commits. A release is not available until its download links and hashes have been checked.
 
