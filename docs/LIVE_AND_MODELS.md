@@ -1,7 +1,7 @@
-# Current release: 2026-10-21.2
-See FINAL_AUDIT_2026-10-21.md for sequential video analysis, individual-model adoption and resolved audit findings.
+# Current release: 2026-10-27.1
+See [validation status](../Deliverables/Validation-Status.md) for sequential video analysis, individual-model adoption and verified limits.
 
-# Live recognition and models - release 2026-10-19.1
+# Live recognition and models
 
 ## What works
 Iriun/USB/laptop cameras and browser-playable MP4/WebM files share a serial frame pipeline. Overview > Open camera starts analysis automatically. Live recognition > Start gives explicit source and quality controls. No Capture button is required for analysis.

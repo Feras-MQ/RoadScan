@@ -22,7 +22,7 @@ function Test-DockerEngine {
 }
 
 if (-not $ProjectPath) {
-    foreach ($candidate in @($PSScriptRoot, (Join-Path $PSScriptRoot 'RoadScan'), 'C:\Users\Feras Alyamani\Desktop\CAPSTONE\RoadScan_Rebuilt_Source_v1\RoadScan')) {
+    foreach ($candidate in @($PSScriptRoot, (Join-Path $PSScriptRoot 'RoadScan'))) {
         if (Test-Path -LiteralPath (Join-Path $candidate 'compose.yaml') -PathType Leaf) { $ProjectPath = $candidate; break }
     }
 }

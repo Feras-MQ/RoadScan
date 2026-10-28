@@ -1,0 +1,43 @@
+SLIDE 1 — 20 seconds
+0:20 — RoadScan helps turn a road image into a reviewable damage report. Our contribution is the complete inspection workflow: recognition, correction, repair-priority support and controlled preparation of training data. It is a capstone prototype, not structural safety certification.
+Sources: RoadScan-Project-Report.pdf sections 1–2; OLO AIEP brief, Track A. Artwork is the current app’s illustrative road scene, not an AI prediction. Team roles are not individually assigned because contribution records have not been verified.
+
+SLIDE 2 — 35 seconds
+0:35 — The browser accepts a photo, camera stream or video. FastAPI validates the input and runs the selected local detector. Predictions become saved reports for human review; SQLAlchemy and SQLite retain decisions while images and model files remain in local storage. Priority and optional nearby matching support the reviewer. Only approved examples enter the export workflow.
+Sources: RoadScan-Project-Report.pdf architecture section; ../roadscan/api.py, core.py and frontend/src/App.tsx. The arrows describe the user workflow; matching is optional and training is a separate process.
+
+SLIDE 3 — 50 seconds
+0:50 — This is an actual current demo report. The reviewer can inspect and correct boxes, record a note and choose a status. An optional vote compares separate model outputs, but a majority is not ground truth: the reviewer can use an individual model’s draft and then save the decision. Demo or synthetic records are demonstrations, not evidence of local-road accuracy.
+Sources: Evidence/Design-2026-10-27/deployed-review-desktop.png; ../docs/LIVE_AND_MODELS.md; frontend/src/ModelVote.tsx and review workflow. If showing the app live, keep the original demo report unchanged or use a disposable report.
+
+SLIDE 4 — 50 seconds
+0:50 — On the supplied RDD holdout, the main YOLO26s at 1024 pixels reports 63.04 percent mAP50 and 33.01 percent mAP50–95. The native chart shows per-class AP50. mAP evaluates detection across thresholds; it is not ordinary image accuracy. These are teammate-supplied results, not an independent rerun. The supplied audit reports near-duplicate leakage, so the result may be optimistic. The team’s main run reports about 41,000 training images; exact manifests are still needed.
+Sources: Team-Models-and-Results.md; the separately supplied team results archive (public download pending; see Models.md) results.csv. D00=longitudinal crack, D10=transverse crack, D20=alligator crack, D40=pothole.
+
+SLIDE 5 — 40 seconds
+0:40 — Camera mode starts analysis automatically after recognition is started, with one inference in flight at a time. It is responsive sampling rather than a promise to process every arriving camera frame. For stored video, the separate complete-frame job processes decoded frames sequentially and reports progress; it can run slower than the recording. The active model and input size affect speed. Iriun can act as a webcam, as tested by the team, but this deck makes no representative live FPS claim.
+Sources: ../docs/LIVE_AND_MODELS.md; frontend/src/LiveRecognition.tsx and FullVideoAnalysis.tsx; current 27 October screenshot. Direct drone telemetry/control is not implemented; compatible footage can be submitted for experimental analysis.
+
+SLIDE 6 — 45 seconds
+0:45 — Learning is an explicit workflow. Correct and save the report, approve the example, then export the dataset. A training tool trains a separate checkpoint. Evaluate on protected unused data before importing it and selecting Use model. Review does not silently change the deployed model, and training gains are not guaranteed. This makes each model change deliberate and reversible.
+Sources: current Learning UI screenshot, 27 October; Quick-Start.md and ../docs/LIVE_AND_MODELS.md; training export/approval code. Keep validation and test data isolated from approved training examples.
+
+SLIDE 7 — 60 seconds
+1:00 — The current release passed 221 backend tests, 24 frontend tests and 67 browser checks; one optional backend test was skipped. These results establish software behaviour such as saving, validation and workflow controls, not road-detection accuracy. A clean source-only Docker build also passed model activation, inference and restart persistence checks. The remaining research work is to collect labeled Saudi images and real repeated-damage pairs, repair split leakage, and measure camera performance under representative conditions. Our deliverable is a working, inspectable system with documented limits.
+Sources: For-Examiners.md; Validation-Status.md. Closing question: which validation gap should be addressed first?
+
+SLIDE 8 — optional appendix
+Appendix — Main training narrative: 26,869 RDD training images plus approximately 14,000 extra images; 5,758 validation and 5,758 holdout. Main training reports 120 epochs, best validation epoch 84 and 1024 px input. Extra sources include Rome potholes, HRP4K, SVRDD Beijing and web data. No original dataset manifest or verified labeled Saudi test set was supplied. Do not call any model’s filename score independent evidence.
+Sources: Team-Models-and-Results.md and supplied split audit in the separately supplied team results archive (public download pending; see Models.md).
+
+SLIDE 9 — optional appendix
+Appendix — E1 is image-presence classification on 5,758 images: ResNet18 F1 .893 / image accuracy .869; main YOLO26s F1 .929 / image accuracy .913. E2 small versus nano uses 640 px models; supplied mAP50 is 59.43% and 55.99%. These tasks and model settings must not be mixed. A synthetic CPU diagnostic is not real camera FPS.
+Sources: e1_classifier_vs_detector.csv and results.csv in the supplied team results; Team-Models-and-Results.md.
+
+SLIDE 10 — optional appendix
+Appendix — E3 supplied mAP50: standard 59.43%, no augmentation 46.93%, vertical flip 58.48%. E4 India-only holdout is 8.86% when India is excluded from comparison training, versus 39.25% when included. This motivates local-domain evaluation; it does not establish Saudi performance. The native chart remains editable.
+Sources: supplied E3/E4 experiment tables; Team-Models-and-Results.md.
+
+SLIDE 11 — optional appendix
+Appendix / contingency — Rehearse with a disposable demo report. Before presenting: start Docker, open the documented local address, confirm health and the intended active model, and retain this PDF. If a camera or model fails, stop trying after one bounded recovery and use screenshots; state the failure honestly. The README provides exact source-only and bundled-release steps. Optional matching requires coordinates and a DINOv2 backbone. Supplied E5 scores are simulations, not deployed duplicate accuracy. The priority sensitivity tool varies each weight ±20%; no validated engineering severity claim is made.
+Sources: Docs/Replacement-Tools.md; ../docs/LIVE_AND_MODELS.md; ../README.md; current priority and duplicate UI. Repository: https://github.com/Feras-MQ/RoadScan (repository visibility is documented separately).

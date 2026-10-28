@@ -1,0 +1,511 @@
+[
+  {
+    "id": "2bb146ad53a3",
+    "sha256": "2bb146ad53a3ddd149320aae3be67b2b1d50ccf0fdbc909edd749538055a2551",
+    "bytes": 5536234,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "D40"
+      },
+      "class_count": 4,
+      "imgsz": 640,
+      "framework": "Ultralytics",
+      "framework_version": "8.4.175",
+      "python": "3.13.15",
+      "torch": "2.11.0+cu130",
+      "initializer": {
+        "file": "yolo11n.pt",
+        "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+        "official_url": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt"
+      },
+      "train_args": {
+        "data": "<dataset>/data.yaml",
+        "epochs": 50,
+        "imgsz": 640,
+        "batch": 16,
+        "device": 0,
+        "workers": 2,
+        "seed": 20261010,
+        "deterministic": true,
+        "project": "<runs>",
+        "name": "E2_recovery_yolo11n_640_seed20261010",
+        "exist_ok": false,
+        "patience": 10,
+        "cache": false,
+        "plots": true,
+        "optimizer": "AdamW",
+        "lr0": 0.001,
+        "degrees": 0.0,
+        "translate": 0.05,
+        "scale": 0.25,
+        "fliplr": 0.5,
+        "flipud": 0.0,
+        "mosaic": 0.5,
+        "mixup": 0.0,
+        "close_mosaic": 10
+      },
+      "exported_after_epoch": 37,
+      "evidence": "source-packet/baseline/training/experiment_manifest.json",
+      "evidence_sha256": "3533600043ce5d48f63118219ef46461ca0210e6e976d9d944eb9cae1b016bb0",
+      "training_source_status": "Original recovery notebook and matching original bootstrap recovered; no reconstructed training history."
+    }
+  },
+  {
+    "id": "bda15131e5f6",
+    "sha256": "bda15131e5f68a3a010dcec312f343b9e54e90f4828efdb21a2f64fb342cc447",
+    "bytes": 540036156,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "D40_Pothole"
+      },
+      "class_count": 4,
+      "imgsz": 640,
+      "checkpoint_epoch": 0,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "edb35d3cf7b1",
+    "sha256": "edb35d3cf7b115d56a7bc96c6e4505c4a1da50ae1aecdf80742f49bae2a75a6d",
+    "bytes": 135456021,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "D40_Pothole"
+      },
+      "class_count": 4,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "9e2a0484d6f4",
+    "sha256": "9e2a0484d6f4fc7938d7e5014673f080d6bb97f697b45e8676325db76131836a",
+    "bytes": 40526764,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "D40_Pothole"
+      },
+      "class_count": 4,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "9a13443ad7a3",
+    "sha256": "9a13443ad7a3f71c211059cc9b62e67e4157f7b49680d75a9ffca96742967e97",
+    "bytes": 52041426,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "D40_Pothole"
+      },
+      "class_count": 4,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "b636269a3035",
+    "sha256": "b636269a303539174ab208d125ab60de149fe832c4fda7aa4c25c8f109b45b60",
+    "bytes": 263739370,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "Longitudinal_Crack",
+        "1": "Transverse_Crack",
+        "2": "Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 800,
+      "checkpoint_epoch": 67,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "11602fd792d5",
+    "sha256": "11602fd792d5f68427d254c9613a60ca3e077bcf42ddc4dc46c6ea1fad17c698",
+    "bytes": 135449685,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "D40_Pothole"
+      },
+      "class_count": 4,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "e1937609619f",
+    "sha256": "e1937609619f0172b0765d676cd0b8167adbda979cb4d3cabeaf61e6395b7758",
+    "bytes": 19219610,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "Longitudinal_Crack",
+        "1": "Transverse_Crack",
+        "2": "Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 800,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "4e14d23d45da",
+    "sha256": "4e14d23d45da6d74504f24632d3f58b447ed6310caf1129b141c736f77e556c1",
+    "bytes": 103884827,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "Longitudinal_Crack",
+        "1": "Transverse_Crack",
+        "2": "Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 800,
+      "checkpoint_epoch": 20,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "31b518ed36ec",
+    "sha256": "31b518ed36ec022fcadb0768268d4b6686a4c327bec3a9cd4fe5fc722ee4cc83",
+    "bytes": 20318592,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "1bb6724ee2d0",
+    "sha256": "1bb6724ee2d01cf0f64c81ae8b6845c70ba06776d51b189f0f3052f880e96543",
+    "bytes": 20318592,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "9f940caa9222",
+    "sha256": "9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434",
+    "bytes": 20414080,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 1024,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "3be62681e3ec",
+    "sha256": "3be62681e3ecc306fd4fbbbcbd40f805fcdd092d03cd57373695ca0453b1aaf8",
+    "bytes": 5463296,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "3ef405bf22a9",
+    "sha256": "3ef405bf22a9324c1f8d43537e21e454a9b4df82cd08f7cb9a09d7d80d1f6edf",
+    "bytes": 20318592,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "63d2099e766f",
+    "sha256": "63d2099e766f5a6ee8bcc7bd915487b99ec03a7da33940c279e844954bf91e08",
+    "bytes": 20318720,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  },
+  {
+    "id": "fa148e7109aa",
+    "sha256": "fa148e7109aad2f30075305bc46e53c8c24fbc6c29ed7167436a30de2acb16bb",
+    "bytes": 20318592,
+    "configuration": {
+      "classes": {
+        "0": "D00",
+        "1": "D10",
+        "2": "D20",
+        "3": "OTHER",
+        "4": "D40"
+      },
+      "original_classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "class_count": 5,
+      "imgsz": 640,
+      "checkpoint_epoch": -1,
+      "framework": "Ultralytics-compatible checkpoint; exact original training implementation unconfirmed",
+      "framework_version": null,
+      "initializer": null,
+      "train_args": null,
+      "evidence": "SHA-bound imported-model catalog metadata",
+      "evidence_sha256": "8a980cbc692a7f4726888ce3ea064f38fd1fc94bcc8dfbcd3ab9242f7f8f19b4",
+      "training_source_status": "Original training recipe/version/initializer absent from supplied teammate archives."
+    }
+  }
+]

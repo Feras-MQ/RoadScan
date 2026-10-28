@@ -1,8 +1,8 @@
-# Current release: 2026-10-21.2
-See FINAL_AUDIT_2026-10-21.md for sequential video analysis, individual-model adoption and resolved audit findings.
+# Current release: 2026-10-27.1
+See [validation status](../Deliverables/Validation-Status.md) for sequential video analysis, individual-model adoption and verified limits.
 
 # Learning from reviews and deployment
-Current release:2026-10-19.1. Implemented capability is separated from future work.
+Implemented capability is separated from future work.
 
 ## Working correction-to-dataset loop
 1. Review the entire report image. Correct false boxes and add missed damage. Save Confirmed (Assigned/Resolved reviewed records are also eligible).
