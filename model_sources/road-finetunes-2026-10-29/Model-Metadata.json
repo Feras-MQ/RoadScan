@@ -1,0 +1,97 @@
+{
+  "models": [
+    {
+      "file": "1_original_yolo26s_1024.pt",
+      "sha256": "9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434",
+      "proposed_release_asset": "9f940caa9222-1_original_yolo26s_1024.pt",
+      "architecture": "YOLO26s",
+      "imgsz": 1024,
+      "classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "saved_version": "8.4.177",
+      "license_notice": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "expected_parent_sha256": null,
+      "parent_evidence": "Consistent filenames and records; no historical hash binding",
+      "runtime_verified": false,
+      "promoted": false,
+      "publication_ready": false
+    },
+    {
+      "file": "2_road_v1_yolo26s_1024_RECOMMENDED.pt",
+      "sha256": "78f5e2afb82d5145f30de9957cb51f167241e377ed0b5775f71be1c5e80ac87d",
+      "proposed_release_asset": "78f5e2afb82d-2_road_v1_yolo26s_1024_RECOMMENDED.pt",
+      "architecture": "YOLO26s",
+      "imgsz": 1024,
+      "classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "saved_version": "8.4.175",
+      "license_notice": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "expected_parent_sha256": "9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434",
+      "parent_evidence": "Consistent filenames and records; no historical hash binding",
+      "runtime_verified": false,
+      "promoted": false,
+      "publication_ready": false
+    },
+    {
+      "file": "3_road_A_yolo26s_1024.pt",
+      "sha256": "00794102e39e621f1268e31f43b3743daae17309b5eaf90feef1077f0bf0991b",
+      "proposed_release_asset": "00794102e39e-3_road_A_yolo26s_1024.pt",
+      "architecture": "YOLO26s",
+      "imgsz": 1024,
+      "classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "saved_version": "8.4.175",
+      "license_notice": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "expected_parent_sha256": "9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434",
+      "parent_evidence": "Consistent filenames and records; no historical hash binding",
+      "runtime_verified": false,
+      "promoted": false,
+      "publication_ready": false
+    },
+    {
+      "file": "4_road_v2b_yolo26s_1024.pt",
+      "sha256": "0caef4521c82a944cfe4b6e5022914eeabab9c69864967db17a9915f4fdc7500",
+      "proposed_release_asset": "0caef4521c82-4_road_v2b_yolo26s_1024.pt",
+      "architecture": "YOLO26s",
+      "imgsz": 1024,
+      "classes": {
+        "0": "D00_Longitudinal_Crack",
+        "1": "D10_Transverse_Crack",
+        "2": "D20_Alligator_Crack",
+        "3": "Other_Corruption",
+        "4": "D40_Pothole"
+      },
+      "saved_version": "8.4.175",
+      "license_notice": [
+        "AGPL-3.0 (https://ultralytics.com/license)"
+      ],
+      "expected_parent_sha256": "78f5e2afb82d5145f30de9957cb51f167241e377ed0b5775f71be1c5e80ac87d",
+      "parent_evidence": "Consistent filenames and records; no historical hash binding",
+      "runtime_verified": false,
+      "promoted": false,
+      "publication_ready": false
+    }
+  ],
+  "metrics_status": "Supplied only; selection-set and threshold bias, shared videos; no independent test"
+}

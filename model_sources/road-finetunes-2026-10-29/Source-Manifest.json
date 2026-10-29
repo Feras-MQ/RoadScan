@@ -1,0 +1,60 @@
+{
+  "license": "AGPL-3.0-only",
+  "scope": "Only nine listed team contributions and documented sanitized copies",
+  "files": [
+    {
+      "path": "extract_frames.py",
+      "original_sha256": "ed3bf02f55c580e16d3d37de1f8dced62c14f056400a7a0ee954ea3d76741753",
+      "candidate_sha256": "b79c823ee434870a02d01c18de60d427ab4d9b8886428e41ea27c03dda10d863",
+      "changed": true
+    },
+    {
+      "path": "finetune_road.py",
+      "original_sha256": "b4ba09093983b735a95f5bd365de063dd9b98b735c6f0f64758cb58bc7ff2beb",
+      "candidate_sha256": "256a3c6f71900f16531e7f6fb4dc6c38b19c333eddf7a262003510ab7669e468",
+      "changed": true
+    },
+    {
+      "path": "history/record_of_first_run/finetune_video.py",
+      "original_sha256": "4ea8a2408fde1b7cac9e5eb4e14398345a6172a52bdbcc225006b67be15bd1b6",
+      "candidate_sha256": "4bac3dd039a5b3fb626490feeef327c4d3d27427206056eb3da22a54d80f6887",
+      "changed": true
+    },
+    {
+      "path": "kaggle_finetune.ipynb",
+      "original_sha256": "b17c99f7e0fc385b4671f7c430c6eba11ead979a2a33c8c250c57af3f75f87d3",
+      "candidate_sha256": "38075eb2f78c6ba8c8cdbc9a0245866b5f708f9b166f077e32db99c71ad584b2",
+      "changed": true
+    },
+    {
+      "path": "labeled_road_data/label_tool.py",
+      "original_sha256": "8f26d035bb9e525563736b550df49085d051493c22aa121d06abe072c2441f2e",
+      "candidate_sha256": "163fd7d13815e41a05ae24ca0b481bde0fc040863661016e96e8800b8144283e",
+      "changed": true
+    },
+    {
+      "path": "realtime_video.py",
+      "original_sha256": "74de04715374b6e400d16a4386a56dce9c9c027c69565fbecdf5788172f8114a",
+      "candidate_sha256": "1184969e662a1df6d116afb86b331500d909a7941e32debf1f210a1a75d94187",
+      "changed": true
+    },
+    {
+      "path": "history/record_of_first_run/args.yaml",
+      "original_sha256": "d447c950c45bc00c54afb64fa7793b1e0774aa907c7c428b7354979ba634be41",
+      "candidate_sha256": "d3b54d67b3e75c3be56fd3c483c133b2ca0df3af02a76f86d97f1f8c8cc79e15",
+      "changed": true
+    },
+    {
+      "path": "results/kaggle_run_A_args.yaml",
+      "original_sha256": "276ce008fbe5ed1159149ab4e44e0cd9be955bf6c5f4f04500b4e932ec8c6907",
+      "candidate_sha256": "7583e2d05ff7814e4b182aef55dbb292181ad3f7f72717ca081ccdd9e91b904e",
+      "changed": true
+    },
+    {
+      "path": "results/kaggle_run_B_args.yaml",
+      "original_sha256": "9fd625b8dfcada97d4b289f28e81277542dded2efba0f29706b5e83e4b10e143",
+      "candidate_sha256": "f3f4578a836f89a92ba933da7e7658d705f476a8462251c4874fe3701cea79cc",
+      "changed": true
+    }
+  ]
+}
