@@ -2,6 +2,8 @@
 
 Prepared 27 October 2026 for release 2026-10-27.1.
 
+**30 October addendum:** the table below is the historical release baseline. The [current audit](Submission-Audit-2026-10-30.md) records 22 unique weights, four small CPU compatibility checks and browser verification of the three new experimental choices. No full benchmark, new accuracy measurement or fresh public-download acceptance is claimed.
+
 | Area | Verified evidence | Limit |
 |---|---|---|
 | Application checks | 221 backend tests passed, one optional skip; 24 frontend tests and 67 browser checks passed | These are software checks, not model accuracy |

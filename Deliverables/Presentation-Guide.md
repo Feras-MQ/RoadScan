@@ -7,12 +7,14 @@ Use slides 1–7 for the main story. Slides 8–11 are an optional technical and
 | Slide | Focus | Time |
 |---|---|---|
 | 1 | Problem and contribution | 20 seconds |
-| 2 | Local architecture | 35 seconds |
-| 3 | Human review and model voting | 50 seconds |
-| 4 | Team-reported model evidence and limits | 50 seconds |
-| 5 | Camera sampling and sequential video analysis | 40 seconds |
-| 6 | Reviewed data and separate training | 45 seconds |
-| 7 | Software verification and next field evidence | 60 seconds |
+| 2 | Local architecture | 50 seconds |
+| 3 | Human review and model voting | 45 seconds |
+| 4 | Team-reported model evidence and limits | 55 seconds |
+| 5 | Camera sampling and sequential video analysis | 45 seconds |
+| 6 | Reviewed data and separate training | 40 seconds |
+| 7 | Software verification and next field evidence | 45 seconds |
+
+These are the script's planned timings, totaling five minutes; rehearsal timing is unmeasured. The report/deck remain the dated 27 October snapshot: slide 8 covers 19 weights, followed by three experimental fine-tunes added later (22 distinct weights / 19 detectors now). Mention this update using the current speaker notes and [30 October supplement](Submission-Audit-2026-10-30.md); no new accuracy results or regenerated slide binaries are implied.
 
 **If a demonstration fails:** keep the PDF open, explain the screenshots, and state what failed; do not claim a failed live run succeeded.
 

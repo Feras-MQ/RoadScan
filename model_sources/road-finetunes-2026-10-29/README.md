@@ -14,7 +14,7 @@ This is a source release, not a self-contained training dataset or an instructio
 
 ## Compatibility
 
-All four checkpoints' statically inspected class IDs are 0=D00, 1=D10, 2=D20, 3=OTHER, 4=D40; image size is 1024. RoadScan's existing name-based mapper passed these four mappings and the prior four-class case without model loading. Actual checkpoint inference remains untested in this release.
+All four checkpoints' class IDs are 0=D00, 1=D10, 2=D20, 3=OTHER, 4=D40; image size is 1024. RoadScan's existing name-based mapper passed these mappings and the prior four-class case. On 29 October each checkpoint also completed restricted loading and actual CPU1024 inference on one synthetic image and one supplied road image, sequentially in isolated containers. The three experimental library labels were verified in the browser on 30 October; the main selection was unchanged. These are compatibility checks, not accuracy, throughput or exact-training-reproduction evidence. See the [current audit and release conditions](../../Deliverables/Submission-Audit-2026-10-30.md).
 
 ## Evaluation limits
 

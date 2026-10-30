@@ -1,0 +1,493 @@
+{
+  "date": "2026-10-30",
+  "scope": "22 unique weights; 19 road detectors, one classifier, one COCO initializer, one embedding backbone. No new weight upload or license grant.",
+  "models": [
+    {
+      "filename": "roadscan_baseline_best.pt",
+      "sha256": "2bb146ad53a3ddd149320aae3be67b2b1d50ccf0fdbc909edd749538055a2551",
+      "bytes": 5536234,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "Official yolo11n.pt; parent SHA256 0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1.",
+      "available_source": "Published baseline packet: notebook, six preparation/training Python files, two configs and two dependency files; exact eleven-file grant applied.",
+      "license_evidence": "AGPL-3.0 notice and approved scoped source grant distributed with source packet; no whole-app relicense.",
+      "publication_status": "PUBLISHED: anonymous download and exact SHA verified on 28 October; release still listed on 30 October.",
+      "smallest_missing_input": "None for the existing weight/source download. Fresh public-download-to-inference acceptance remains stopped; do not present it as passed.",
+      "reproducibility_gaps": "Recorded baseline experiment exists; this audit does not rerun training or the US holdout.",
+      "test_evidence": "Earlier isolated CPU inference recorded; fresh download-to-inference acceptance not completed.",
+      "evidence": [
+        "https://github.com/Feras-MQ/RoadScan/releases/tag/model-resources-2026-10-28",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Baseline-Source-AGPL-3.0.zip"
+      ],
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/2bb146ad53a3-roadscan_baseline_best.pt"
+    },
+    {
+      "filename": "road_damage_rtdetr_x_best_Epoch001_mAP50_95_0.00000.pt",
+      "sha256": "bda15131e5f68a3a010dcec312f343b9e54e90f4828efdb21a2f64fb342cc447",
+      "bytes": 540036156,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): rtdetr-x.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "road_damage_rtdetr_x_final_best_Epoch050_mAP50_95_0.04830.pt",
+      "sha256": "edb35d3cf7b115d56a7bc96c6e4505c4a1da50ae1aecdf80742f49bae2a75a6d",
+      "bytes": 135456021,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): rtdetr-x.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "road_damage_yolo11m_best_Epoch086_mAP50_95_0.21440.pt",
+      "sha256": "9e2a0484d6f4fc7938d7e5014673f080d6bb97f697b45e8676325db76131836a",
+      "bytes": 40526764,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolo11m.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "road_damage_yolov8m_optimized_best_Epoch097_mAP50_95_0.21809.pt",
+      "sha256": "9a13443ad7a3f71c211059cc9b62e67e4157f7b49680d75a9ffca96742967e97",
+      "bytes": 52041426,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolov8m.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "RTDETR_L_RDD2022_200E_800px_best_Epoch068_mAP50_95_0.31278.pt",
+      "sha256": "b636269a303539174ab208d125ab60de149fe832c4fda7aa4c25c8f109b45b60",
+      "bytes": 263739370,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.177"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): rtdetr-l.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "setup_benchmark_best_Epoch001_mAP50_95_0.00001.pt",
+      "sha256": "11602fd792d5f68427d254c9613a60ca3e077bcf42ddc4dc46c6ea1fad17c698",
+      "bytes": 135449685,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): rtdetr-x.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "YOLO11s_RDD2022_200E_800px_best_Epoch085_mAP50_95_0.34684.pt",
+      "sha256": "e1937609619f0172b0765d676cd0b8167adbda979cb4d3cabeaf61e6395b7758",
+      "bytes": 19219610,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.178"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolo11s.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "YOLOv8m_RDD2022_150E_800px_best_Epoch021_mAP50_95_0.30855.pt",
+      "sha256": "4e14d23d45da6d74504f24632d3f58b447ed6310caf1129b141c736f77e556c1",
+      "bytes": 103884827,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "No exact initializer identified in the inspected record.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "yolo11n.pt",
+      "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+      "bytes": 5613764,
+      "task": "stock_coco",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [],
+      "parent_evidence": "Official Ultralytics COCO-pretrained YOLO11n initializer; not team-trained.",
+      "available_source": "Official Ultralytics implementation and upstream asset; source/notices remain upstream.",
+      "license_evidence": "Upstream Ultralytics terms; no new license is assigned.",
+      "publication_status": "UPSTREAM DOWNLOAD: exact file/hash previously verified; no RoadScan mirror.",
+      "smallest_missing_input": "None for the official link. This is not a road-damage model.",
+      "reproducibility_gaps": "Does not reproduce RoadScan training and cannot replace a trained road detector.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "https://github.com/ultralytics/ultralytics",
+        "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt"
+      ],
+      "public_weight_url": "https://github.com/ultralytics/assets/releases/download/v8.3.0/yolo11n.pt"
+    },
+    {
+      "filename": "e2_yolo26s_640.pt",
+      "sha256": "31b518ed36ec022fcadb0768268d4b6686a4c327bec3a9cd4fe5fc722ee4cc83",
+      "bytes": 20318592,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.177"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "data_yolo26s_640_clean_labels.pt",
+      "sha256": "1bb6724ee2d01cf0f64c81ae8b6845c70ba06776d51b189f0f3052f880e96543",
+      "bytes": 20318592,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.177"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "main_yolo26s_1024.pt",
+      "sha256": "9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434",
+      "bytes": 20414080,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.177"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent. Supplied again byte-identically as the original in the new road package; nine-file fine-tune grant does not cover missing original-main source.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference. Saved epoch is -1; original main mixed-data manifest remains absent.",
+      "test_evidence": "29 October: restricted loader plus actual CPU inference at 1024 on one synthetic and one road image completed. 30 October: selected main model verified unchanged. Compatibility only; no accuracy measurement.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null,
+      "aliases": [
+        "1_original_yolo26s_1024.pt"
+      ]
+    },
+    {
+      "filename": "e2_yolo26n_640.pt",
+      "sha256": "3be62681e3ecc306fd4fbbbcbd40f805fcdd092d03cd57373695ca0453b1aaf8",
+      "bytes": 5463296,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.177"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolo26n.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "e3_yolo26s_640_no_augmentation.pt",
+      "sha256": "3ef405bf22a9324c1f8d43537e21e454a9b4df82cd08f7cb9a09d7d80d1f6edf",
+      "bytes": 20318592,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.177"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "e3_yolo26s_640_vertical_flip.pt",
+      "sha256": "63d2099e766f5a6ee8bcc7bd915487b99ec03a7da33940c279e844954bf91e08",
+      "bytes": 20318720,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.177"
+      ],
+      "parent_evidence": "No exact initializer identified in the inspected record.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "e4_yolo26s_640_without_India.pt",
+      "sha256": "fa148e7109aad2f30075305bc46e53c8c24fbc6c29ed7167436a30de2acb16bb",
+      "bytes": 20318592,
+      "task": "road_detector",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [
+        "8.4.177"
+      ],
+      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
+      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
+      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
+      "publication_status": "HOLD: asset source mapping has not been established.",
+      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "detector-config-provenance-map.json",
+        "public-model-inventory.json"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "baseline_resnet18.pt",
+      "sha256": "267c1eefc78dedf7fe13e9d2e899695b7f5d1edefa98ee7115356d2c6d47b21c",
+      "bytes": 44793483,
+      "task": "classifier",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [],
+      "parent_evidence": "ResNet18 architecture is identified; exact starting checkpoint, source and terms are not established.",
+      "available_source": "Replacement classifier implementation exists in this repository; it is not evidence of the original training source.",
+      "license_evidence": "Torchvision code license does not establish this checkpoint's weight terms; no explicit artifact license proven here.",
+      "publication_status": "HOLD: initializer/checkpoint terms are not established.",
+      "smallest_missing_input": "Trainer: state scratch or exact pretrained weight ID/URL, identify any third-party checkpoint terms and any own additions. Original notebook absence alone is not a prohibition.",
+      "reproducibility_gaps": "Original training recipe and split lineage are missing; replacement synthetic tests are not reproduction of this weight.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "Team-Models-and-Results.md",
+        "https://docs.pytorch.org/vision/stable/models.html"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "dinov2_vits14_pretrain.pth",
+      "sha256": "b938bf1bc15cd2ec0feacfe3a1bb553fe8ea9ca46a7e1d8d00217f29aef60cd9",
+      "bytes": 88283115,
+      "task": "embedding",
+      "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
+      "embedded_framework_versions": [],
+      "parent_evidence": "Unmodified official Meta DINOv2 ViT-S/14 pretrained backbone.",
+      "available_source": "Official DINOv2 source/model card; published Apache license and provenance packet.",
+      "license_evidence": "Apache-2.0 model/source evidence; notices shipped with the mirror.",
+      "publication_status": "PUBLISHED: anonymous download and exact SHA verified on 28 October; release still listed on 30 October.",
+      "smallest_missing_input": "None for redistribution of the unchanged published asset. Real duplicate-pair calibration is a separate task.",
+      "reproducibility_gaps": "Does not detect boxes. Real-pair retrieval and threshold validation remain unmeasured.",
+      "test_evidence": "No new inference or accuracy test in this documentation audit.",
+      "evidence": [
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/DINOv2-license-provenance.zip",
+        "https://github.com/facebookresearch/dinov2/blob/main/MODEL_CARD.md"
+      ],
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/b938bf1bc15c-dinov2_vits14_pretrain.pth"
+    },
+    {
+      "filename": "2_road_v1_yolo26s_1024_RECOMMENDED.pt",
+      "sha256": "78f5e2afb82d5145f30de9957cb51f167241e377ed0b5775f71be1c5e80ac87d",
+      "bytes": 20444878,
+      "task": "road_detector",
+      "publication_permission": "Owner authorized inclusion/publication of eligible new team models; no extra rank/selection approval required.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "main_yolo26s_1024.pt (main lineage reported); saved filename supports lineage but does not cryptographically bind the historical parent. These are team fine-tunes, not new third-party pretrained models.",
+      "available_source": "Nine sanitized team source/config files published under the approved AGPL-3.0-only grant; notebook pins stock Ultralytics 8.4.175. Historical v1 script and args retained.",
+      "license_evidence": "Embedded AGPL-3.0 notice and approved nine-file source grant. Exact parent-main/custom-implementation source mapping remains unverified; no new permission question is inferred.",
+      "publication_status": "HOLD: parent/source mapping requires confirmation; not held for accuracy, missing historical notebook, or model ranking.",
+      "smallest_missing_input": "Trainer: confirm stock 8.4.175 or provide actual patches; identify the parent used and link its covered source/terms (main 9f940caa9222, via v1 for v2b if confirmed). Supply any missing covered preparation/training modifications or confirm the published nine files are complete for this fine-tune.",
+      "reproducibility_gaps": "Supplied v1 selection rule rejects all recorded epochs; actual manual selection/export explanation missing. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy.",
+      "test_evidence": "29 October: restricted loading and actual CPU1024 inference on one synthetic and one road image passed. 30 October: distinct experimental choice visible in model library; not activated. No accuracy or sustained-speed claim.",
+      "evidence": [
+        "../model_sources/road-finetunes-2026-10-29/NOTICE.md",
+        "../model_sources/road-finetunes-2026-10-29/Source-Manifest.json",
+        "../model_sources/road-finetunes-2026-10-29/Model-Metadata.json",
+        "../model_sources/road-finetunes-2026-10-29/README.md"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "3_road_A_yolo26s_1024.pt",
+      "sha256": "00794102e39e621f1268e31f43b3743daae17309b5eaf90feef1077f0bf0991b",
+      "bytes": 20446971,
+      "task": "road_detector",
+      "publication_permission": "Owner authorized inclusion/publication of eligible new team models; no extra rank/selection approval required.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "main_yolo26s_1024.pt (main lineage reported); saved filename supports lineage but does not cryptographically bind the historical parent. These are team fine-tunes, not new third-party pretrained models.",
+      "available_source": "Nine sanitized team source/config files published under the approved AGPL-3.0-only grant; notebook pins stock Ultralytics 8.4.175. Current notebook/trainer and saved run A args are available.",
+      "license_evidence": "Embedded AGPL-3.0 notice and approved nine-file source grant. Exact parent-main/custom-implementation source mapping remains unverified; no new permission question is inferred.",
+      "publication_status": "HOLD: parent/source mapping requires confirmation; not held for accuracy, missing historical notebook, or model ranking.",
+      "smallest_missing_input": "Trainer: confirm stock 8.4.175 or provide actual patches; identify the parent used and link its covered source/terms (main 9f940caa9222, via v1 for v2b if confirmed). Supply any missing covered preparation/training modifications or confirm the published nine files are complete for this fine-tune.",
+      "reproducibility_gaps": "Saved selection rule is consistent with epoch 4; exact historical parent hash unverified. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy.",
+      "test_evidence": "29 October: restricted loading and actual CPU1024 inference on one synthetic and one road image passed. 30 October: distinct experimental choice visible in model library; not activated. No accuracy or sustained-speed claim.",
+      "evidence": [
+        "../model_sources/road-finetunes-2026-10-29/NOTICE.md",
+        "../model_sources/road-finetunes-2026-10-29/Source-Manifest.json",
+        "../model_sources/road-finetunes-2026-10-29/Model-Metadata.json",
+        "../model_sources/road-finetunes-2026-10-29/README.md"
+      ],
+      "public_weight_url": null
+    },
+    {
+      "filename": "4_road_v2b_yolo26s_1024.pt",
+      "sha256": "0caef4521c82a944cfe4b6e5022914eeabab9c69864967db17a9915f4fdc7500",
+      "bytes": 20447626,
+      "task": "road_detector",
+      "publication_permission": "Owner authorized inclusion/publication of eligible new team models; no extra rank/selection approval required.",
+      "embedded_framework_versions": [
+        "8.4.175"
+      ],
+      "parent_evidence": "main_yolo26s_1024_road.pt (v1 lineage reported); saved filename supports lineage but does not cryptographically bind the historical parent. These are team fine-tunes, not new third-party pretrained models.",
+      "available_source": "Nine sanitized team source/config files published under the approved AGPL-3.0-only grant; notebook pins stock Ultralytics 8.4.175. Current notebook/trainer and saved run B args are available.",
+      "license_evidence": "Embedded AGPL-3.0 notice and approved nine-file source grant. Exact parent-main/custom-implementation source mapping remains unverified; no new permission question is inferred.",
+      "publication_status": "HOLD: parent/source mapping requires confirmation; not held for accuracy, missing historical notebook, or model ranking.",
+      "smallest_missing_input": "Trainer: confirm stock 8.4.175 or provide actual patches; identify the parent used and link its covered source/terms (main 9f940caa9222, via v1 for v2b if confirmed). Supply any missing covered preparation/training modifications or confirm the published nine files are complete for this fine-tune.",
+      "reproducibility_gaps": "Saved selection rule is consistent with epoch 3; exact historical parent hash unverified. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy.",
+      "test_evidence": "29 October: restricted loading and actual CPU1024 inference on one synthetic and one road image passed. 30 October: distinct experimental choice visible in model library; not activated. No accuracy or sustained-speed claim.",
+      "evidence": [
+        "../model_sources/road-finetunes-2026-10-29/NOTICE.md",
+        "../model_sources/road-finetunes-2026-10-29/Source-Manifest.json",
+        "../model_sources/road-finetunes-2026-10-29/Model-Metadata.json",
+        "../model_sources/road-finetunes-2026-10-29/README.md"
+      ],
+      "public_weight_url": null
+    }
+  ]
+}

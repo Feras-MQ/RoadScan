@@ -2,7 +2,7 @@
 
 **Team:** Feras Alyamani, Ahmed Salamah, Ahmed Alhejaili. **Release:** 2026-10-27.1. **Prepared:** 27 October 2026.
 
-Start with the report PDF, then the presentation. Source code is in the repository root; the files below are the current submission documents.
+Start with the report PDF and the [30 October supplement](Submission-Audit-2026-10-30.md), then the presentation. Source code is in the repository root; the report/deck binaries below retain their dated 27 October snapshot. The [current 22-weight matrix](Model-Release-Matrix-2026-10-30.md) separates publication permission, source terms and missing evaluations for every model; the older 19-weight inventory and model report are historical snapshots.
 
 | File | Contents | Status |
 |---|---|---|
@@ -18,7 +18,7 @@ Start with the report PDF, then the presentation. Source code is in the reposito
 | [Inference-and-Reproducibility.md](Inference-and-Reproducibility.md) | New-image inference without retraining; model/state checks and pinned setup | Existing API equivalent; public-download acceptance pending |
 | [For-Examiners.md](For-Examiners.md) | Demonstration and evidence guide | Current public edition |
 | [Collect-Photos.md](Collect-Photos.md) | Local test-photo collection and labeling | Genuine Saudi test collection remains pending |
-| [Models.md](Models.md) | Model availability, tasks and license conditions | All 19 inventoried; DINOv2 and stock COCO downloads verified, trained checkpoints pending |
+| [Models.md](Models.md) | Historical model availability, tasks and license conditions | 28 October pre-baseline-publication snapshot; current availability is in the 30 October matrix |
 | [public-model-inventory.csv](public-model-inventory.csv) / [.json](public-model-inventory.json) | Architecture/task, provenance, exact size and SHA-256 | No model weights included in these files |
 | [Model-Report.pdf](Model-Report.pdf) / [.md](Model-Report.md) | All 19 models, training counts, supplied metrics and comparison limits | Historical evidence separated from pending common-set benchmark |
 | [detector-config-provenance-map.json](detector-config-provenance-map.json) | Class maps and available configuration tied to 16 detector hashes | Unknown original values remain explicitly unknown |

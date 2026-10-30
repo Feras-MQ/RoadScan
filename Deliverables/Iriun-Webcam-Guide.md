@@ -2,6 +2,8 @@
 
 **Goal:** phone camera → Iriun on your computer → RoadScan live recognition. Keep the phone and computer nearby for the first test.
 
+Official computer, Android and iPhone download/setup sources below were rechecked on **30 October 2026**; this verifies the instructions, not a new physical phone-camera test.
+
 ## 1. Get the two Iriun apps
 
 Install **both** the phone app and the computer companion:
