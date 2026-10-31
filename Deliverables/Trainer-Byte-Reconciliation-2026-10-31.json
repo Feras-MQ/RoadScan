@@ -1,0 +1,173 @@
+{
+  "date": "2026-10-31",
+  "method": "Streaming original bytes, MD5 and SHA256; no unpickling/inference.",
+  "records": [
+    {
+      "trainer_filename": "main_yolo26s_1024.pt",
+      "trainer_md5": "702e8a0b44b1e8bb0eceda92cce3b3c2",
+      "group": "runpod",
+      "status": "matched",
+      "sha256": "9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434",
+      "actual_md5": "702e8a0b44b1e8bb0eceda92cce3b3c2",
+      "bytes": 20414080
+    },
+    {
+      "trainer_filename": "e2_yolo26s_640.pt",
+      "trainer_md5": "4fd8bb20b1424da7694c7a88f39150bf",
+      "group": "runpod",
+      "status": "matched",
+      "sha256": "31b518ed36ec022fcadb0768268d4b6686a4c327bec3a9cd4fe5fc722ee4cc83",
+      "actual_md5": "4fd8bb20b1424da7694c7a88f39150bf",
+      "bytes": 20318592
+    },
+    {
+      "trainer_filename": "data_yolo26s_640_clean_labels.pt",
+      "trainer_md5": "0e0296b8c153a49aab9413ffc6032218",
+      "group": "runpod",
+      "status": "matched",
+      "sha256": "1bb6724ee2d01cf0f64c81ae8b6845c70ba06776d51b189f0f3052f880e96543",
+      "actual_md5": "0e0296b8c153a49aab9413ffc6032218",
+      "bytes": 20318592
+    },
+    {
+      "trainer_filename": "e2_yolo26n_640.pt",
+      "trainer_md5": "1d8aca51755f4b390ce54f106fbcf22f",
+      "group": "runpod",
+      "status": "matched",
+      "sha256": "3be62681e3ecc306fd4fbbbcbd40f805fcdd092d03cd57373695ca0453b1aaf8",
+      "actual_md5": "1d8aca51755f4b390ce54f106fbcf22f",
+      "bytes": 5463296
+    },
+    {
+      "trainer_filename": "e3_yolo26s_640_no_augmentation.pt",
+      "trainer_md5": "19a0ee638e668683c1544cc1e4086865",
+      "group": "runpod",
+      "status": "matched",
+      "sha256": "3ef405bf22a9324c1f8d43537e21e454a9b4df82cd08f7cb9a09d7d80d1f6edf",
+      "actual_md5": "19a0ee638e668683c1544cc1e4086865",
+      "bytes": 20318592
+    },
+    {
+      "trainer_filename": "e3_yolo26s_640_vertical_flip.pt",
+      "trainer_md5": "711ef23a36f6393a4092bafa80dcb3c2",
+      "group": "runpod",
+      "status": "matched",
+      "sha256": "63d2099e766f5a6ee8bcc7bd915487b99ec03a7da33940c279e844954bf91e08",
+      "actual_md5": "711ef23a36f6393a4092bafa80dcb3c2",
+      "bytes": 20318720
+    },
+    {
+      "trainer_filename": "e4_yolo26s_640_without_India.pt",
+      "trainer_md5": "5109fbaf4f3f9bec3853a7c0091f2bc8",
+      "group": "runpod",
+      "status": "matched",
+      "sha256": "fa148e7109aad2f30075305bc46e53c8c24fbc6c29ed7167436a30de2acb16bb",
+      "actual_md5": "5109fbaf4f3f9bec3853a7c0091f2bc8",
+      "bytes": 20318592
+    },
+    {
+      "trainer_filename": "YOLO11s_RDD2022_200E_800px_best_Epoch085_mAP50_95_0.34684.pt",
+      "trainer_md5": "63334fe8b3734035a9d5335478ad0411",
+      "group": "older_machine",
+      "status": "matched",
+      "sha256": "e1937609619f0172b0765d676cd0b8167adbda979cb4d3cabeaf61e6395b7758",
+      "actual_md5": "63334fe8b3734035a9d5335478ad0411",
+      "bytes": 19219610
+    },
+    {
+      "trainer_filename": "RTDETR_L_RDD2022_200E_800px_best_Epoch068_mAP50_95_0.31278.pt",
+      "trainer_md5": "fbd53dea100c7164fcf4a2293e62bafc",
+      "group": "older_machine",
+      "status": "matched",
+      "sha256": "b636269a303539174ab208d125ab60de149fe832c4fda7aa4c25c8f109b45b60",
+      "actual_md5": "fbd53dea100c7164fcf4a2293e62bafc",
+      "bytes": 263739370
+    },
+    {
+      "trainer_filename": "last.pt",
+      "trainer_md5": "5baf8107f5cfadfe1c76fd309149b859",
+      "group": "unlocated_rtdetr_l_epoch70",
+      "status": "not_found_in_supplied_model_archives",
+      "sha256": null
+    },
+    {
+      "trainer_filename": "YOLOv8m_RDD2022_150E_800px_best_Epoch021_mAP50_95_0.30855.pt",
+      "trainer_md5": "30600686e5a814e92942ef419720b1fc",
+      "group": "older_machine_unconfirmed_initializer",
+      "status": "matched",
+      "sha256": "4e14d23d45da6d74504f24632d3f58b447ed6310caf1129b141c736f77e556c1",
+      "actual_md5": "30600686e5a814e92942ef419720b1fc",
+      "bytes": 103884827
+    },
+    {
+      "trainer_filename": "road_damage_yolov8m_optimized_best_Epoch097_mAP50_95_0.21809.pt",
+      "trainer_md5": "6651368ff9a2fadeb8723dd0aa224d64",
+      "group": "older_machine",
+      "status": "matched",
+      "sha256": "9a13443ad7a3f71c211059cc9b62e67e4157f7b49680d75a9ffca96742967e97",
+      "actual_md5": "6651368ff9a2fadeb8723dd0aa224d64",
+      "bytes": 52041426
+    },
+    {
+      "trainer_filename": "yolo8m_183epochs.pt",
+      "trainer_md5": "534319ca3a63bbd46a69bf9a7be25e76",
+      "group": "unlocated_resumed_yolov8",
+      "status": "not_found_in_supplied_model_archives",
+      "sha256": null
+    },
+    {
+      "trainer_filename": "road_damage_yolo11m_best_Epoch086_mAP50_95_0.21440.pt",
+      "trainer_md5": "736286e081736b334b7a7d3a52a26da1",
+      "group": "older_machine",
+      "status": "matched",
+      "sha256": "9e2a0484d6f4fc7938d7e5014673f080d6bb97f697b45e8676325db76131836a",
+      "actual_md5": "736286e081736b334b7a7d3a52a26da1",
+      "bytes": 40526764
+    },
+    {
+      "trainer_filename": "road_damage_rtdetr_x_final_best_Epoch050_mAP50_95_0.04830.pt",
+      "trainer_md5": "e0cefd5593683edd4aac24d2fceda17d",
+      "group": "older_machine",
+      "status": "matched",
+      "sha256": "edb35d3cf7b115d56a7bc96c6e4505c4a1da50ae1aecdf80742f49bae2a75a6d",
+      "actual_md5": "e0cefd5593683edd4aac24d2fceda17d",
+      "bytes": 135456021
+    },
+    {
+      "trainer_filename": "main_yolo26s_1024_road.pt",
+      "trainer_md5": "136263d2f425bd02e6aa99ce3302fa7b",
+      "group": "fine_tune",
+      "status": "matched",
+      "sha256": "78f5e2afb82d5145f30de9957cb51f167241e377ed0b5775f71be1c5e80ac87d",
+      "actual_md5": "136263d2f425bd02e6aa99ce3302fa7b",
+      "bytes": 20444878
+    },
+    {
+      "trainer_filename": "main_yolo26s_1024_road_v2.pt",
+      "trainer_md5": "3f5da7ce51d4440f88678917149afa9b",
+      "group": "fine_tune",
+      "status": "matched",
+      "sha256": "00794102e39e621f1268e31f43b3743daae17309b5eaf90feef1077f0bf0991b",
+      "actual_md5": "3f5da7ce51d4440f88678917149afa9b",
+      "bytes": 20446971
+    },
+    {
+      "trainer_filename": "main_yolo26s_1024_road_v2b.pt",
+      "trainer_md5": "2062c17bf58470639354ada10fefe6da",
+      "group": "fine_tune",
+      "status": "matched",
+      "sha256": "0caef4521c82a944cfe4b6e5022914eeabab9c69864967db17a9915f4fdc7500",
+      "actual_md5": "2062c17bf58470639354ada10fefe6da",
+      "bytes": 20447626
+    },
+    {
+      "trainer_filename": "baseline_resnet18.pt",
+      "trainer_md5": "447c958de19105ea2ce5d0bedc691763",
+      "group": "classifier",
+      "status": "matched",
+      "sha256": "267c1eefc78dedf7fe13e9d2e899695b7f5d1edefa98ee7115356d2c6d47b21c",
+      "actual_md5": "447c958de19105ea2ce5d0bedc691763",
+      "bytes": 44793483
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
-  "date": "2026-10-30",
-  "scope": "22 unique weights; 19 road detectors, one classifier, one COCO initializer, one embedding backbone. No new weight upload or license grant.",
+  "date": "2026-10-31",
+  "scope": "22 unique local weights; 12 mirrored weights, one official upstream initializer link, nine held individually. Two additional named checkpoints remain unlocated and are not counted as verified local weights.",
   "models": [
     {
       "filename": "roadscan_baseline_best.pt",
@@ -55,18 +55,23 @@
       "embedded_framework_versions": [
         "8.4.175"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): rtdetr-x.pt; exact parent bytes not established.",
+      "parent_evidence": "Trainer identifies rtdetr-x.pt; exact historical parent bytes not proven.",
       "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
       "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "publication_status": "HOLD only this older-machine asset: checkpoint identity verified, but the supplied statement expressly retains the original-trainer/library-modification caveat.",
+      "smallest_missing_input": "Original trainer confirms the recorded stock package/version was unmodified, or supplies the actual modifications and terms.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md"
       ],
-      "public_weight_url": null
+      "public_weight_url": null,
+      "trainer_md5": "e0cefd5593683edd4aac24d2fceda17d",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "General stock-pip statement accompanied by an explicit older-machine caveat; not treated as an unconditional per-run confirmation."
     },
     {
       "filename": "road_damage_yolo11m_best_Epoch086_mAP50_95_0.21440.pt",
@@ -77,18 +82,23 @@
       "embedded_framework_versions": [
         "8.4.175"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolo11m.pt; exact parent bytes not established.",
+      "parent_evidence": "Trainer identifies yolo11m.pt; exact historical parent bytes not proven.",
       "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
       "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "publication_status": "HOLD only this older-machine asset: checkpoint identity verified, but the supplied statement expressly retains the original-trainer/library-modification caveat.",
+      "smallest_missing_input": "Original trainer confirms the recorded stock package/version was unmodified, or supplies the actual modifications and terms.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md"
       ],
-      "public_weight_url": null
+      "public_weight_url": null,
+      "trainer_md5": "736286e081736b334b7a7d3a52a26da1",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "General stock-pip statement accompanied by an explicit older-machine caveat; not treated as an unconditional per-run confirmation."
     },
     {
       "filename": "road_damage_yolov8m_optimized_best_Epoch097_mAP50_95_0.21809.pt",
@@ -99,18 +109,23 @@
       "embedded_framework_versions": [
         "8.4.175"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolov8m.pt; exact parent bytes not established.",
+      "parent_evidence": "Trainer identifies yolov8m.pt; exact historical parent bytes not proven.",
       "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
       "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "publication_status": "HOLD only this older-machine asset: checkpoint identity verified, but the supplied statement expressly retains the original-trainer/library-modification caveat.",
+      "smallest_missing_input": "Original trainer confirms the recorded stock package/version was unmodified, or supplies the actual modifications and terms.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md"
       ],
-      "public_weight_url": null
+      "public_weight_url": null,
+      "trainer_md5": "6651368ff9a2fadeb8723dd0aa224d64",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "General stock-pip statement accompanied by an explicit older-machine caveat; not treated as an unconditional per-run confirmation."
     },
     {
       "filename": "RTDETR_L_RDD2022_200E_800px_best_Epoch068_mAP50_95_0.31278.pt",
@@ -121,18 +136,23 @@
       "embedded_framework_versions": [
         "8.4.177"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): rtdetr-l.pt; exact parent bytes not established.",
+      "parent_evidence": "Trainer identifies rtdetr-l.pt; exact historical parent bytes not proven.",
       "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
       "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "publication_status": "HOLD only this older-machine asset: checkpoint identity verified, but the supplied statement expressly retains the original-trainer/library-modification caveat.",
+      "smallest_missing_input": "Original trainer confirms the recorded stock package/version was unmodified, or supplies the actual modifications and terms.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md"
       ],
-      "public_weight_url": null
+      "public_weight_url": null,
+      "trainer_md5": "fbd53dea100c7164fcf4a2293e62bafc",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "General stock-pip statement accompanied by an explicit older-machine caveat; not treated as an unconditional per-run confirmation."
     },
     {
       "filename": "setup_benchmark_best_Epoch001_mAP50_95_0.00001.pt",
@@ -165,18 +185,23 @@
       "embedded_framework_versions": [
         "8.4.178"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolo11s.pt; exact parent bytes not established.",
+      "parent_evidence": "Trainer identifies yolo11s.pt; exact historical parent bytes not proven.",
       "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
       "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "publication_status": "HOLD only this older-machine asset: checkpoint identity verified, but the supplied statement expressly retains the original-trainer/library-modification caveat.",
+      "smallest_missing_input": "Original trainer confirms the recorded stock package/version was unmodified, or supplies the actual modifications and terms.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md"
       ],
-      "public_weight_url": null
+      "public_weight_url": null,
+      "trainer_md5": "63334fe8b3734035a9d5335478ad0411",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "General stock-pip statement accompanied by an explicit older-machine caveat; not treated as an unconditional per-run confirmation."
     },
     {
       "filename": "YOLOv8m_RDD2022_150E_800px_best_Epoch021_mAP50_95_0.30855.pt",
@@ -187,18 +212,23 @@
       "embedded_framework_versions": [
         "8.4.175"
       ],
-      "parent_evidence": "No exact initializer identified in the inspected record.",
+      "parent_evidence": "Trainer identifies own resumed last.pt; original initializer unconfirmed (yolov8m.pt is only a suggestion); exact historical parent bytes not proven.",
       "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
       "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "publication_status": "HOLD only this older-machine asset: checkpoint identity verified, but the supplied statement expressly retains the original-trainer/library-modification caveat.",
+      "smallest_missing_input": "Original trainer confirms the recorded stock package/version was unmodified, or supplies the actual modifications and terms. Also identify the original initializer of the resumed run; do not promote the suggested yolov8m.pt to a fact.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md"
       ],
-      "public_weight_url": null
+      "public_weight_url": null,
+      "trainer_md5": "30600686e5a814e92942ef419720b1fc",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "General stock-pip statement accompanied by an explicit older-machine caveat; not treated as an unconditional per-run confirmation."
     },
     {
       "filename": "yolo11n.pt",
@@ -229,18 +259,26 @@
       "embedded_framework_versions": [
         "8.4.177"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
-      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
-      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "parent_evidence": "Trainer identifies stock COCO yolo26s.pt; exact historical initializer hash not independently established.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.177; trainer confirms stock library without modifications. Trainer identifies ordinary CLI training arguments; original RunPod orchestration wrapper is absent, not invented.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/31b518ed36ec-e2_yolo26s_640.pt",
+      "trainer_md5": "4fd8bb20b1424da7694c7a88f39150bf",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "data_yolo26s_640_clean_labels.pt",
@@ -251,18 +289,26 @@
       "embedded_framework_versions": [
         "8.4.177"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
-      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
-      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "parent_evidence": "Trainer identifies stock COCO yolo26s.pt; exact historical initializer hash not independently established.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.177; trainer confirms stock library without modifications. Trainer identifies ordinary CLI training arguments; original RunPod orchestration wrapper is absent, not invented.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/1bb6724ee2d0-data_yolo26s_640_clean_labels.pt",
+      "trainer_md5": "0e0296b8c153a49aab9413ffc6032218",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "main_yolo26s_1024.pt",
@@ -273,21 +319,29 @@
       "embedded_framework_versions": [
         "8.4.177"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
-      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent. Supplied again byte-identically as the original in the new road package; nine-file fine-tune grant does not cover missing original-main source.",
-      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "parent_evidence": "Trainer identifies stock COCO yolo26s.pt; exact historical initializer hash not independently established.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.177; trainer confirms stock library without modifications. Trainer identifies ordinary CLI training arguments; original RunPod orchestration wrapper is absent, not invented.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference. Saved epoch is -1; original main mixed-data manifest remains absent.",
       "test_evidence": "29 October: restricted loader plus actual CPU inference at 1024 on one synthetic and one road image completed. 30 October: selected main model verified unchanged. Compatibility only; no accuracy measurement.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null,
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/9f940caa9222-main_yolo26s_1024.pt",
       "aliases": [
         "1_original_yolo26s_1024.pt"
-      ]
+      ],
+      "trainer_md5": "702e8a0b44b1e8bb0eceda92cce3b3c2",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "e2_yolo26n_640.pt",
@@ -298,18 +352,26 @@
       "embedded_framework_versions": [
         "8.4.177"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolo26n.pt; exact parent bytes not established.",
-      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
-      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "parent_evidence": "Trainer identifies stock COCO yolo26n.pt; exact historical initializer hash not independently established.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.177; trainer confirms stock library without modifications. Trainer identifies ordinary CLI training arguments; original RunPod orchestration wrapper is absent, not invented.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/3be62681e3ec-e2_yolo26n_640.pt",
+      "trainer_md5": "1d8aca51755f4b390ce54f106fbcf22f",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "e3_yolo26s_640_no_augmentation.pt",
@@ -320,18 +382,26 @@
       "embedded_framework_versions": [
         "8.4.177"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
-      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
-      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "parent_evidence": "Trainer identifies stock COCO yolo26s.pt; exact historical initializer hash not independently established.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.177; trainer confirms stock library without modifications. Trainer identifies ordinary CLI training arguments; original RunPod orchestration wrapper is absent, not invented.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/3ef405bf22a9-e3_yolo26s_640_no_augmentation.pt",
+      "trainer_md5": "19a0ee638e668683c1544cc1e4086865",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "e3_yolo26s_640_vertical_flip.pt",
@@ -342,18 +412,26 @@
       "embedded_framework_versions": [
         "8.4.177"
       ],
-      "parent_evidence": "No exact initializer identified in the inspected record.",
-      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
-      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "parent_evidence": "Trainer identifies stock COCO yolo26s.pt; exact historical initializer hash not independently established. Originally yolo26s.pt; resumed this run from weights/last.pt after a crash.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.177; trainer confirms stock library without modifications. Trainer identifies ordinary CLI training arguments; original RunPod orchestration wrapper is absent, not invented.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/63d2099e766f-e3_yolo26s_640_vertical_flip.pt",
+      "trainer_md5": "711ef23a36f6393a4092bafa80dcb3c2",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "e4_yolo26s_640_without_India.pt",
@@ -364,18 +442,26 @@
       "embedded_framework_versions": [
         "8.4.177"
       ],
-      "parent_evidence": "Saved initializer filename candidate(s): yolo26s.pt; exact parent bytes not established.",
-      "available_source": "Saved class map/configuration and embedded Ultralytics implementation/version evidence; exact run code or patch confirmation absent.",
-      "license_evidence": "Embedded AGPL-3.0 notice; preserve it. Source completeness is unverified, not proof of infringement.",
-      "publication_status": "HOLD: asset source mapping has not been established.",
-      "smallest_missing_input": "Trainer confirmation identifying the recorded stock Ultralytics version and whether it was modified; provide any actual patches/covered custom code with existing terms. Identify the initializer source (or state trained from scratch). A historical notebook is not mandatory if an equivalent complete source description is available.",
+      "parent_evidence": "Trainer identifies stock COCO yolo26s.pt; exact historical initializer hash not independently established.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.177; trainer confirms stock library without modifications. Trainer identifies ordinary CLI training arguments; original RunPod orchestration wrapper is absent, not invented.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
       "reproducibility_gaps": "Exact data/split/selection lineage and independent evaluation remain unverified; these do not alone prohibit publication or private inference.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "detector-config-provenance-map.json",
-        "public-model-inventory.json"
+        "public-model-inventory.json",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/fa148e7109aa-e4_yolo26s_640_without_India.pt",
+      "trainer_md5": "5109fbaf4f3f9bec3853a7c0091f2bc8",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "baseline_resnet18.pt",
@@ -384,18 +470,24 @@
       "task": "classifier",
       "publication_permission": "Approved by owner; no rank/top-five privacy hold.",
       "embedded_framework_versions": [],
-      "parent_evidence": "ResNet18 architecture is identified; exact starting checkpoint, source and terms are not established.",
-      "available_source": "Replacement classifier implementation exists in this repository; it is not evidence of the original training source.",
-      "license_evidence": "Torchvision code license does not establish this checkpoint's weight terms; no explicit artifact license proven here.",
-      "publication_status": "HOLD: initializer/checkpoint terms are not established.",
-      "smallest_missing_input": "Trainer: state scratch or exact pretrained weight ID/URL, identify any third-party checkpoint terms and any own additions. Original notebook absence alone is not a prohibition.",
+      "parent_evidence": "Trainer identifies torchvision ResNet18_Weights.IMAGENET1K_V1 (not scratch), four output labels, 20 epochs at 512px on RDD train. MD5 and current SHA256 match; historical initializer bytes not hashed.",
+      "available_source": "Official torchvision ResNet18 source/weight enum identified; trainer points to training/baseline_classifier.py build_model line 118, but that original file was not included in the reviewed archives.",
+      "license_evidence": "Torchvision repository is BSD-3-Clause; official model documentation warns pretrained weights may carry separate terms. An explicit redistribution basis for this pretrained-weight derivative has not been established; no illegal-use conclusion is inferred.",
+      "publication_status": "HOLD only ResNet18: initializer identity clarified; pretrained-weight redistribution terms remain unresolved.",
+      "smallest_missing_input": "Asset-specific terms or authoritative redistribution confirmation for the identified IMAGENET1K_V1 initializer/derivative; original training script is a separate reproduction input, not by itself a BSD restriction.",
       "reproducibility_gaps": "Original training recipe and split lineage are missing; replacement synthetic tests are not reproduction of this weight.",
       "test_evidence": "No new inference or accuracy test in this documentation audit.",
       "evidence": [
         "Team-Models-and-Results.md",
-        "https://docs.pytorch.org/vision/stable/models.html"
+        "https://docs.pytorch.org/vision/stable/models.html",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.resnet18.html",
+        "https://github.com/pytorch/vision/blob/main/LICENSE"
       ],
-      "public_weight_url": null
+      "public_weight_url": null,
+      "trainer_md5": "447c958de19105ea2ce5d0bedc691763",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true
     },
     {
       "filename": "dinov2_vits14_pretrain.pth",
@@ -426,20 +518,28 @@
       "embedded_framework_versions": [
         "8.4.175"
       ],
-      "parent_evidence": "main_yolo26s_1024.pt (main lineage reported); saved filename supports lineage but does not cryptographically bind the historical parent. These are team fine-tunes, not new third-party pretrained models.",
-      "available_source": "Nine sanitized team source/config files published under the approved AGPL-3.0-only grant; notebook pins stock Ultralytics 8.4.175. Historical v1 script and args retained.",
-      "license_evidence": "Embedded AGPL-3.0 notice and approved nine-file source grant. Exact parent-main/custom-implementation source mapping remains unverified; no new permission question is inferred.",
-      "publication_status": "HOLD: parent/source mapping requires confirmation; not held for accuracy, missing historical notebook, or model ranking.",
-      "smallest_missing_input": "Trainer: confirm stock 8.4.175 or provide actual patches; identify the parent used and link its covered source/terms (main 9f940caa9222, via v1 for v2b if confirmed). Supply any missing covered preparation/training modifications or confirm the published nine files are complete for this fine-tune.",
-      "reproducibility_gaps": "Supplied v1 selection rule rejects all recorded epochs; actual manual selection/export explanation missing. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy.",
+      "parent_evidence": "Trainer-attested parent SHA identity 9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434; package filename/metadata support this lineage, but do not prove historical parent bytes.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.175; trainer confirms stock library without modifications. Previously approved nine-file fine-tune source is also included.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
+      "reproducibility_gaps": "Supplied v1 selection rule rejects all recorded epochs; actual manual selection/export explanation missing. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy. Trainer reports only a list-output-directory change in the earlier A/B helper; no recipe/data change. Historical v1 selection explanation remains unresolved.",
       "test_evidence": "29 October: restricted loading and actual CPU1024 inference on one synthetic and one road image passed. 30 October: distinct experimental choice visible in model library; not activated. No accuracy or sustained-speed claim.",
       "evidence": [
         "../model_sources/road-finetunes-2026-10-29/NOTICE.md",
         "../model_sources/road-finetunes-2026-10-29/Source-Manifest.json",
         "../model_sources/road-finetunes-2026-10-29/Model-Metadata.json",
-        "../model_sources/road-finetunes-2026-10-29/README.md"
+        "../model_sources/road-finetunes-2026-10-29/README.md",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/78f5e2afb82d-main_yolo26s_1024_road.pt",
+      "trainer_md5": "136263d2f425bd02e6aa99ce3302fa7b",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "3_road_A_yolo26s_1024.pt",
@@ -450,20 +550,28 @@
       "embedded_framework_versions": [
         "8.4.175"
       ],
-      "parent_evidence": "main_yolo26s_1024.pt (main lineage reported); saved filename supports lineage but does not cryptographically bind the historical parent. These are team fine-tunes, not new third-party pretrained models.",
-      "available_source": "Nine sanitized team source/config files published under the approved AGPL-3.0-only grant; notebook pins stock Ultralytics 8.4.175. Current notebook/trainer and saved run A args are available.",
-      "license_evidence": "Embedded AGPL-3.0 notice and approved nine-file source grant. Exact parent-main/custom-implementation source mapping remains unverified; no new permission question is inferred.",
-      "publication_status": "HOLD: parent/source mapping requires confirmation; not held for accuracy, missing historical notebook, or model ranking.",
-      "smallest_missing_input": "Trainer: confirm stock 8.4.175 or provide actual patches; identify the parent used and link its covered source/terms (main 9f940caa9222, via v1 for v2b if confirmed). Supply any missing covered preparation/training modifications or confirm the published nine files are complete for this fine-tune.",
-      "reproducibility_gaps": "Saved selection rule is consistent with epoch 4; exact historical parent hash unverified. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy.",
+      "parent_evidence": "Trainer-attested parent SHA identity 9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434; package filename/metadata support this lineage, but do not prove historical parent bytes.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.175; trainer confirms stock library without modifications. Previously approved nine-file fine-tune source is also included.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
+      "reproducibility_gaps": "Saved selection rule is consistent with epoch 4; exact historical parent hash unverified. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy. Trainer reports only a list-output-directory change in the earlier A/B helper; no recipe/data change. Historical v1 selection explanation remains unresolved.",
       "test_evidence": "29 October: restricted loading and actual CPU1024 inference on one synthetic and one road image passed. 30 October: distinct experimental choice visible in model library; not activated. No accuracy or sustained-speed claim.",
       "evidence": [
         "../model_sources/road-finetunes-2026-10-29/NOTICE.md",
         "../model_sources/road-finetunes-2026-10-29/Source-Manifest.json",
         "../model_sources/road-finetunes-2026-10-29/Model-Metadata.json",
-        "../model_sources/road-finetunes-2026-10-29/README.md"
+        "../model_sources/road-finetunes-2026-10-29/README.md",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/00794102e39e-main_yolo26s_1024_road_v2.pt",
+      "trainer_md5": "3f5da7ce51d4440f88678917149afa9b",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     },
     {
       "filename": "4_road_v2b_yolo26s_1024.pt",
@@ -474,20 +582,28 @@
       "embedded_framework_versions": [
         "8.4.175"
       ],
-      "parent_evidence": "main_yolo26s_1024_road.pt (v1 lineage reported); saved filename supports lineage but does not cryptographically bind the historical parent. These are team fine-tunes, not new third-party pretrained models.",
-      "available_source": "Nine sanitized team source/config files published under the approved AGPL-3.0-only grant; notebook pins stock Ultralytics 8.4.175. Current notebook/trainer and saved run B args are available.",
-      "license_evidence": "Embedded AGPL-3.0 notice and approved nine-file source grant. Exact parent-main/custom-implementation source mapping remains unverified; no new permission question is inferred.",
-      "publication_status": "HOLD: parent/source mapping requires confirmation; not held for accuracy, missing historical notebook, or model ranking.",
-      "smallest_missing_input": "Trainer: confirm stock 8.4.175 or provide actual patches; identify the parent used and link its covered source/terms (main 9f940caa9222, via v1 for v2b if confirmed). Supply any missing covered preparation/training modifications or confirm the published nine files are complete for this fine-tune.",
-      "reproducibility_gaps": "Saved selection rule is consistent with epoch 3; exact historical parent hash unverified. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy.",
+      "parent_evidence": "Trainer-attested parent SHA identity 78f5e2afb82d5145f30de9957cb51f167241e377ed0b5775f71be1c5e80ac87d; package filename/metadata support this lineage, but do not prove historical parent bytes.",
+      "available_source": "Verified official pip source archive for Ultralytics 8.4.175; trainer confirms stock library without modifications. Previously approved nine-file fine-tune source is also included.",
+      "license_evidence": "Existing embedded AGPL-3.0 notice retained. Source mapping updated using trainer attestation plus verified official source; no new or whole-app license assigned.",
+      "publication_status": "PUBLISHED 31 October: original bytes anonymously downloaded and exact SHA256/size verified; adjacent source/notices included.",
+      "smallest_missing_input": "None for this published asset/source packet. Historical parent hashes, full training data/evaluator and selection details remain reproduction limits, not automatic publication prohibitions.",
+      "reproducibility_gaps": "Saved selection rule is consistent with epoch 3; exact historical parent hash unverified. Road set was used in selection, shares video sequences across partitions, and big-test evaluator is absent; supplied scores are not independent held-out accuracy. Trainer reports only a list-output-directory change in the earlier A/B helper; no recipe/data change. Historical v1 selection explanation remains unresolved.",
       "test_evidence": "29 October: restricted loading and actual CPU1024 inference on one synthetic and one road image passed. 30 October: distinct experimental choice visible in model library; not activated. No accuracy or sustained-speed claim.",
       "evidence": [
         "../model_sources/road-finetunes-2026-10-29/NOTICE.md",
         "../model_sources/road-finetunes-2026-10-29/Source-Manifest.json",
         "../model_sources/road-finetunes-2026-10-29/Model-Metadata.json",
-        "../model_sources/road-finetunes-2026-10-29/README.md"
+        "../model_sources/road-finetunes-2026-10-29/README.md",
+        "Trainer-Provenance-2026-10-31.md",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Model-Source-2026-10-31.zip",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31.json",
+        "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Team-Models-2026-10-31-SHA256SUMS.txt"
       ],
-      "public_weight_url": null
+      "public_weight_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/0caef4521c82-main_yolo26s_1024_road_v2b.pt",
+      "trainer_md5": "2062c17bf58470639354ada10fefe6da",
+      "md5_matches_original_bytes": true,
+      "sha256_reverified_2026_10_31": true,
+      "trainer_attestation": "Supplied 31 October 2026; stock pip library, no library modifications. Attestation is distinct from embedded metadata and independent byte matching."
     }
   ]
 }
