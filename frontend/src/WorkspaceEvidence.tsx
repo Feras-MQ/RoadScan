@@ -1,0 +1,13 @@
+import {ArrowUpRight,MapPin,ShieldCheck} from 'lucide-react';
+import type {EvidenceReport} from './EvidenceMap';
+
+export default function WorkspaceEvidence({reports,lang,busy,connected,onOpen,onMap,onLearning}:{reports:EvidenceReport[];lang:string;busy:boolean;connected:boolean;onOpen:(id:string)=>void;onMap:()=>void;onLearning:()=>void}) {
+  const tx=(en:string,ar:string)=>lang==='ar'?ar:en;
+  return <section className="workspace-evidence" aria-labelledby="closer-look">
+    <div className="evidence-section-title"><div><span className="mini-label">{tx('YOUR NEXT DECISION','قرارك التالي')}</span><h2 id="closer-look">{tx('A closer look.','نظرة أقرب.')}</h2></div><button className="text-button" disabled={!connected} onClick={onMap}><MapPin size={16}/>{tx('Map & results','الخريطة والنتائج')}<ArrowUpRight size={16}/></button></div>
+    {reports.length?<div className="evidence-cases">{reports.slice(0,3).map((r,i)=><button key={r.id} className="evidence-case" disabled={busy||!connected} onClick={()=>onOpen(r.id)} style={{animationDelay:`${i*70}ms`}}><span className="case-kicker"><i className={r.status==='Needs Review'?'pending':''}/>{r.status==='Needs Review'?tx('Needs a human decision','بانتظار قرار المراجع'):tx('Saved evidence','أدلة محفوظة')}</span><strong>{tx('Inspection ','فحص ')}{r.id.slice(0,8).toUpperCase()}</strong><span className="case-facts">{r.detections.length} {tx('annotations','تحديدات')}<span>{r.score==null?tx('Unscored','دون تقييم'):tx('Draft priority ','أولوية مبدئية ')+Math.round(r.score)+'/100'}</span></span><span className="case-action">{tx('Review evidence','مراجعة الأدلة')}<ArrowUpRight size={20}/></span></button>)}</div>:<div className="evidence-onboarding"><ShieldCheck size={26}/><div><h3>{tx('Your first inspection starts below.','فحصك الأول يبدأ أدناه.')}</h3><p>{tx('Upload a photo, inspect the result and save your decision.','ارفع صورة وافحص النتيجة واحفظ قرارك.')}</p></div></div>}
+    <div className="learning-rail-heading"><h3>{tx('How learning actually works','كيف يعمل التعلّم فعليًا')}</h3><button className="text-button" onClick={onLearning}>{tx('Open learning','فتح التعلّم')}<ArrowUpRight size={15}/></button></div>
+    <ol className="learning-rail">{[['Review','راجع'],['Approve','وافق'],['Export','صدّر'],['Train separately','درّب بصورة منفصلة'],['Evaluate & import','قيّم واستورد']].map(([en,ar],i)=><li key={en}><span>0{i+1}</span><strong>{tx(en,ar)}</strong></li>)}</ol>
+    <p className="learning-rail-note">{tx('Corrections prepare future training examples. The active model never changes during review.','تجهز التصحيحات أمثلة للتدريب اللاحق. لا يتغير النموذج النشط أثناء المراجعة.')}</p>
+  </section>;
+}

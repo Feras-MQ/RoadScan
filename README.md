@@ -4,7 +4,7 @@
 
 By Feras Alyamani, Ahmed Salamah and Ahmed Alhejaili.
 
-[Report](Deliverables/RoadScan-Project-Report.pdf) · [Slides](Deliverables/RoadScan-Presentation.pdf) · [Run RoadScan](#quick-start--windows) · [Iriun camera](Deliverables/Iriun-Webcam-Guide.md) · [Models](Deliverables/Models.md) · [Benchmarks](Deliverables/Validation-Status.md)
+[Report](Deliverables/RoadScan-Project-Report.pdf) · [Slides](Deliverables/RoadScan-Presentation.pdf) · [Run RoadScan](#quick-start--windows) · [Iriun camera](Deliverables/Iriun-Webcam-Guide.md) · [Models](Deliverables/Models.md) · [Benchmarks](Deliverables/Validation-Status.md) · [Latest interface and map guide](Deliverables/Interface-Map-Update-2026-10-31.md)
 
 ![RoadScan overview in the demo workspace](assets/readme/overview.png)
 

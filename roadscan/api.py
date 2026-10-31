@@ -154,6 +154,7 @@ async def upload(photo:UploadFile=File(...),latitude:float|None=Form(None),longi
     if longitude is not None and (not math.isfinite(longitude) or not -180<=longitude<=180):raise HTTPException(422,'Invalid longitude')
     if (latitude is None)!=(longitude is None):raise HTTPException(422,'Provide both coordinates')
     if location_source not in {'not_provided','manual','simulated','device_gps'}:raise HTTPException(422,'Invalid location source')
+    if latitude is not None and location_source=='not_provided':raise HTTPException(422,'Choose a location source when providing coordinates')
     if latitude is None:location_source='not_provided'
     limit=int(os.getenv('ROADSCAN_MAX_UPLOAD_MB','50'))*1024*1024
     raw=await photo.read(limit+1)
