@@ -8,6 +8,8 @@ By Feras Alyamani, Ahmed Salamah and Ahmed Alhejaili.
 
 *The earlier walkthrough was recorded on 31 October 2026 in an isolated synthetic workspace. Human annotations are labeled; setup and token entry use reference cards. Voting and camera/video chapters are orientation only, not physical-device or model-voting acceptance tests.*
 
+**New quick walkthrough:** [RoadScan — Quick Walkthrough | Narration: elevenlabs.io](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Quick-Walkthrough-elevenlabs.io.mp4) · [Credits, photo attribution and recording details](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Quick-Walkthrough-Credits.txt). Shows the real-photo inspection and human-review workflow in separate recorded takes. ElevenLabs narration is for noncommercial use; the photograph retains CC BY-SA 4.0, and source-code licensing is unchanged.
+
 [Report](Deliverables/RoadScan-Project-Report.pdf) · [Slides](Deliverables/RoadScan-Presentation.pdf) · [Run RoadScan](#quick-start--windows) · [Iriun camera](Deliverables/Iriun-Webcam-Guide.md) · [Models](Deliverables/Models.md) · [Benchmarks](Deliverables/Validation-Status.md) · [Latest interface and map guide](Deliverables/Interface-Map-Update-2026-10-31.md)
 
 ![RoadScan overview in the demo workspace](assets/readme/overview.png)
