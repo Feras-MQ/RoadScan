@@ -20,11 +20,11 @@ The PDF stands alone if there is no live presentation. If the official ten-minut
 
 ## Files
 
-- Docs/RoadScan-Project-Report.docx and .pdf: synchronized appendix content and current 18-page PDF; Word pagination remains unverified.
-- Docs/RoadScan-Presentation.pptx and .pdf: slides.
-- Docs/Submission-Readiness.md: mandatory evidence and hand-in checks.
-- Models/Model-Inventory.csv: checkpoint identities and provenance.
-- Validation-Status.md: verified checks and current limits.
-- ../: application, tests and replacement research scripts.
+- [Project report — DOCX](RoadScan-Project-Report.docx) / [PDF](RoadScan-Project-Report.pdf): dated 27 October, 18-page PDF; read the current supplement alongside it; Word pagination remains unverified.
+- [Presentation — PPTX](RoadScan-Presentation.pptx) / [PDF](RoadScan-Presentation.pdf): refreshed 31 October, seven main slides plus five appendices.
+- [Submission audit](Submission-Audit-2026-10-30.md): evidence and remaining hand-in checks.
+- [Current model matrix](Model-Release-Matrix-2026-10-30.md) / [JSON](Model-Release-Matrix-2026-10-30.json): 22 checkpoint identities and provenance; [original CSV inventory](public-model-inventory.csv) is historical.
+- [Validation status](Validation-Status.md): verified checks and current limits.
+- [Application source](../roadscan/) / [tests](../tests/) / [research scripts](../tools/).
 
 The PDF is the current layout-checked reference. Word is installed, but its controls could not be targeted reliably and no connected document-control session was available; DOCX pagination remains unverified.

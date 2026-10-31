@@ -4,6 +4,8 @@ Prepared 27 October 2026 for release 2026-10-27.1.
 
 **30 October addendum:** the table below is the historical release baseline. The [current audit](Submission-Audit-2026-10-30.md) records 22 unique weights, four small CPU compatibility checks and browser verification of the three new experimental choices. No full benchmark, new accuracy measurement or fresh public-download acceptance is claimed.
 
+**31 October addendum:** the refreshed presentation has **12 visually checked slides: seven main plus five appendices**. The current model matrix lists 22 weights, 12 public mirrors, one official initializer link and nine individual holds. The Windows launcher now honors explicit detector-build settings and checks existing Compose project names before startup; **14 isolated PowerShell checks passed** using only extracted configuration functions and a temporary settings fixture. Run `powershell -File tests/test_launcher_settings.ps1` to repeat them: no Docker startup, credentials or project data are touched. Syntax/configuration checks are not a fresh-install or Windows end-to-end acceptance test. The separate map/interface candidate is not deployed or included in this publication; its browser QA remains incomplete after browser address-verification failures. Historical setup/diagnostic holds remain in place.
+
 | Area | Verified evidence | Limit |
 |---|---|---|
 | Application checks | 221 backend tests passed, one optional skip; 24 frontend tests and 67 browser checks passed | These are software checks, not model accuracy |

@@ -1,6 +1,24 @@
 [CmdletBinding()]
-param([string]$ProjectPath, [switch]$CheckOnly, [switch]$NoBrowser, [switch]$CopyAccessKey, [switch]$Rebuild)
+param([string]$ProjectPath, [string]$ComposeProject, [switch]$CheckOnly, [switch]$NoBrowser, [switch]$CopyAccessKey, [switch]$Rebuild)
 $ErrorActionPreference = 'Stop'
+
+function Read-LauncherSetting([string]$Name, [string]$EnvPath, [string]$Default) {
+    $value = [Environment]::GetEnvironmentVariable($Name, 'Process')
+    if ([string]::IsNullOrWhiteSpace($value) -and (Test-Path -LiteralPath $EnvPath -PathType Leaf)) {
+        $line = Get-Content -LiteralPath $EnvPath | Where-Object { $_ -match ('^\s*' + [regex]::Escape($Name) + '\s*=') } | Select-Object -Last 1
+        if ($line) { $value = (($line -split '=', 2)[1] -replace '\s+#.*$', '').Trim().Trim('"').Trim("'") }
+    }
+    if ([string]::IsNullOrWhiteSpace($value)) { return $Default }
+    return $value.Trim()
+}
+
+function Assert-LauncherProject([string]$Requested, [string[]]$Existing, [bool]$Explicit) {
+    if ($Requested -notmatch '^[a-z0-9][a-z0-9_-]*$') { throw 'Compose project names must use lowercase letters, digits, underscores or hyphens.' }
+    $known = @($Existing | Where-Object { $_ } | Sort-Object -Unique)
+    if (($known.Count -gt 1 -and -not $Explicit) -or ($known.Count -gt 0 -and $Requested -notin $known)) {
+        throw "Existing RoadScan data belongs to Compose project(s): $($known -join ', '). Nothing was changed. Use -ComposeProject with the intended existing name; do not create another project to recover reports."
+    }
+}
 
 function Find-Docker {
     $command = Get-Command docker -ErrorAction SilentlyContinue
@@ -29,8 +47,11 @@ if (-not $ProjectPath) {
 if (-not $ProjectPath) { throw 'Extract the verified source ZIP beside this launcher, or run with -ProjectPath pointing to RoadScan.' }
 $project = (Resolve-Path -LiteralPath $ProjectPath).Path
 if (-not (Test-Path -LiteralPath (Join-Path $project 'compose.yaml') -PathType Leaf)) { throw 'The selected folder has no RoadScan compose.yaml.' }
+$envPath = Join-Path $project '.env'
+$explicitProject = $PSBoundParameters.ContainsKey('ComposeProject') -or -not [string]::IsNullOrWhiteSpace((Read-LauncherSetting 'COMPOSE_PROJECT_NAME' $envPath ''))
+if (-not $ComposeProject) { $ComposeProject = Read-LauncherSetting 'COMPOSE_PROJECT_NAME' $envPath 'roadscan' }
 $docker = Find-Docker
-$compose = @('compose', '--project-name', 'roadscan', '--project-directory', $project, '-f', (Join-Path $project 'compose.yaml'))
+$compose = @('compose', '--project-name', $ComposeProject, '--project-directory', $project, '-f', (Join-Path $project 'compose.yaml'))
 
 if ($CheckOnly) {
     Write-Host "RoadScan folder: $project"
@@ -55,7 +76,14 @@ if (-not (Test-DockerEngine)) {
     if (-not $available) { throw 'Docker did not become ready. Open Docker Desktop and check its status.' }
 }
 
-$envPath = Join-Path $project '.env'
+# Read-only discovery before credentials, builds or startup: never fork an existing data volume silently.
+$containerProjects = & $docker ps -a --filter label=com.docker.compose.service=roadscan --format '{{.Label `com.docker.compose.project`}}'
+if ($LASTEXITCODE -ne 0) { throw 'Could not check existing RoadScan containers. Nothing was changed.' }
+$volumeProjects = & $docker volume ls --filter label=com.docker.compose.volume=roadscan_data --format '{{.Label `com.docker.compose.project`}}'
+if ($LASTEXITCODE -ne 0) { throw 'Could not check existing RoadScan data volumes. Nothing was changed.' }
+Assert-LauncherProject $ComposeProject @($containerProjects; $volumeProjects) $explicitProject
+$withDetector = Read-LauncherSetting 'ROADSCAN_WITH_DETECTOR' $envPath '1'
+if ($withDetector -notin @('0','1')) { throw 'ROADSCAN_WITH_DETECTOR must be 0 or 1. Existing settings were preserved.' }
 if (-not (Test-Path -LiteralPath $envPath -PathType Leaf)) {
     $random = New-Object byte[] 32
     $generator = [System.Security.Cryptography.RandomNumberGenerator]::Create()
@@ -66,7 +94,6 @@ if (-not (Test-Path -LiteralPath $envPath -PathType Leaf)) {
 }
 
 $modelRecord = Join-Path $project 'models\roadscan_model.json'
-$withDetector = '0'
 if (Test-Path -LiteralPath $modelRecord -PathType Leaf) {
     $record = Get-Content -LiteralPath $modelRecord -Raw | ConvertFrom-Json
     $confidence = 0.0
@@ -82,20 +109,20 @@ if (Test-Path -LiteralPath $modelRecord -PathType Leaf) {
     $env:ROADSCAN_YOLO_SHA256 = $actualHash
     $env:ROADSCAN_CONFIDENCE = $confidence.ToString([System.Globalization.CultureInfo]::InvariantCulture)
     if ($record.status -eq 'experimental') { Write-Host 'Experimental models: check the documented validation results. Review every report; no boxes does not mean no damage.' }
-    $withDetector = '1'
 }
 $env:ROADSCAN_WITH_DETECTOR = $withDetector
-$existingImage = & $docker image ls --filter reference=roadscan-roadscan --format '{{.ID}}'
+$imageName = "$ComposeProject-roadscan"
+$existingImage = & $docker image ls --filter "reference=$imageName" --format '{{.ID}}'
 $feature = ''
 $imageRelease = ''
 $releaseFile = Join-Path $project 'ROADSCAN_RELEASE'
 $expectedRelease = if (Test-Path -LiteralPath $releaseFile) { (Get-Content -LiteralPath $releaseFile -Raw).Trim() } else { '' }
 if ($existingImage) {
-    $labels = (& $docker image inspect roadscan-roadscan --format '{{json .Config.Labels}}') | ConvertFrom-Json
+    $labels = (& $docker image inspect $imageName --format '{{json .Config.Labels}}') | ConvertFrom-Json
     $feature = $labels.'io.roadscan.detector'
     $imageRelease = $labels.'io.roadscan.release'
 }
-$build = $Rebuild -or -not $existingImage -or ($withDetector -eq '1' -and [string]$feature -ne '1') -or ($expectedRelease -and $expectedRelease -ne $imageRelease)
+$build = $Rebuild -or -not $existingImage -or ($withDetector -ne [string]$feature) -or ($expectedRelease -and $expectedRelease -ne $imageRelease)
 if ($build) {
     Write-Host 'Preparing RoadScan. The first build needs an internet connection; later launches reuse it.'
     & $docker @compose build roadscan

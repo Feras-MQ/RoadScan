@@ -1,7 +1,7 @@
 # RoadScan quick start
 
 1. Install Docker Desktop and use Linux containers.
-2. Download this repository and follow [Quick start — Windows](../README.md#quick-start--windows); it contains the tested setup commands.
+2. Download this repository and follow [Quick start — Windows](../README.md#quick-start--windows); preserve your existing Compose project name if you already have reports.
 3. Open the local address shown by the launcher and use your locally generated token.
 4. Import a trusted, compatible checkpoint in **Settings → Your model library**, select **Use model**, and confirm **Active**; see [model availability](Models.md).
 5. Analyze a road image, open the saved report, review the boxes and save your decision.

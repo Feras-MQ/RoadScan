@@ -24,10 +24,10 @@ Release **2026-10-27.1**. Final submission documents are indexed in [Deliverable
 | File | Description and status |
 |---|---|
 | [Project report — PDF](Deliverables/RoadScan-Project-Report.pdf) / [DOCX](Deliverables/RoadScan-Project-Report.docx) | 18-page report with results and screenshots; PDF checked, Word pagination unverified |
-| [Presentation — PDF](Deliverables/RoadScan-Presentation.pdf) / [PPTX](Deliverables/RoadScan-Presentation.pptx) | Seven main slides plus four appendices; static slides, native playback unverified |
+| [Presentation — PDF](Deliverables/RoadScan-Presentation.pdf) / [PPTX](Deliverables/RoadScan-Presentation.pptx) | Twelve slides: seven main plus five appendices; static slides, native playback unverified |
 | [Speaker notes](Deliverables/Speaker-Notes.txt) / [presentation guide](Deliverables/Presentation-Guide.md) | English five-minute main script and timing |
 | [All documentation](Deliverables/README.md) / [quick start](Deliverables/Quick-Start.md) | Setup, use, learning, model inventory and validation status |
-| [Models and download status](Deliverables/Models.md) / [validation limits](Deliverables/Validation-Status.md) | All 19 inventoried; two pretrained resources downloadable, trained checkpoints and common-set benchmark pending |
+| [Models and download status](Deliverables/Models.md) / [validation limits](Deliverables/Validation-Status.md) | 22 weights: 12 public mirrors (11 road detectors + DINOv2), one official initializer link, nine individual holds; common-set benchmark pending |
 ## Quick start — Windows
 
 **RoadScan runs the website, API and CPU detector together in Docker.** You do not need a GPU, Python or Node installed on your computer.
@@ -47,13 +47,17 @@ cd RoadScan
 
 Open PowerShell in the extracted/cloned folder that contains `compose.yaml`, then paste these commands:
 
+If this computer already has RoadScan reports, first follow [existing-installation checks](Deliverables/Run-On-Another-Computer.md#existing-installations-preserve-your-project-name) and keep the original project name; the commands below are for a new `roadscan` project.
+
 ```powershell
 docker run --rm --mount "type=bind,source=$($PWD.Path),target=/workspace" -w /workspace python:3.11-slim@sha256:e88e9763f943ec1834f992a4b51e0f24500486803e8bc534e5767af9ea65f6ce python tools/prepare_local_env.py
-docker compose up --build -d
+docker compose -p roadscan up --build -d
 .\COPY_ACCESS_TOKEN.cmd
 ```
 
-Use these commands for a source-only download: the double-click launcher expects bundled baseline-model metadata to enable detection. The helper creates a private `.env`, enables the CPU detector build and preserves an existing `.env`; it never prints your token.
+These are the canonical commands for a **new source-only installation**. The helper creates a private `.env`, enables the CPU detector build and preserves an existing `.env`; it never prints your token. The Windows launcher also supports source-only folders: it defaults to a CPU detector build and respects explicit `ROADSCAN_WITH_DETECTOR=0` or `1` settings (process environment first, then `.env`). Model weights still need importing.
+
+**Already have reports?** Keep the existing Compose project name and data volume. Do not run the `-p roadscan` example over an installation created under a different name: follow [existing-installation checks](Deliverables/Run-On-Another-Computer.md#existing-installations-preserve-your-project-name). The launcher stops on ambiguous or different existing RoadScan projects instead of silently choosing new storage.
 
 ### 3. Open and connect
 
@@ -61,12 +65,12 @@ Open **http://127.0.0.1:8000**, paste the copied token into **Access token**, an
 
 For a GitHub download, install a model next: **Settings > Your model library > Browse models** (or drag a file) > choose a trusted team `.pt` or `.zip` > **Use model** > check **Active**. Importing alone does not activate a model.
 
-**Road-trained public downloads remain pending.** Use an already supplied trusted road checkpoint or team-model ZIP for detection. [Models](Deliverables/Models.md) provides verified DINOv2 and stock COCO downloads, which serve different tasks and do not replace a road detector; no paid inference API is required.
+**Download a road detector:** [Main YOLO26s (1024)](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/9f940caa9222-main_yolo26s_1024.pt) or the smaller [original baseline](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/2bb146ad53a3-roadscan_baseline_best.pt). Verify the full SHA256 and read the source/license links in [Models](Deliverables/Models.md), then import > **Use model** > verify **Active**. The experimental fine-tunes and their individual evidence are listed there too; availability does not establish an accuracy ranking. No paid inference API is required.
 
 ### 4. Confirm it works
 
 ```powershell
-docker compose ps
+docker compose -p roadscan ps
 Invoke-RestMethod http://127.0.0.1:8000/api/health | Select-Object status, model, model_reason
 ```
 
@@ -144,9 +148,9 @@ Detailed guides: [live recognition and models](docs/LIVE_AND_MODELS.md), [learni
 
 ## Model access
 
-See [Models](Deliverables/Models.md) for all 19 checkpoints, hashes, license conditions and publication status. Use [this repository’s Issues](https://github.com/Feras-MQ/RoadScan/issues) for support, provenance or licensing questions.
+See [Models](Deliverables/Models.md) for the current 22 weights, hashes, license conditions and publication status; the older 19-weight inventory is a dated snapshot. Use [this repository’s Issues](https://github.com/Feras-MQ/RoadScan/issues) for support, provenance or licensing questions.
 
-Model weights are supplied separately from source code. The full common-set comparison is paused pending sufficient memory and a running Docker service; there is no verified universal top-five ranking. Only import trusted checkpoints with compatible road-damage classes. Generic COCO models are not road-damage-trained models.
+Model weights are supplied separately from source code. The full common-set comparison remains incomplete; there is no verified universal top-five ranking. Only import trusted checkpoints with compatible road-damage classes. Generic COCO models are not road-damage-trained models.
 
 ## Evidence and limits
 

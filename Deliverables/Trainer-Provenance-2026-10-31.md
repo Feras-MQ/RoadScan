@@ -59,4 +59,4 @@ For a **new workspace**, save the three fine-tune downloads with the names below
 
 The checkpoint files retain generic training paths, including the disclosed project drive path in v1; static string/opcode inspection found no credential patterns. Raw road data, labels, reports and secrets were excluded from source/provenance artifacts. No models were deserialized or executed during this release review.
 
-The earlier denied fresh-setup and resource-diagnostic operations remain stopped; this publication is not a passed fresh-install test. The report/slides remain dated snapshots supplemented by this note; UI overhaul and Hermes have not resumed.
+The earlier denied fresh-setup and resource-diagnostic operations remain stopped; this publication is not a passed fresh-install test. The report remains a dated snapshot supplemented by this note; the 31 October presentation now contains seven main slides and five appendices. UI improvements are under separate isolated QA and are not yet deployed; Hermes remains outside this project.
