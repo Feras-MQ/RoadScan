@@ -49,6 +49,14 @@ The two unlocated entries are not replacements for the verified existing files. 
 
 Download the chosen `.pt` and adjacent source/notices; compare its SHA256 with the batch manifest. In RoadScan, use **Settings → Your model library → Browse models → Use model** and confirm **Active**. Import alone does not select a model. If a known hash is already installed, reuse that entry. The live workstation's selected Main model, reports and settings were not changed for this publication.
 
+For a **new workspace**, save the three fine-tune downloads with the names below before dragging them into the library; this keeps their displayed labels distinct. Renaming a file does not change its contents or SHA256. Existing installations already have these labels, so do not import duplicate copies.
+
+| Release filename suffix | Save as before import |
+|---|---|
+| `main_yolo26s_1024_road.pt` | `EXPERIMENTAL - Road v1 (1024).pt` |
+| `main_yolo26s_1024_road_v2.pt` | `EXPERIMENTAL - Road A (1024).pt` |
+| `main_yolo26s_1024_road_v2b.pt` | `EXPERIMENTAL - Road v2b (1024).pt` |
+
 The checkpoint files retain generic training paths, including the disclosed project drive path in v1; static string/opcode inspection found no credential patterns. Raw road data, labels, reports and secrets were excluded from source/provenance artifacts. No models were deserialized or executed during this release review.
 
 The earlier denied fresh-setup and resource-diagnostic operations remain stopped; this publication is not a passed fresh-install test. The report/slides remain dated snapshots supplemented by this note; UI overhaul and Hermes have not resumed.
