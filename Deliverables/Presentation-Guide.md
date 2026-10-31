@@ -2,7 +2,7 @@
 
 **Open RoadScan-Presentation.pptx to present or edit; use RoadScan-Presentation.pdf for standalone review.**
 
-Use slides 1–7 for the main story. Slides 8–11 are an optional technical and question appendix; speaker notes are inside PowerPoint and in Speaker-Notes.txt.
+Use slides 1–7 for the main story. Slides 8–12 are an optional technical and question appendix; speaker notes are inside PowerPoint and in Speaker-Notes.txt.
 
 | Slide | Focus | Time |
 |---|---|---|
@@ -14,10 +14,10 @@ Use slides 1–7 for the main story. Slides 8–11 are an optional technical and
 | 6 | Reviewed data and separate training | 40 seconds |
 | 7 | Software verification and next field evidence | 45 seconds |
 
-These are the script's planned timings, totaling five minutes; rehearsal timing is unmeasured. The report/deck remain the dated 27 October snapshot: slide 8 covers 19 weights, followed by three experimental fine-tunes added later (22 distinct weights / 19 detectors now). Mention this update using the current speaker notes and [30 October supplement](Submission-Audit-2026-10-30.md); no new accuracy results or regenerated slide binaries are implied.
+These planned timings total five minutes; rehearsal timing is unmeasured. The 31 October deck has seven main slides and five optional appendices. It covers 22 distinct weights, including 19 road detectors, the published model downloads, experimental fine-tune caveats and E1–E5 research gaps. The report remains a dated snapshot: read it with the [updated supplement](Submission-Audit-2026-10-30.md). No new accuracy results are claimed.
 
 **If a demonstration fails:** keep the PDF open, explain the screenshots, and state what failed; do not claim a failed live run succeeded.
 
 The official brief describes a longer presentation/demo slot. If that format is required, expand the model appendix and add a rehearsed demonstration; the five-minute version follows the team's latest request.
 
-This delivery is static: animations and transitions are not included, and native PowerPoint playback remains unverified after computer control stopped. The PDF uses slide images, while the PPTX retains editable text, charts, a table and speaker notes.
+This delivery is static: animations and transitions are not included, and native PowerPoint playback remains unverified. The PDF uses slide images; the PPTX retains editable text, diagrams, two tables and speaker notes. Suggested speaking rotation: Feras, slides 1–2; Ahmed Salamah, slides 3–4; Ahmed Alhejaili, slides 5–7. Confirm this rotation together; it does not attribute individual implementation work.

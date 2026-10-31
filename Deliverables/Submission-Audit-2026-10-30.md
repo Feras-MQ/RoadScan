@@ -2,7 +2,7 @@
 
 **Superseding model-release update, 31 October:** trainer evidence resolved source mapping for ten additional models; all were published unchanged and anonymously hash-verified with source/notices. See [the new evidence](Trainer-Provenance-2026-10-31.md) and updated matrix. The source holds described below are the 30 October snapshot; field-evaluation, selection and fresh-setup limits still apply.
 
-**Read this alongside the dated report and slides.** The application works locally; this does not mean every course evaluation requirement is complete. The report PDF and presentation remain the 27 October snapshot, with 14 report pages plus four appendices and seven main slides plus four optional slides. This supplement records later model integration and the remaining evidence gaps without rewriting historical results.
+**Read this alongside the dated report and slides.** The application works locally; this does not mean every course evaluation requirement is complete. The report PDF remains the 27 October snapshot, with 14 report pages plus four appendices. The presentation was refreshed on 31 October and contains seven main slides plus five optional slides, including the current model inventory and research limits. This supplement records later model integration and the remaining evidence gaps without rewriting historical results.
 
 ## What changed after the report
 
@@ -35,7 +35,7 @@ The instructor's supplied OLO AIEP brief, Track A (pages 6–10), and deliverabl
 | CPU and end-to-end latency | Historical isolated CPU checks and bounded new-model compatibility evidence | A representative repeatable latency study, hardware conditions and batch coverage |
 | Report, architecture, code, privacy and errors | 18-page PDF, editable DOCX, source excerpts, screenshots and limitations; README images and documentation links checked | Current supplement must accompany older binary artifacts; native Word pagination remains unverified |
 | Team contribution statement | Three names are correct | Each member must supply an accurate role/contribution account and meaningful commits; no roles or history fabricated |
-| Demo and presentation | English seven-slide main story, four appendices, code/data-flow overview and speaker notes | Rehearse the panel's unseen-input flow and actual hardware; the brief asks for a longer presentation/demo slot |
+| Demo and presentation | English seven-slide main story, five appendices, code/data-flow overview and speaker notes | Rehearse the panel's unseen-input flow and actual hardware; the brief asks for a longer presentation/demo slot |
 | Fresh-process artifact inference | HTTP recognition command and pinned Docker setup documented; trained baseline/source/checksums published | The fresh public-download-to-inference acceptance run remains explicitly uncompleted |
 
 The automatic upload similarity hint is legacy dHash. The separate on-demand crop/GPS search uses DINOv2/FAISS; the health endpoint's `dhash_unvalidated` label must not be interpreted as a runtime result for that separate search. No new real-pair matching claim is made here.
@@ -62,7 +62,7 @@ An earlier automatic approval review rejected a **combined documentation/baselin
 
 A separate rejected **combined staged-PPTX metadata / Windows RAM / disk diagnostic** remains stopped. No resource-admission probe, slide-transition metadata reconstruction or full common-set benchmark was run. Reading the current published report/slide text for this requested content audit does not establish native playback or resource headroom. The earlier denied browser downloads page was not reopened.
 
-These boundaries do not prohibit unrelated link checks, current model evidence, this new matrix, or independent presentation/documentation corrections. UI overhaul and Hermes remain deferred to the owner's priority decision after the GitHub blockers are reconciled.
+These boundaries do not prohibit unrelated link checks, current model evidence, this new matrix, or independent presentation/documentation corrections. The owner authorized the presentation refresh followed by the approved UI design on 31 October while the remaining model holds stay separate. UI implementation is still in progress. Hermes remains outside this scope.
 
 ## Decisions and inputs still needed
 

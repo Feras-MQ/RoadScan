@@ -1,17 +1,17 @@
 # RoadScan instructor deliverables
 
-**31 October update:** [ten additional model downloads and trainer provenance](Trainer-Provenance-2026-10-31.md); the [22-model matrix](Model-Release-Matrix-2026-10-30.md) now separates twelve mirrored weights, one upstream initializer and nine individual holds. Original report/deck binaries remain dated snapshots.
+**31 October update:** [ten additional model downloads and trainer provenance](Trainer-Provenance-2026-10-31.md); the [22-model matrix](Model-Release-Matrix-2026-10-30.md) now separates twelve mirrored weights, one upstream initializer and nine individual holds. The presentation and speaker notes now reflect the 31 October model release; the report remains a dated snapshot.
 
 **Team:** Feras Alyamani, Ahmed Salamah, Ahmed Alhejaili. **Release:** 2026-10-27.1. **Prepared:** 27 October 2026.
 
-Start with the report PDF and the [30 October supplement](Submission-Audit-2026-10-30.md), then the presentation. Source code is in the repository root; the report/deck binaries below retain their dated 27 October snapshot. The [current 22-weight matrix](Model-Release-Matrix-2026-10-30.md) separates publication permission, source terms and missing evaluations for every model; the older 19-weight inventory and model report are historical snapshots.
+Start with the report PDF and the [30 October supplement](Submission-Audit-2026-10-30.md), then the presentation. Source code is in the repository root; the report retains its dated 27 October snapshot, and the presentation was refreshed on 31 October. The [current 22-weight matrix](Model-Release-Matrix-2026-10-30.md) separates publication permission, source terms and missing evaluations for every model; the older 19-weight inventory and model report are historical snapshots.
 
 | File | Contents | Status |
 |---|---|---|
 | [RoadScan-Project-Report.pdf](RoadScan-Project-Report.pdf) | Full report, results, screenshots and appendices; 18 pages | PDF visually checked |
 | [RoadScan-Project-Report.docx](RoadScan-Project-Report.docx) | Editable report | Content checked; Word pagination unverified |
-| [RoadScan-Presentation.pdf](RoadScan-Presentation.pdf) | Static presentation; 11 slides | All slide visuals checked |
-| [RoadScan-Presentation.pptx](RoadScan-Presentation.pptx) | Editable slides and charts | Static; native PowerPoint playback unverified |
+| [RoadScan-Presentation.pdf](RoadScan-Presentation.pdf) | Static presentation; 12 slides | All slide visuals checked |
+| [RoadScan-Presentation.pptx](RoadScan-Presentation.pptx) | Editable slides, diagrams and tables | Static; native PowerPoint playback unverified |
 | [Speaker-Notes.txt](Speaker-Notes.txt) | English presentation script | Seven main slides, about five minutes |
 | [Presentation-Guide.md](Presentation-Guide.md) | Timing and optional appendix/demo guidance | Current |
 | [Quick-Start.md](Quick-Start.md) | Short source-download walkthrough | Uses the verified root setup instructions |

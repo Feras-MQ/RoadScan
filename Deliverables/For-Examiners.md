@@ -2,11 +2,11 @@
 
 Team: Feras Alyamani, Ahmed Salamah, Ahmed Alhejaili. Prepared release: 2026-10-27.1.
 
-Read the [30 October supplement](Submission-Audit-2026-10-30.md) with the dated report/deck: three additional experimental detectors are locally available, bringing the inventory to 22 unique weights. The baseline's published download and remaining per-weight conditions are in the [current matrix](Model-Release-Matrix-2026-10-30.md).
+Read the [30 October supplement](Submission-Audit-2026-10-30.md) with the dated report and refreshed 31 October deck: three additional experimental detectors are locally available, bringing the inventory to 22 unique weights. The baseline's published download and remaining per-weight conditions are in the [current matrix](Model-Release-Matrix-2026-10-30.md).
 
 ## Five-minute presentation
 
-Use slides 1–7 for the main story and 8–11 for optional questions; see [Presentation-Guide.md](Presentation-Guide.md) for timings and [Speaker-Notes.txt](Speaker-Notes.txt) for the script.
+Use slides 1–7 for the main story and 8–12 for optional questions; see [Presentation-Guide.md](Presentation-Guide.md) for timings and [Speaker-Notes.txt](Speaker-Notes.txt) for the script.
 
 The PDF stands alone if there is no live presentation. If the official ten-minute presentation/demo slot is used, expand the experiment appendix and add a rehearsed demonstration. Rehearse the actual camera and presentation files beforehand; native PowerPoint animation/playback is unverified and the delivered deck is static.
 
