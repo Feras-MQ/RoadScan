@@ -4,6 +4,10 @@
 
 By Feras Alyamani, Ahmed Salamah and Ahmed Alhejaili.
 
+**Watch RoadScan:** [58-second trailer](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Trailer.mp4) · [5:55 walkthrough](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Walkthrough.mp4). Both include narration and captions.
+
+*Recorded on 31 October 2026 in an isolated synthetic workspace. Human annotations are labeled; setup and token entry use reference cards. Voting and camera/video chapters are orientation only, not physical-device or model-voting acceptance tests.*
+
 [Report](Deliverables/RoadScan-Project-Report.pdf) · [Slides](Deliverables/RoadScan-Presentation.pdf) · [Run RoadScan](#quick-start--windows) · [Iriun camera](Deliverables/Iriun-Webcam-Guide.md) · [Models](Deliverables/Models.md) · [Benchmarks](Deliverables/Validation-Status.md) · [Latest interface and map guide](Deliverables/Interface-Map-Update-2026-10-31.md)
 
 ![RoadScan overview in the demo workspace](assets/readme/overview.png)
