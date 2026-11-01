@@ -27,4 +27,6 @@
 
 The earlier no-deletion wording was clarified as preservation of data, backups, old images and unrelated containers, not a new prohibition on the already-approved production replacement. No additional owner approval was requested.
 
-Detailed private receipts and stopped-service backups remain on the owner's laptop and are excluded from the public source ZIP. Full anonymous re-download verification of the prior publication remains incomplete because of network/certificate failures; certificate checks were not weakened. No new accuracy evaluation, fresh-machine installation or physical camera/drone test is claimed.
+Detailed private receipts and stopped-service backups remain on the owner's laptop and are excluded from the public source ZIP. The earlier anonymous re-download attempt was incomplete because of network/certificate failures; certificate checks were not weakened.
+
+**Public-source verification update — 1 November 2026 at 00:16 UTC:** an anonymous download of public `main` at commit `f1008e78bcb1b044d83c51e6f44c6eee8540792c` passed ZIP CRC checks, and all 254 files matched the complete public Git tree by Git blob hash, with no missing, extra or mismatched files. The downloaded ZIP was 6,196,685 bytes, SHA-256 `b57f5885c81b322bdcf719fb79e66aa2fda1013a97ee2ab74ece6a1ddb9437e0`. This establishes that public source snapshot's completeness, not parity with the laptop working copy or earlier local ZIP, and not a fresh installation or inference test. No new accuracy evaluation, fresh-machine installation or physical camera/drone test is claimed.
