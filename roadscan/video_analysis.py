@@ -4,9 +4,12 @@ Video metadata is advisory. EOF with a discrepant advertised frame count is
 reported as incomplete, never silently called successful full coverage.
 """
 import base64
+import asyncio
+import errno
 import io
 import math
 import os
+import shutil
 from pathlib import Path
 import tempfile
 import threading
@@ -25,6 +28,9 @@ MAX_FRAMES = 50_000
 MAX_SESSIONS = 2
 SESSION_TTL = 15 * 60
 MAX_PIXELS = 25_000_000
+TEMP_RESERVE = 256 * 1024 * 1024
+UPLOAD_TIMEOUT = 15 * 60
+UPLOAD_IDLE_TIMEOUT = 60
 
 
 class VideoSession:
@@ -41,7 +47,13 @@ class VideoSession:
         self.total = None
         self.fps = None
         self.sample = 0  # analyzed frames per video second; 0 = every frame
-        self.step = 1
+        self.source_total = None
+        self.decoded = 0
+        self.source_frame = None
+        self.next_sample_time = 0.0
+        self.last_timestamp = None
+        self.timing = 'timestamps'
+        self.fallback_offset = 0
         self.terminal = None
         self.cancelled = threading.Event()
 
@@ -79,7 +91,7 @@ def _open(session):
     cv2 = _cv2()
     with session.path.open('rb') as stream:
         if not _container_allowed(stream.read(32)):
-            raise HTTPException(415, 'Choose an MP4, MOV, AVI, MKV or WebM video')
+            raise HTTPException(415, 'Choose an MP4, MOV, M4V, AVI, MKV or WebM video')
     session.capture = cv2.VideoCapture(str(session.path), cv2.CAP_FFMPEG)
     cap = session.capture
     if not cap.isOpened():
@@ -89,11 +101,13 @@ def _open(session):
         raise HTTPException(413, 'Video dimensions exceed the 25 megapixel limit')
     total, fps = cap.get(cv2.CAP_PROP_FRAME_COUNT), cap.get(cv2.CAP_PROP_FPS)
     session.total = int(total) if math.isfinite(total) and total > 0 else None
+    session.source_total = session.total
     session.fps = fps if math.isfinite(fps) and fps > 0 else None
-    if session.sample and session.fps:
-        session.step = max(1, round(session.fps / session.sample))
-        if session.total:
-            session.total = math.ceil(session.total / session.step)  # frames that will actually be analyzed
+    if session.sample:
+        if session.fps is None:
+            raise HTTPException(422, 'Video FPS is missing or invalid; choose Every frame instead')
+        # Variable-rate timestamps determine the actual sample count, not rounded FPS.
+        session.total = None
     if session.total and session.total > MAX_FRAMES:
         raise HTTPException(413, 'Video exceeds the 50,000 frame limit; split it into shorter clips')
 
@@ -105,15 +119,36 @@ def _next(session, detector):
     if detector.version != session.version:
         return session.finish(False, 'model_changed')
     if session.pending is None:
-        if session.processed and session.step > 1:
-            for _ in range(session.step - 1):  # skipped frames are only demuxed/decoded, never analyzed
-                if not session.capture.grab():
-                    break  # the read below then reports the end of the video
-        ok, frame = session.capture.read()
-        if not ok:
-            complete = session.processed > 0 and (session.total is not None and session.processed == session.total)
-            reason = 'decoder_eof' if complete else ('decoder_end_coverage_unverified' if session.total is None else 'metadata_mismatch_coverage_unverified')
-            return session.finish(complete, reason)
+        started_decode = time.monotonic()
+        while True:
+            if session.cancelled.is_set():
+                return session.finish(False, 'cancelled')
+            if time.monotonic() - started_decode > 60:
+                return session.finish(False, 'decode_time_limit')
+            ok, frame = session.capture.read()
+            if not ok:
+                complete = session.processed > 0 and session.source_total is not None and session.decoded == session.source_total
+                if session.sample and complete:
+                    session.total = session.processed
+                reason = 'decoder_eof' if complete else ('decoder_end_coverage_unverified' if session.source_total is None else 'metadata_mismatch_coverage_unverified')
+                return session.finish(complete, reason)
+            session.source_frame = session.decoded
+            session.decoded += 1
+            stamp = session.capture.get(cv2.CAP_PROP_POS_MSEC)
+            valid_stamp = math.isfinite(stamp) and stamp >= 0 and (session.last_timestamp is None or stamp > session.last_timestamp)
+            if not valid_stamp and session.timing == 'timestamps':
+                session.timing = 'nominal_fps_fallback'
+                if session.fps and session.last_timestamp is not None:
+                    session.fallback_offset = session.last_timestamp - (session.source_frame - 1) * 1000 / session.fps
+            session.last_timestamp = stamp if valid_stamp else session.last_timestamp
+            # Stay on the fallback clock after bad timestamps to avoid time going backwards.
+            session.timestamp = (session.fallback_offset + session.source_frame * 1000 / session.fps if session.fps else None) if session.timing == 'nominal_fps_fallback' else stamp
+            if not session.sample:
+                break
+            seconds = session.timestamp / 1000
+            if seconds + 1e-9 >= session.next_sample_time:
+                session.next_sample_time = (math.floor(seconds * session.sample + 1e-9) + 1) / session.sample
+                break
         if session.processed >= MAX_FRAMES:
             return session.finish(False, 'frame_limit_reached')
         if frame.ndim != 3 or frame.shape[0] * frame.shape[1] > MAX_PIXELS:
@@ -123,8 +158,6 @@ def _next(session, detector):
         if factor < 1:
             frame = cv2.resize(frame, (max(1, round(width * factor)), max(1, round(height * factor))), interpolation=cv2.INTER_AREA)
         session.pending = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
-        stamp = session.capture.get(cv2.CAP_PROP_POS_MSEC)
-        session.timestamp = stamp if math.isfinite(stamp) and stamp >= 0 else None
     started = time.perf_counter()
     prediction = detector.predict(session.pending, wait=False, live_mode=session.mode)
     # A switch can occur between the pre-check and acquiring the runtime lock.
@@ -138,7 +171,7 @@ def _next(session, detector):
     image.save(output, 'JPEG', quality=88)
     result = {**prediction, 'jpeg_base64': base64.b64encode(output.getvalue()).decode('ascii'),
               'width': image.width, 'height': image.height, 'frame_index': session.processed,
-              'source_frame': session.processed * session.step,
+              'source_frame': session.source_frame, 'sampling_timing': session.timing,
               'timestamp_ms': session.timestamp, 'total_frames': session.total,
               'processed_count': session.processed + 1, 'persisted': False,
               'elapsed_ms': round((time.perf_counter() - started) * 1000, 2)}
@@ -202,8 +235,8 @@ def create_video_router(detector_getter):
                      mode: str = Query('balanced', pattern='^(balanced|detail)$'),
                      sample: int = Query(0, ge=0, le=60), actor: str = Depends(review_access)):
         nonlocal janitor
-        if Path(filename).suffix.lower() not in {'.mp4', '.mov', '.avi', '.webm', '.mkv'}:
-            raise HTTPException(415, 'Choose an MP4, MOV, AVI, MKV or WebM video')
+        if Path(filename).suffix.lower() not in {'.mp4', '.mov', '.m4v', '.avi', '.webm', '.mkv'}:
+            raise HTTPException(415, 'Choose an MP4, MOV, M4V, AVI, MKV or WebM video')
         _cv2()
         purge()
         with lock:
@@ -218,18 +251,35 @@ def create_video_router(detector_getter):
                 janitor.start()
         try:
             size = 0
-            with session.path.open('wb') as output:
-                async for chunk in request.stream():
-                    size += len(chunk)
-                    if size > MAX_UPLOAD:
-                        raise HTTPException(413, f'Video exceeds the {MAX_UPLOAD // (1024 * 1024)} MiB upload limit')
-                    output.write(chunk)
+            async with asyncio.timeout(UPLOAD_TIMEOUT):
+                with session.path.open('wb') as output:
+                    stream = request.stream().__aiter__()
+                    while True:
+                        try:
+                            chunk = await asyncio.wait_for(anext(stream), timeout=UPLOAD_IDLE_TIMEOUT)
+                        except StopAsyncIteration:
+                            break
+                        size += len(chunk)
+                        if size > MAX_UPLOAD:
+                            raise HTTPException(413, f'Video exceeds the {MAX_UPLOAD // (1024 * 1024)} MiB upload limit')
+                        if session.cancelled.is_set():
+                            raise HTTPException(409, 'Video upload cancelled')
+                        # Serialize the free-space check and write across both upload slots.
+                        with lock:
+                            if shutil.disk_usage(session.directory.name).free < len(chunk) + TEMP_RESERVE:
+                                raise HTTPException(507, 'Not enough temporary disk space; keep 256 MiB free')
+                            output.write(chunk)
+                            output.flush()
             await run_in_threadpool(_open, session)
-            return dict(id=session.id, state='ready', total_frames=session.total, fps=session.fps, step=session.step)
-        except BaseException:
+            return dict(id=session.id, state='ready', total_frames=session.total, fps=session.fps, sample=sample)
+        except BaseException as exc:
             session.close()
             with lock:
                 sessions.pop(session.id, None)
+            if isinstance(exc, TimeoutError):
+                raise HTTPException(408, 'Video upload timed out; try a shorter clip') from exc
+            if isinstance(exc, OSError) and exc.errno == errno.ENOSPC:
+                raise HTTPException(507, 'Temporary disk is full') from exc
             raise
         finally:
             session.touched = time.monotonic()

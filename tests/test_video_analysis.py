@@ -58,8 +58,8 @@ def test_every_frame_and_honest_eof(setup):
 def test_sampled_frames_and_detail_resolution(setup):
     client,headers,raw,_,calls=setup
     # 12 fps clip, 6 analyzed frames per second -> every 2nd of the 4 frames
-    meta=client.post('/api/video-analysis?filename=clip.mov&sample=6&mode=detail',content=raw,headers=headers).json()
-    assert meta['step']==2 and meta['total_frames']==2
+    meta=client.post('/api/video-analysis?filename=clip.avi&sample=6&mode=detail',content=raw,headers=headers).json()
+    assert meta['sample']==6 and meta['total_frames'] is None
     for index in range(2):
         frame=client.post(f"/api/video-analysis/{meta['id']}/next",headers=headers).json()
         assert frame['frame_index']==index and frame['source_frame']==index*2
@@ -109,7 +109,7 @@ def test_metadata_discrepancy_is_not_full_coverage(setup,monkeypatch):
     client,headers,*_=setup
     original=video._open
     def wrong_metadata(session):
-        original(session); session.total=7
+        original(session); session.total=7; session.source_total=7
     monkeypatch.setattr(video,'_open',wrong_metadata)
     ident=start(setup).json()['id']
     for _ in range(4):
@@ -159,7 +159,7 @@ def test_unknown_count_does_not_claim_all_original_frames(setup,monkeypatch):
     client,headers,*_=setup
     original=video._open
     def unknown_metadata(session):
-        original(session); session.total=None
+        original(session); session.total=None; session.source_total=None
     monkeypatch.setattr(video,'_open',unknown_metadata)
     ident=start(setup).json()['id']
     for _ in range(4): client.post(f'/api/video-analysis/{ident}/next',headers=headers)
@@ -187,3 +187,157 @@ def test_router_lifespan_releases_temporary_files(setup,monkeypatch):
         response=other.post('/api/video-analysis?filename=x.avi',content=raw,headers=headers)
         assert response.status_code==200 and paths[0].exists()
     assert not paths[0].parent.exists()
+
+
+def test_m4v_extension_reaches_decoder_without_claiming_codec_support(setup, monkeypatch):
+    client, headers, raw, *_ = setup
+    opened = []
+    monkeypatch.setattr(video, '_open', lambda session: opened.append(session))
+    response = client.post('/api/video-analysis?filename=clip.M4V', content=raw, headers=headers)
+    assert response.status_code == 200 and len(opened) == 1
+    # Extension contract only; this deliberately does not claim HEVC/M4V decoding.
+
+
+class FakeCapture:
+    def __init__(self, timestamps, fps):
+        self.timestamps, self.fps, self.index = timestamps, fps, -1
+    def isOpened(self): return True
+    def release(self): pass
+    def get(self, prop):
+        return {cv2.CAP_PROP_FRAME_WIDTH: 4, cv2.CAP_PROP_FRAME_HEIGHT: 4,
+                cv2.CAP_PROP_FRAME_COUNT: len(self.timestamps), cv2.CAP_PROP_FPS: self.fps,
+                cv2.CAP_PROP_POS_MSEC: self.timestamps[max(0, self.index)]}.get(prop, 0)
+    def read(self):
+        self.index += 1
+        return (True, np.zeros((4, 4, 3), dtype=np.uint8)) if self.index < len(self.timestamps) else (False, None)
+
+
+def sample_fixture(monkeypatch, timestamps, fps, rate):
+    monkeypatch.setattr(cv2, 'VideoCapture', lambda *args: FakeCapture(timestamps, fps))
+    session = video.VideoSession('fixture', 'balanced', 'fixture')
+    session.path.write_bytes(b'RIFF0000AVI ')
+    session.sample = rate
+    detector = SimpleNamespace(version='fixture', predict=lambda *a, **k: dict(state='completed', model_version='fixture', detections=[]))
+    frames = []
+    try:
+        video._open(session)
+        while True:
+            result = video._next(session, detector)
+            if result['state'] == 'finished':
+                return frames, result
+            frames.append(result)
+    finally:
+        session.close()
+
+
+@pytest.mark.parametrize('fps,count,rate,expected', [
+    (25, 25, 10, [0,3,5,8,10,13,15,18,20,23]),
+    (29.97, 300, 10, None), (5, 5, 10, [0,1,2,3,4]),
+])
+def test_fractional_sampling_no_rounded_stride(monkeypatch, fps, count, rate, expected):
+    frames, final = sample_fixture(monkeypatch, [i*1000/fps for i in range(count)], fps, rate)
+    assert final['complete'] is True
+    assert len(frames) == (100 if expected is None else len(expected))
+    if expected is not None:
+        assert [f['source_frame'] for f in frames] == expected
+    assert final['total_frames'] == len(frames)
+
+
+def test_variable_rate_uses_timestamps_not_frame_stride(monkeypatch):
+    frames, final = sample_fixture(monkeypatch, [0,10,20,110,115,230,250,310,490,510], 25, 10)
+    assert [f['source_frame'] for f in frames] == [0,3,5,7,8,9]
+    assert all(f['sampling_timing'] == 'timestamps' for f in frames)
+    assert final['complete'] is True
+
+
+@pytest.mark.parametrize('bad', [0, float('nan'), -1])
+def test_bad_timestamps_fall_back_without_stalling(monkeypatch, bad):
+    frames, final = sample_fixture(monkeypatch, [0]+[bad]*24, 25, 10)
+    assert len(frames) == 10 and final['complete']
+    assert frames[-1]['sampling_timing'] == 'nominal_fps_fallback'
+    assert [f['source_frame'] for f in frames] == [0,3,5,8,10,13,15,18,20,23]
+
+
+@pytest.mark.parametrize('fps', [0, -1, float('nan'), float('inf')])
+def test_missing_fps_rejects_sampling_but_all_frames_still_work(monkeypatch, fps):
+    with pytest.raises(video.HTTPException) as exc:
+        sample_fixture(monkeypatch, [0,40,80], fps, 10)
+    assert exc.value.status_code == 422
+    frames, final = sample_fixture(monkeypatch, [0,40,80], fps, 0)
+    assert len(frames) == 3 and final['complete']
+
+
+def test_low_disk_removes_partial_file_and_frees_slot(setup, monkeypatch):
+    paths = []
+    original = video.VideoSession
+    def tracked(*args):
+        session = original(*args); paths.append(session.path); return session
+    monkeypatch.setattr(video, 'VideoSession', tracked)
+    disk_usage = video.shutil.disk_usage
+    monkeypatch.setattr(video.shutil, 'disk_usage', lambda path: SimpleNamespace(free=video.TEMP_RESERVE))
+    for _ in range(3):
+        assert start(setup).status_code == 507
+        assert not paths[-1].parent.exists()
+    monkeypatch.setattr(video.shutil, 'disk_usage', disk_usage)
+    assert start(setup).status_code == 200
+
+
+def test_interrupted_and_slow_uploads_release_files_and_slots(monkeypatch):
+    import asyncio
+    from starlette.requests import Request, ClientDisconnect
+    paths = []
+    original = video.VideoSession
+    def tracked(*args):
+        session = original(*args); paths.append(session.path); return session
+    monkeypatch.setattr(video, 'VideoSession', tracked)
+    monkeypatch.setattr(video, 'UPLOAD_IDLE_TIMEOUT', .01)
+    router = video.create_video_router(lambda: SimpleNamespace(version='fixture'))
+    upload = next(r.endpoint for r in router.routes if r.path == '/api/video-analysis')
+    async def run():
+        async with router.lifespan_context(FastAPI()):
+            for kind in ['disconnect', 'slow', 'disconnect']:
+                calls = 0
+                async def receive():
+                    nonlocal calls
+                    calls += 1
+                    if calls == 1:
+                        return {'type':'http.request', 'body':b'partial', 'more_body':True}
+                    if kind == 'slow':
+                        await asyncio.sleep(1)
+                    return {'type':'http.disconnect'}
+                request = Request({'type':'http', 'method':'POST', 'headers':[]}, receive)
+                with pytest.raises((ClientDisconnect, video.HTTPException)) as exc:
+                    await upload(request, filename='x.avi', mode='balanced', sample=0, actor='fixture')
+                if kind == 'slow': assert exc.value.status_code == 408
+                assert not paths[-1].parent.exists()
+    asyncio.run(run())
+
+
+def test_concurrent_uploads_respect_two_slot_limit_and_release_on_cancel(monkeypatch):
+    import asyncio
+    from starlette.requests import Request
+    paths = []
+    original = video.VideoSession
+    def tracked(*args):
+        session = original(*args); paths.append(session.path); return session
+    monkeypatch.setattr(video, 'VideoSession', tracked)
+    router = video.create_video_router(lambda: SimpleNamespace(version='fixture'))
+    upload = next(r.endpoint for r in router.routes if r.path == '/api/video-analysis')
+    async def run():
+        async with router.lifespan_context(FastAPI()):
+            entered = asyncio.Queue()
+            async def receive():
+                entered.put_nowait(True)
+                await asyncio.Event().wait()
+            def request(): return Request({'type':'http','method':'POST','headers':[]},receive)
+            tasks = [asyncio.create_task(upload(request(),filename='x.avi',mode='balanced',sample=0,actor='fixture')) for _ in range(2)]
+            await asyncio.wait_for(entered.get(),1); await asyncio.wait_for(entered.get(),1)
+            try:
+                with pytest.raises(video.HTTPException) as exc:
+                    await upload(request(),filename='x.avi',mode='balanced',sample=0,actor='fixture')
+                assert exc.value.status_code == 429
+            finally:
+                for task in tasks: task.cancel()
+                await asyncio.gather(*tasks,return_exceptions=True)
+            assert all(not path.parent.exists() for path in paths)
+    asyncio.run(run())
