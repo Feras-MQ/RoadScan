@@ -73,3 +73,23 @@ test('map questions explain missing pins and location entry without claiming GPS
   const location = guideTopics.find(topic => topic.id === 'map-location')!;
   assert.match(location.steps.map(step => step[0]).join(' '), /GPS is not extracted automatically/);
 });
+
+test('map UI labels and video-report location questions match without swallowing mixed intents', () => {
+  for (const query of ['recorded locations', 'simulated locations', 'simulation', 'no usable location',
+    'What are the recorded locations?', 'مواقع مسجلة', 'مواقع محاكاة', 'محاكاة', 'بلا موقع صالح', 'المواقع المُسجَّلة']) {
+    assert.equal(matchGuideTopic(query)?.id, 'map', query);
+  }
+  for (const query of ['where is my video report on the map', 'video report location', 'location of my video report',
+    'where are my video reports on the map?', 'video GPS', 'موقع بلاغ الفيديو', 'أين بلاغ الفيديو على الخريطة؟',
+    'وين بلاغ الفيديو في الخريطة', 'إحداثيات الفيديو']) {
+    assert.equal(matchGuideTopic(query)?.id, 'map-location', query);
+  }
+  for (const query of ['analyze video', 'upload a video', 'how do I upload a mov file', 'تحليل الفيديو', 'رفع فيديو']) {
+    assert.equal(matchGuideTopic(query)?.id, 'video', query);
+  }
+  for (const query of ['recorded locations and analyze video', 'simulation and save review',
+    'video report location and upload photo', 'where is my video report on the map and analyze video',
+    'مواقع مسجلة وتحليل فيديو', 'موقع بلاغ الفيديو وتحليل فيديو', 'حذف مواقع المحاكاة']) {
+    assert.equal(matchGuideTopic(query), null, query);
+  }
+});

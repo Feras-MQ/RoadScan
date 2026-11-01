@@ -74,7 +74,7 @@ The frontend recognizes the additive contract proposed in PR #4: optional
 branch does not include or merge that backend PR. New-contract browser responses
 are mocked; combined real-backend verification remains an integration check.
 
-Local verification for this frontend change: 41 frontend unit tests passed;
+Local verification for this frontend change: 42 frontend unit tests passed;
 TypeScript and Vite production build passed. The complete synthetic browser suite
 passed its base guide checks, 12 existing report/video navigation guard scenarios,
 and 12 map scenarios (legacy/new contract × English/Arabic × 1440/390/320 px).
@@ -82,3 +82,7 @@ Additional new-contract checks covered an invalid returned row, conflicting
 coverage totals and navigation during a delayed request. Request failure/retry
 was checked in every map scenario. No backend code changed or backend tests were
 rerun for this frontend-only branch; real combined-API verification is pending.
+
+Guide matching also recognizes the exact location-group labels in both languages
+and video-report location questions. Compound phrases consume their generic video
+and map words; independent mixed intents still fall back rather than guessing.

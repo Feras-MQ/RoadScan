@@ -174,6 +174,13 @@ export async function checkMapWorkspace(browser, origin, baseReport, expect, art
       await page.keyboard.press('Escape'); await expect(help).toBeFocused();
       await help.click();
       await expect(guide.locator('#website-guide-topic')).toBeFocused();
+      await guide.getByLabel(tx('What would you like to do?', 'ماذا تريد أن تفعل؟')).fill(tx('simulated locations', 'مواقع محاكاة'));
+      await guide.getByRole('button', {name:tx('Find steps', 'عرض الخطوات')}).click();
+      await expect(guide.locator('#website-guide-topic')).toHaveText(tx('Find reports on the map', 'عرض البلاغات على الخريطة'));
+      await guide.getByLabel(tx('What would you like to do?', 'ماذا تريد أن تفعل؟')).fill(tx('where is my video report on the map', 'موقع بلاغ الفيديو'));
+      await guide.getByRole('button', {name:tx('Find steps', 'عرض الخطوات')}).click();
+      await expect(guide.locator('#website-guide-topic')).toHaveText(tx('Add a location to a new photo', 'إضافة موقع لصورة جديدة'));
+      await expect(guide.locator('.website-guide-answer')).toContainText(tx('GPS is not extracted automatically', 'لا يُستخرج GPS تلقائيًا'));
       await guide.getByLabel(tx('What would you like to do?', 'ماذا تريد أن تفعل؟')).fill(tx('add a location', 'إضافة موقع'));
       await guide.getByRole('button', {name:tx('Find steps', 'عرض الخطوات')}).click();
       await expect(guide.locator('#website-guide-topic')).toHaveText(tx('Add a location to a new photo', 'إضافة موقع لصورة جديدة'));
