@@ -112,6 +112,14 @@ def _open(session):
         raise HTTPException(413, 'Video exceeds the 50,000 frame limit; split it into shorter clips')
 
 
+def _decoder_end(session):
+    complete = session.processed > 0 and session.source_total is not None and session.decoded == session.source_total
+    if session.sample and complete:
+        session.total = session.processed
+    reason = 'decoder_eof' if complete else ('decoder_end_coverage_unverified' if session.source_total is None else 'metadata_mismatch_coverage_unverified')
+    return session.finish(complete, reason)
+
+
 def _next(session, detector):
     cv2 = _cv2()
     if session.terminal is not None:
@@ -125,13 +133,9 @@ def _next(session, detector):
                 return session.finish(False, 'cancelled')
             if time.monotonic() - started_decode > 60:
                 return session.finish(False, 'decode_time_limit')
-            ok, frame = session.capture.read()
-            if not ok:
-                complete = session.processed > 0 and session.source_total is not None and session.decoded == session.source_total
-                if session.sample and complete:
-                    session.total = session.processed
-                reason = 'decoder_eof' if complete else ('decoder_end_coverage_unverified' if session.source_total is None else 'metadata_mismatch_coverage_unverified')
-                return session.finish(complete, reason)
+            # grab() decodes only; skipped frames are never converted to BGR (about 2x faster sampling at 4K).
+            if not session.capture.grab():
+                return _decoder_end(session)
             session.source_frame = session.decoded
             session.decoded += 1
             stamp = session.capture.get(cv2.CAP_PROP_POS_MSEC)
@@ -143,12 +147,16 @@ def _next(session, detector):
             session.last_timestamp = stamp if valid_stamp else session.last_timestamp
             # Stay on the fallback clock after bad timestamps to avoid time going backwards.
             session.timestamp = (session.fallback_offset + session.source_frame * 1000 / session.fps if session.fps else None) if session.timing == 'nominal_fps_fallback' else stamp
-            if not session.sample:
-                break
-            seconds = session.timestamp / 1000
-            if seconds + 1e-9 >= session.next_sample_time:
+            if session.sample:
+                seconds = session.timestamp / 1000
+                if seconds + 1e-9 < session.next_sample_time:
+                    continue
                 session.next_sample_time = (math.floor(seconds * session.sample + 1e-9) + 1) / session.sample
-                break
+            ok, frame = session.capture.retrieve()
+            if not ok:
+                session.decoded -= 1  # same coverage as read() failing on this frame
+                return _decoder_end(session)
+            break
         if session.processed >= MAX_FRAMES:
             return session.finish(False, 'frame_limit_reached')
         if frame.ndim != 3 or frame.shape[0] * frame.shape[1] > MAX_PIXELS:
