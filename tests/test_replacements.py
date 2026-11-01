@@ -55,3 +55,10 @@ def test_validation_thresholds_and_runner_refuse_bad_plans(tmp_path):
     data=tmp_path/'reports.json';data.write_text('[]');command=['python','--input',str(data)]
     before=module.input_fingerprint(command);data.write_text('[{}]')
     assert before!=module.input_fingerprint(command)
+
+
+def test_recorded_sources_compare_but_simulated_stays_separate():
+    from roadscan.duplicate_finder import comparable_sources
+    assert comparable_sources('manual', 'device_gps') and comparable_sources('device_gps', 'manual')
+    assert comparable_sources('simulated', 'simulated') and comparable_sources('manual', 'manual')
+    assert not comparable_sources('simulated', 'manual') and not comparable_sources('device_gps', 'simulated')
