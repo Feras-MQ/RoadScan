@@ -44,6 +44,7 @@ test('navigation accepts only curated topic IDs and never a URL or command', () 
     save: ['reports', 'review-decision'], export: ['reports', 'review-queue'],
     map: ['map', 'guide-map'], settings: ['settings', 'guide-settings'], errors: ['settings', 'guide-settings'],
     training: ['learning', 'guide-learning'],
+    'map-location': ['dashboard', 'guide-inspection'],
   };
   for (const [id, [screen, target]] of Object.entries(expected)) {
     assert.deepEqual(guideDestination(id, true), {screen, target});
@@ -55,4 +56,20 @@ test('navigation accepts only curated topic IDs and never a URL or command', () 
     assert.ok(topic.title.every(Boolean));
     assert.ok(topic.steps.length >= 2 && topic.steps.every(step => step.every(Boolean)));
   }
+});
+
+test('map questions explain missing pins and location entry without claiming GPS collection', () => {
+  for (const query of ['why are there no pins?', 'missing GPS', 'my photo has no GPS', 'لا توجد نقاط', 'الموقع مفقود']) {
+    assert.equal(matchGuideTopic(query)?.id, 'map', query);
+  }
+  for (const query of ['add a location', 'how do I add a location to a photo?', 'add GPS to my photo', 'add coordinates to a photo', 'add a location to a new photo', 'add coordinates', 'photo location', 'location source', 'إضافة الموقع', 'إضافة إحداثيات', 'إضافة موقع إلى الصورة', 'إضافة إحداثيات إلى الصورة', 'موقع الصورة', 'مصدر الموقع']) {
+    assert.equal(matchGuideTopic(query)?.id, 'map-location', query);
+  }
+  for (const query of ['add location and analyze video', 'upload photo and delete location', 'إضافة موقع وحذف البلاغ']) {
+    assert.equal(matchGuideTopic(query), null, query);
+  }
+  const map = guideTopics.find(topic => topic.id === 'map')!;
+  assert.match(map.steps.map(step => step[0]).join(' '), /no streets, routes or distance scale/);
+  const location = guideTopics.find(topic => topic.id === 'map-location')!;
+  assert.match(location.steps.map(step => step[0]).join(' '), /GPS is not extracted automatically/);
 });

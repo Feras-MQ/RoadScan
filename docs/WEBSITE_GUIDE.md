@@ -8,11 +8,19 @@ Specific phrases consume their generic words (for example, "upload video"), whil
 separate conflicting intents still fall back instead of guessing. It is
 not an LLM, report explainer, or command executor. Questions are kept in component
 memory and cleared when the panel closes. The guide receives only language,
-screen, whether a report is selected, and a navigation callback.
+screen, whether a report is selected, an optional curated topic request, and a
+navigation callback. The map's **How this map works** button requests the map
+topic directly; closing returns focus to that button. The floating launcher also
+states **Steps & navigation**, and current-screen topics appear before the question
+field.
 
 Topics cover photo upload, model voting, detection editing, video analysis,
 saving reviews, report export availability, training-data download, map use,
-settings, and common errors. There is no website PDF/CSV report-export control in
+settings, and common errors. Map help explains the coordinate diagram, page scope,
+independent filters, missing/unknown locations, simulation and explicit external links.
+**Add a location to a new photo** opens Overview and explains manual entry without
+claiming automatic GPS extraction or editing of saved coordinates.
+There is no website PDF/CSV report-export control in
 this baseline. Learning separately offers **Export approved dataset**, a ZIP of
 approved training examples; its guide topic opens Learning without downloading.
 Instructions and both languages live in `frontend/src/guideContent.ts`;
@@ -79,3 +87,10 @@ scenarios cover guide, sidebar and brand paths at 1440px and 390px widths. Video
 responses are synthetic: Cancel retains the pending request and settings,
 Continue aborts/stops only after confirmation, and EN/AR headings track the rate.
 No real video decoder, camera, detector, training export or backend is used.
+
+The map regression uses legacy and new-contract synthetic report sets (22/40 reports), including manual/device-GPS,
+overlapping, missing, invalid, unknown-source, simulated and zero coordinates.
+It covers English/Arabic at 1440, 390 and 320 pixels, location groups, pagination,
+map search/status filters and paging independent of Review queue, empty results, keyboard pin/list
+selection, report opening, direct map help and repeated focus return. It asserts
+no external requests or writes. See [map behavior and limits](MAP_GUIDE_CLARITY.md).

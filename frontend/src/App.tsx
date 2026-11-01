@@ -13,7 +13,7 @@ import ModelVote from './ModelVote';
 import TrainingApproval from './TrainingApproval';
 import Learning from './Learning';
 import RoadScene from './RoadScene';
-import EvidenceMap from './EvidenceMap';
+import MapWorkspace from './MapWorkspace';
 import WorkspaceEvidence from './WorkspaceEvidence';
 import WebsiteGuide from './WebsiteGuide';
 import type {GuideScreen} from './guideContent';
@@ -28,7 +28,7 @@ import {Activity, ArrowUpRight, Camera, CheckCircle2, ChevronLeft, ChevronRight,
 type HistoryEvent = {from: string | null; to: string; actor: string; at: string};
 type AuditEvent = {actor: string; action: string; at: string; details: {manual_detections?: boolean}};
 type Report = {id: string; revision:string; source_metadata?:{initial_prediction?:{detections?:Detection[];elapsed_ms?:number}}; status: string; created_at: string; score: number | null; inference_state: string; detections: Detection[]; duplicates: {report_id: string; similarity: number}[]; image_url: string; note: string; model_version: string; reviewer?: string; history?: HistoryEvent[]; latitude?: number | null; longitude?: number | null; location_source?: string};
-type Stats = {total: number; needs_review: number; high_priority: number; by_status: Record<string, number>};
+type Stats = {total: number; needs_review: number; high_priority: number; by_status: Record<string, number>; by_location?:unknown};
 type Health = {status: string; model: string; model_reason: string; demo?:boolean; demo_token?:string|null;max_upload_mb?:number};
 type Desktop = {getToken: () => Promise<string | null>; selectModel: () => Promise<{ok: boolean; message: string}>};
 declare global {interface Window {roadscanDesktop?: Desktop}}
@@ -63,6 +63,7 @@ export default function App() {
   const [pendingReport,setPendingReport]=useState<string|null>(null);
   const [audit, setAudit] = useState<AuditEvent[]>([]);
   const [section, setSection] = useState<GuideScreen>('dashboard');
+  const [guideRequest, setGuideRequest] = useState<{id:string; version:number}>();
   const [autoStartLive, setAutoStartLive] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [batch, setBatch] = useState<BatchItem[]>([]);
@@ -320,7 +321,7 @@ export default function App() {
         {message && <div className="alert success" role="status"><CheckCircle2 size={18}/><span>{message}</span><button aria-label={tx('Dismiss notification', 'إغلاق التنبيه')} onClick={() => setMessage('')}><X size={16}/></button></div>}
         {!connected && !refreshing && <section className="connect"><div className="connect-icon"><LockKeyhole size={24}/></div><div><h2>{tx('Connect your workspace', 'اتصل بمساحة العمل')}</h2><p>{tx('Use your existing RoadScan access token to open your reports.', 'استخدم رمز الوصول الحالي لعرض بلاغات RoadScan.')}</p></div><div className="connect-row"><input aria-label={tx('Access token', 'رمز الوصول')} type="password" autoComplete="off" placeholder={tx('Paste your access token', 'الصق رمز الوصول')} value={draftToken} onChange={e => setDraftToken(e.target.value)} onKeyDown={e => e.key === 'Enter' && connect()}/><button className="primary" disabled={busy} onClick={connect}>{tx('Connect', 'اتصال')}<ArrowUpRight size={16}/></button></div><small>{tx('Kept for this browser session. Sent only to your local RoadScan server.', 'محفوظ لجلسة المتصفح الحالية ويرسل إلى خادم RoadScan المحلي فقط.')}</small></section>}
         {section === 'live' && <div id="guide-live" tabIndex={-1}><LiveRecognition lang={lang} connected={connected} ready={ready} sessionKey={token} autoStart={autoStartLive} request={request} onCapture={frame => {acceptFile(frame); setSection('dashboard'); setMessage(tx('Frame selected. Create a report when you are ready.', 'تم اختيار الإطار. أنشئ البلاغ عندما تكون جاهزًا.'))}}/></div>}
-        {section === 'map' && <div id="guide-map" tabIndex={-1}><EvidenceMap reports={connected?reports:[]} total={connected?total:0} page={page} lang={lang} connected={connected} busy={busy||refreshing} sessionKey={token} onPage={setPage} onOpen={id=>void chooseReport(id)}/></div>}
+        {section === 'map' && <div id="guide-map" tabIndex={-1}><MapWorkspace lang={lang} connected={connected} busy={busy||refreshing} sessionKey={token} stats={stats} request={request} labelStatus={labelStatus} onOpen={id=>void chooseReport(id)} onNewInspection={()=>navigateFromWorkspace('dashboard')} onHelp={()=>setGuideRequest(request=>({id:'map',version:(request?.version||0)+1}))}/></div>}
         {section === 'dashboard' && <>
           <section className="hero showcase-hero">
             <div className="hero-copy">
@@ -372,6 +373,6 @@ export default function App() {
         <footer><span>{tx('RoadScan · A capstone prototype. All decisions require human review.', 'RoadScan · نموذج مشروع تخرج. جميع القرارات تتطلب مراجعة بشرية.')}</span><span>{tx('Observe. Review. Improve.', 'راقب. راجع. حسّن.')}</span></footer>
       </div>
     </main>
-    <WebsiteGuide lang={lang} screen={section} hasReport={Boolean(selected)} onNavigate={navigateToScreen}/>
+    <WebsiteGuide lang={lang} screen={section} hasReport={Boolean(selected)} requestedTopic={guideRequest} onNavigate={navigateToScreen}/>
   </div>;
 }
