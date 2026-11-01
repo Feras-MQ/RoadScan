@@ -17,7 +17,7 @@ from .inference import LocalDetector
 from .review import validate_detections
 from .workflow import validate_transition
 from functools import lru_cache
-from sqlalchemy import or_, func, update as sql_update
+from sqlalchemy import and_, or_, func, update as sql_update
 from starlette.concurrency import run_in_threadpool
 from .imaging import decode_image, pillow_open
 from .model_library import ModelLibrary, ModelRuntime, MAX_IMPORT
@@ -228,9 +228,20 @@ def training_export(actor:str=Depends(admin_access),session=Depends(db)):
     return FileResponse(path,media_type='application/zip',filename='RoadScan-Reviewed-Dataset.zip',
                         headers={'Cache-Control':'no-store'},background=BackgroundTask(path.unlink,missing_ok=True))
 
+def location_filters():
+    # Recorded = real sources with both coordinates; simulated stays separate; everything else has no usable location.
+    # Range-checked too: upload validates, but legacy rows have no schema constraint.
+    located=and_(Report.latitude.isnot(None),Report.longitude.isnot(None),Report.latitude.between(-90,90),Report.longitude.between(-180,180))
+    recorded=and_(located,Report.location_source.in_(('manual','device_gps')))
+    simulated=and_(located,Report.location_source=='simulated')
+    none=or_(Report.latitude.is_(None),Report.longitude.is_(None),~Report.latitude.between(-90,90),~Report.longitude.between(-180,180),
+             Report.location_source.is_(None),Report.location_source.notin_(('manual','device_gps','simulated')))
+    return {'recorded':recorded,'simulated':simulated,'none':none}
+
 @app.get('/api/reports')
-def reports(status:str|None=None,search:str=Query('',max_length=200),page:int=Query(1,ge=1),size:int=Query(20,ge=1,le=100),actor:str=Depends(read_access),session=Depends(db)):
+def reports(status:str|None=None,search:str=Query('',max_length=200),page:int=Query(1,ge=1),size:int=Query(20,ge=1,le=100),location:str|None=Query(None,pattern='^(recorded|simulated|none)$'),actor:str=Depends(read_access),session=Depends(db)):
     q=session.query(Report)
+    if location:q=q.filter(location_filters()[location])
     if status:
         if status not in STATUSES:raise HTTPException(422,'Invalid status')
         q=q.filter(Report.status==status)
@@ -245,7 +256,8 @@ def stats(actor:str=Depends(read_access),session=Depends(db)):
     counts=dict(session.query(Report.status,func.count(Report.id)).group_by(Report.status).all())
     return {'total':sum(counts.values()),'needs_review':counts.get('Needs Review',0),
             'high_priority':session.query(Report).filter(Report.score>=65).count(),
-            'by_status':counts}
+            'by_status':counts,
+            'by_location':{name:session.query(Report).filter(condition).count() for name,condition in location_filters().items()}}
 @app.get('/api/reports/{rid}')
 def detail(rid:str,actor:str=Depends(read_access),session=Depends(db)):
     r=session.get(Report,rid)

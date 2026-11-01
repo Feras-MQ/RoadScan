@@ -6,6 +6,11 @@ from .feature_embeddings import OfflineEmbedder
 OPEN_STATUSES={'New','Needs Review','Confirmed','Assigned'}
 PREPROCESS='dinov2-vits14-crop-resize518-imagenet-v1'
 
+def comparable_sources(left,right):
+    """Manual and device GPS are both recorded locations; simulated only matches simulated; anything else matches nothing."""
+    recorded={'manual','device_gps'}
+    return (left in recorded and right in recorded) or left==right=='simulated'
+
 def distance_m(left,right):
     for point in (left,right):
         if len(point)!=2 or any(type(v) not in (int,float) or not math.isfinite(v) for v in point):raise ValueError('Both reports need GPS coordinates')
@@ -53,7 +58,7 @@ class DuplicateFinder:
             candidates=[]
             for row in reports:
                 if row['id']==query['id'] or row['status'] not in OPEN_STATUSES or not row['detections']:continue
-                if row.get('location_source')!=query.get('location_source'):continue
+                if not comparable_sources(row.get('location_source'),query.get('location_source')):continue
                 if any(v is None for v in row['gps']):continue
                 distance=distance_m(query['gps'],row['gps'])
                 if distance<=radius:candidates.append((row,distance))
