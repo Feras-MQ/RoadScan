@@ -201,19 +201,25 @@ def test_m4v_extension_reaches_decoder_without_claiming_codec_support(setup, mon
 class FakeCapture:
     def __init__(self, timestamps, fps):
         self.timestamps, self.fps, self.index = timestamps, fps, -1
+        self.grabs = self.retrieves = 0
+        self.fail_retrieve_at = None
     def isOpened(self): return True
-    def release(self): pass
+    def release(self): self.released = True
     def get(self, prop):
         return {cv2.CAP_PROP_FRAME_WIDTH: 4, cv2.CAP_PROP_FRAME_HEIGHT: 4,
                 cv2.CAP_PROP_FRAME_COUNT: len(self.timestamps), cv2.CAP_PROP_FPS: self.fps,
                 cv2.CAP_PROP_POS_MSEC: self.timestamps[max(0, self.index)]}.get(prop, 0)
-    def read(self):
-        self.index += 1
-        return (True, np.zeros((4, 4, 3), dtype=np.uint8)) if self.index < len(self.timestamps) else (False, None)
+    def grab(self):
+        self.index += 1; self.grabs += 1
+        return self.index < len(self.timestamps)
+    def retrieve(self):
+        self.retrieves += 1
+        return (False, None) if self.index == self.fail_retrieve_at else (True, np.zeros((4, 4, 3), dtype=np.uint8))
 
 
-def sample_fixture(monkeypatch, timestamps, fps, rate):
-    monkeypatch.setattr(cv2, 'VideoCapture', lambda *args: FakeCapture(timestamps, fps))
+def sample_fixture(monkeypatch, timestamps, fps, rate, capture=None):
+    capture = capture or FakeCapture(timestamps, fps)
+    monkeypatch.setattr(cv2, 'VideoCapture', lambda *args: capture)
     session = video.VideoSession('fixture', 'balanced', 'fixture')
     session.path.write_bytes(b'RIFF0000AVI ')
     session.sample = rate
@@ -265,6 +271,78 @@ def test_missing_fps_rejects_sampling_but_all_frames_still_work(monkeypatch, fps
     assert exc.value.status_code == 422
     frames, final = sample_fixture(monkeypatch, [0,40,80], fps, 0)
     assert len(frames) == 3 and final['complete']
+
+
+@pytest.mark.parametrize('timestamps,fps,rate', [
+    ([i*40 for i in range(25)], 25, 10), ([i*1000/29.97 for i in range(300)], 29.97, 10),
+    ([0,10,20,110,115,230,250,310,490,510], 25, 10), ([0]+[float('nan')]*24, 25, 10),
+    ([i*40 for i in range(25)], 25, 0), ([i*1000/120 for i in range(240)], 120, 1),
+])
+def test_only_analyzed_frames_are_retrieved(monkeypatch, timestamps, fps, rate):
+    capture = FakeCapture(timestamps, fps)
+    frames, final = sample_fixture(monkeypatch, timestamps, fps, rate, capture)
+    assert final['complete'] is True and final['reason'] == 'decoder_eof'
+    assert capture.retrieves == len(frames) and capture.grabs == len(timestamps) + 1
+
+
+def test_retrieve_failure_ends_like_a_failed_read(monkeypatch):
+    capture = FakeCapture([i*40 for i in range(25)], 25)
+    capture.fail_retrieve_at = 5
+    frames, final = sample_fixture(monkeypatch, [], 25, 0, capture)
+    assert len(frames) == 5 and final['processed_count'] == 5
+    assert final['complete'] is False and final['reason'] == 'metadata_mismatch_coverage_unverified'
+
+
+def test_cancel_between_frames_retrieves_nothing_more(monkeypatch):
+    capture = FakeCapture([i*40 for i in range(25)], 25)
+    monkeypatch.setattr(cv2, 'VideoCapture', lambda *args: capture)
+    session = video.VideoSession('fixture', 'balanced', 'fixture')
+    session.path.write_bytes(b'RIFF0000AVI ')
+    session.sample = 10
+    detector = SimpleNamespace(version='fixture', predict=lambda *a, **k: dict(state='completed', model_version='fixture', detections=[]))
+    video._open(session)
+    assert video._next(session, detector)['source_frame'] == 0
+    session.cancelled.set()
+    assert video._next(session, detector)['reason'] == 'cancelled'
+    assert capture.retrieves == 1 and capture.grabs == 1
+
+
+def test_selected_frame_retrieve_failure_ends_sampled_run(monkeypatch):
+    capture = FakeCapture([i*40 for i in range(25)], 25)
+    capture.fail_retrieve_at = 8  # selected at 10/s: 0,3,5,8,...
+    frames, final = sample_fixture(monkeypatch, [], 25, 10, capture)
+    assert [f['source_frame'] for f in frames] == [0, 3, 5]
+    assert final['complete'] is False and final['reason'] == 'metadata_mismatch_coverage_unverified'
+    assert final['processed_count'] == 3 and final['total_frames'] is None
+
+
+def test_skipped_frame_retrieve_failure_is_not_observed(monkeypatch):
+    # Intentional: skipped frames are grabbed (decoded) but never retrieved, so a conversion-only fault there is unseen.
+    capture = FakeCapture([i*40 for i in range(25)], 25)
+    capture.fail_retrieve_at = 4  # skipped at 10/s
+    frames, final = sample_fixture(monkeypatch, [], 25, 10, capture)
+    assert [f['source_frame'] for f in frames] == [0,3,5,8,10,13,15,18,20,23]
+    assert final['complete'] is True and capture.retrieves == len(frames)
+
+
+def test_cancel_during_skip_run_releases_capture_and_files(monkeypatch):
+    capture = FakeCapture([i*1000/120 for i in range(240)], 120)
+    session = video.VideoSession('fixture', 'balanced', 'fixture')
+    grab = capture.grab
+    def cancelling_grab():
+        if capture.grabs == 40: session.cancelled.set()  # mid-way through the 119 skipped frames after frame 0
+        return grab()
+    capture.grab = cancelling_grab
+    monkeypatch.setattr(cv2, 'VideoCapture', lambda *args: capture)
+    session.path.write_bytes(b'RIFF0000AVI ')
+    session.sample = 1
+    detector = SimpleNamespace(version='fixture', predict=lambda *a, **k: dict(state='completed', model_version='fixture', detections=[]))
+    video._open(session)
+    assert video._next(session, detector)['source_frame'] == 0
+    result = video._next(session, detector)
+    assert result['reason'] == 'cancelled' and result['complete'] is False
+    assert capture.grabs == 41 and capture.retrieves == 1
+    assert getattr(capture, 'released', False) and not session.path.parent.exists()
 
 
 def test_low_disk_removes_partial_file_and_frees_slot(setup, monkeypatch):
