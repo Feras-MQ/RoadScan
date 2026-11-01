@@ -1,5 +1,7 @@
 # RoadScan submission audit — 30 October 2026
 
+Historical evidence below retains its stated dates. The current report and final presentation publication status are recorded in [the 1 November publication record](Submission-2026-11-01.md).
+
 **Superseding model-release update, 31 October:** trainer evidence resolved source mapping for ten additional models; all were published unchanged and anonymously hash-verified with source/notices. See [the new evidence](Trainer-Provenance-2026-10-31.md) and updated matrix. The source holds described below are the 30 October snapshot; field-evaluation, selection and fresh-setup limits still apply.
 
 **Read this alongside the dated report and slides.** The application works locally; this does not mean every course evaluation requirement is complete. The report PDF remains the 27 October snapshot, with 14 report pages plus four appendices. The presentation was refreshed on 31 October and contains seven main slides plus five optional slides, including the current model inventory and research limits. This supplement records later model integration and the remaining evidence gaps without rewriting historical results.

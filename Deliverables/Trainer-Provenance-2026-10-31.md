@@ -1,5 +1,7 @@
 # Trainer evidence and release update — 31 October 2026
 
+Historical evidence below retains its stated dates. The current report and final presentation publication status are recorded in [the 1 November publication record](Submission-2026-11-01.md).
+
 **Ten more road detectors are published:** seven RunPod YOLO26 checkpoints and Road v1, Road A and Road v2b. Their original bytes are unchanged. Each was downloaded anonymously and matched its byte count and full SHA256, as were the three companion files.
 
 - [Weights and source release](https://github.com/Feras-MQ/RoadScan/releases/tag/model-resources-2026-10-28)

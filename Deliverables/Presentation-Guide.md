@@ -1,23 +1,24 @@
-# Present RoadScan in five minutes
+# RoadScan final presentation plan
 
-**Open RoadScan-Presentation.pptx to present or edit; use RoadScan-Presentation.pdf for standalone review.**
+The submitted presentation dated 1 November has **12 slides: nine main slides and three backups**. The planned slot is **ten minutes: 7.5 minutes of explanation and 2.5 minutes of live demonstration**, followed by questions. Rehearsal timing remains unmeasured.
 
-Use slides 1–7 for the main story. Slides 8–12 are an optional technical and question appendix; speaker notes are inside PowerPoint and in Speaker-Notes.txt.
+The final PPTX/PDF is not published because the saved project prediction images on slide 3 lack confirmed public redistribution rights. The [31 October PDF](RoadScan-Presentation.pdf) and [PPTX](RoadScan-Presentation.pptx) are historical files and do not match the final script. This repository publishes the [approved English speaking text](Speaker-Notes.txt), [final technical report](RoadScan-Project-Report.pdf) and [Arabic revision guide](Revision/RoadScan-Arabic-Revision-Guide.pdf).
 
-| Slide | Focus | Time |
-|---|---|---|
-| 1 | Problem and contribution | 20 seconds |
-| 2 | Local architecture | 50 seconds |
-| 3 | Human review and model voting | 45 seconds |
-| 4 | Team-reported model evidence and limits | 55 seconds |
-| 5 | Camera sampling and sequential video analysis | 45 seconds |
-| 6 | Reviewed data and separate training | 40 seconds |
-| 7 | Software verification and next field evidence | 45 seconds |
+| Slide | Final focus | Planned time |
+|---|---|---:|
+| 1 | Road damage is easy to miss | 0:25 |
+| 2 | Meet RoadScan: upload, detect, review | 0:35 |
+| 3 | Saved model suggestions on real road images | 0:50 |
+| 4 | Models explored | 0:45 |
+| 5 | Data, transfer learning and model development | 1:05 |
+| 6 | Main results and experiment context | 1:00 |
+| 7 | Human review | 0:55 |
+| 8 | Detection, priority, duplicate suggestions and live demo | 3:55, including 2:30 live |
+| 9 | Conclusion and local evaluation gap | 0:30 |
+| 10–12 | Road-selection results, map/help and E1–E5 evidence | Backup; outside the ten-minute slot |
 
-These planned timings total five minutes; rehearsal timing is unmeasured. The 31 October deck has seven main slides and five optional appendices. It covers 22 distinct weights, including 19 road detectors, the published model downloads, experimental fine-tune caveats and E1–E5 research gaps. The report remains a dated snapshot: read it with the [updated supplement](Submission-Audit-2026-10-30.md). No new accuracy results are claimed.
+Use a panel-chosen input for the live demonstration. If a feature fails, state what failed and distinguish saved evidence from a successful live run. The approved report and notes retain the limitations of historical metrics, selection data, heuristic priority and uncalibrated duplicate matching.
 
-**If a demonstration fails:** keep the PDF open, explain the screenshots, and state what failed; do not claim a failed live run succeeded.
+Opening-photo credit: Frankie Fouganthin, [Pothole in an asphalt pavement](https://commons.wikimedia.org/wiki/File:Pothole_in_an_asphalt_pavement.jpg), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The presentation crops and resizes the photo; its adaptation remains CC BY-SA 4.0. This credit does not clear the separate project prediction images.
 
-The official brief describes a longer presentation/demo slot. If that format is required, expand the model appendix and add a rehearsed demonstration; the five-minute version follows the team's latest request.
-
-This delivery is static: animations and transitions are not included, and native PowerPoint playback remains unverified. The PDF uses slide images; the PPTX retains editable text, diagrams, two tables and speaker notes. Suggested speaking rotation: Feras, slides 1–2; Ahmed Salamah, slides 3–4; Ahmed Alhejaili, slides 5–7. Confirm this rotation together; it does not attribute individual implementation work.
+See the [publication record](Submission-2026-11-01.md) for the exact files published and held. Finished video assets are unchanged.

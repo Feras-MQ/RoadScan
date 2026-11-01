@@ -10,7 +10,7 @@ By Feras Alyamani, Ahmed Salamah and Ahmed Alhejaili.
 
 **New quick walkthrough:** [RoadScan — Quick Walkthrough | Narration: elevenlabs.io](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Quick-Walkthrough-elevenlabs.io.mp4) · [Credits, photo attribution and recording details](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Quick-Walkthrough-Credits.txt). Shows the real-photo inspection and human-review workflow in separate recorded takes. ElevenLabs narration is for noncommercial use; the photograph retains CC BY-SA 4.0, and source-code licensing is unchanged.
 
-[Report](Deliverables/RoadScan-Project-Report.pdf) · [Slides](Deliverables/RoadScan-Presentation.pdf) · [Run RoadScan](#quick-start--windows) · [Iriun camera](Deliverables/Iriun-Webcam-Guide.md) · [Models](Deliverables/Models.md) · [Benchmarks](Deliverables/Validation-Status.md) · [Latest interface and map guide](Deliverables/Interface-Map-Update-2026-10-31.md)
+[Report](Deliverables/RoadScan-Project-Report.pdf) · [Presentation status](Deliverables/Presentation-Guide.md) · [Run RoadScan](#quick-start--windows) · [Iriun camera](Deliverables/Iriun-Webcam-Guide.md) · [Models](Deliverables/Models.md) · [Benchmarks](Deliverables/Validation-Status.md) · [Latest interface and map guide](Deliverables/Interface-Map-Update-2026-10-31.md)
 
 ![RoadScan overview in the demo workspace](assets/readme/overview.png)
 
@@ -27,11 +27,14 @@ Release **2026-10-27.1**. Final submission documents are indexed in [Deliverable
 
 ## Instructor deliverables
 
+The [1 November publication record](Deliverables/Submission-2026-11-01.md) identifies the exact submitted report and revision-guide files. The final presentation and submission ZIP remain unpublished because two project prediction images are not cleared for public redistribution.
+
 | File | Description and status |
 |---|---|
-| [Project report — PDF](Deliverables/RoadScan-Project-Report.pdf) / [DOCX](Deliverables/RoadScan-Project-Report.docx) | 18-page report with results and screenshots; PDF checked, Word pagination unverified |
-| [Presentation — PDF](Deliverables/RoadScan-Presentation.pdf) / [PPTX](Deliverables/RoadScan-Presentation.pptx) | Twelve slides: seven main plus five appendices; static slides, native playback unverified |
-| [Speaker notes](Deliverables/Speaker-Notes.txt) / [presentation guide](Deliverables/Presentation-Guide.md) | English five-minute main script and timing |
+| [Project report — PDF](Deliverables/RoadScan-Project-Report.pdf) / [DOCX](Deliverables/RoadScan-Project-Report.docx) | Final 1 November technical report, 25-page PDF; submitted DOCX/PDF bytes preserved |
+| [Arabic revision guide — PDF](Deliverables/Revision/RoadScan-Arabic-Revision-Guide.pdf) / [DOCX](Deliverables/Revision/RoadScan-Arabic-Revision-Guide.docx) | 23-page supplementary study guide; distinct from the full technical report |
+| [Historical presentation — PDF](Deliverables/RoadScan-Presentation.pdf) / [PPTX](Deliverables/RoadScan-Presentation.pptx) | 31 October deck only; the final course deck awaits prediction-image redistribution clearance |
+| [Speaker notes](Deliverables/Speaker-Notes.txt) / [presentation guide](Deliverables/Presentation-Guide.md) | Approved final English speaking text; nine main slides, three backups, ten minutes including a 2.5-minute live demo |
 | [All documentation](Deliverables/README.md) / [quick start](Deliverables/Quick-Start.md) | Setup, use, learning, model inventory and validation status |
 | [Models and download status](Deliverables/Models.md) / [validation limits](Deliverables/Validation-Status.md) | 22 weights: 12 public mirrors (11 road detectors + DINOv2), one official initializer link, nine individual holds; common-set benchmark pending |
 ## Quick start — Windows
@@ -160,7 +163,7 @@ Model weights are supplied separately from source code. The full common-set comp
 
 ## Evidence and limits
 
-This release passed 221 backend tests (1 optional skip), 24 frontend tests and 67 browser checks: 17 interaction checks, 40 EN/AR responsive cases and 10 final narrow-screen rechecks. The TypeScript/Vite build passed. The earlier CPU Docker baseline has a separate inference proof; fresh Mac/ARM installation remains unverified. See [the design and workflow evidence](docs/DESIGN_REVIEW_2026-10-27.md). These are software checks, not field accuracy. Real Saudi test photos, duplicate calibration and repaired split evidence remain outstanding. The public report, slides and guides are in [Deliverables](Deliverables/README.md); weight availability is listed separately in [Models](Deliverables/Models.md).
+Historical release 2026-10-27.1 passed 221 backend tests (1 optional skip), 24 frontend tests and 67 browser checks: 17 interaction checks, 40 EN/AR responsive cases and 10 final narrow-screen rechecks. The TypeScript/Vite build passed. The earlier CPU Docker baseline has a separate inference proof; fresh Mac/ARM installation remains unverified. See [the design and workflow evidence](docs/DESIGN_REVIEW_2026-10-27.md). These are software checks, not field accuracy. Real Saudi test photos, duplicate calibration and repaired split evidence remain outstanding. The public report, slides and guides are in [Deliverables](Deliverables/README.md); weight availability is listed separately in [Models](Deliverables/Models.md).
 
 ## Tests
 
