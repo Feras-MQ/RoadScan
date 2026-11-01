@@ -2,7 +2,7 @@
 
 The submitted presentation dated 1 November has **12 slides: nine main slides and three backups**. The planned slot is **ten minutes: 7.5 minutes of explanation and 2.5 minutes of live demonstration**, followed by questions. Rehearsal timing remains unmeasured.
 
-The final PPTX/PDF is not published because the saved project prediction images on slide 3 lack confirmed public redistribution rights. The [31 October PDF](RoadScan-Presentation.pdf) and [PPTX](RoadScan-Presentation.pptx) are historical files and do not match the final script. This repository publishes the [approved English speaking text](Speaker-Notes.txt), [final technical report](RoadScan-Project-Report.pdf) and [Arabic revision guide](Revision/RoadScan-Arabic-Revision-Guide.pdf).
+Open the final [PPTX](RoadScan-Presentation.pptx) to present or edit, or use the [PDF](RoadScan-Presentation.pdf). These are the exact submitted files and match the [approved English speaking text](Speaker-Notes.txt). The [final technical report](RoadScan-Project-Report.pdf) and [Arabic revision guide](Revision/RoadScan-Arabic-Revision-Guide.pdf) provide supporting detail.
 
 | Slide | Final focus | Planned time |
 |---|---|---:|
@@ -19,6 +19,6 @@ The final PPTX/PDF is not published because the saved project prediction images 
 
 Use a panel-chosen input for the live demonstration. If a feature fails, state what failed and distinguish saved evidence from a successful live run. The approved report and notes retain the limitations of historical metrics, selection data, heuristic priority and uncalibrated duplicate matching.
 
-Opening-photo credit: Frankie Fouganthin, [Pothole in an asphalt pavement](https://commons.wikimedia.org/wiki/File:Pothole_in_an_asphalt_pavement.jpg), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The presentation crops and resizes the photo; its adaptation remains CC BY-SA 4.0. This credit does not clear the separate project prediction images.
+Opening-photo credit: Frankie Fouganthin, [Pothole in an asphalt pavement](https://commons.wikimedia.org/wiki/File:Pothole_in_an_asphalt_pavement.jpg), [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/). The presentation crops and resizes the photo; its adaptation remains CC BY-SA 4.0. The two project prediction images have separate team ownership and owner-confirmed permission for public publication; see the publication record.
 
-See the [publication record](Submission-2026-11-01.md) for the exact files published and held. Finished video assets are unchanged.
+See the [publication record](Submission-2026-11-01.md) for the exact published files and the subsequent image-ownership confirmation. Finished video assets are unchanged.

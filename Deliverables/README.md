@@ -1,10 +1,10 @@
 # RoadScan instructor deliverables
 
-**1 November 2026:** the full technical report and Arabic revision guide below are the exact submitted files, pinned to source commit `58e7c3e494b5e1c5f2ca4d431b24d3f099003205`. The report supersedes the previous current report; earlier versions remain in Git history. See the [publication record](Submission-2026-11-01.md) for hashes and scope.
+**1 November 2026:** the presentation, full technical report and Arabic revision guide below are the exact submitted files, pinned to source commit `58e7c3e494b5e1c5f2ca4d431b24d3f099003205`. The presentation and report supersede their previous current versions; earlier versions remain in Git history. See the [publication record](Submission-2026-11-01.md) for hashes and scope.
 
 **Team:** Feras Alyamani, Ahmed Salamah, Ahmed Alhejaili.
 
-Start with the 25-page report PDF. The 23-page Arabic guide is supplementary study material. The final course presentation has nine main slides and three backups, with a ten-minute slot including 2.5 minutes of live demonstration. Its PPTX/PDF and the complete submission ZIP are not published: two project prediction images lack confirmed public redistribution rights. The linked 31 October deck is historical, not the submitted presentation.
+Start with the 25-page report PDF. The 23-page Arabic guide is supplementary study material. The final course presentation has nine main slides and three backups, with a ten-minute slot including 2.5 minutes of live demonstration. All six submitted documents are published below. The owner confirmed permission to publish the project prediction images; photo attribution and the submitted content are preserved.
 
 The [current inventory](public-model-inventory.json) covers 22 locally verified identities; [names and organization](Model-Organization-2026-11-01.md) distinguish two additional peer-reported checkpoints. Historical model reports and supplements retain their original evidence dates.
 
@@ -13,9 +13,9 @@ The [current inventory](public-model-inventory.json) covers 22 locally verified 
 | [RoadScan-Project-Report.pdf](RoadScan-Project-Report.pdf) | Final technical report; 25 pages | Exact submitted PDF, 1 November |
 | [RoadScan-Project-Report.docx](RoadScan-Project-Report.docx) | Editable final report | Exact submitted DOCX; no content changes |
 | [Arabic revision guide — PDF](Revision/RoadScan-Arabic-Revision-Guide.pdf) / [DOCX](Revision/RoadScan-Arabic-Revision-Guide.docx) | Supplementary Arabic study guide; 23-page PDF | Exact submitted files, 1 November |
-| [Historical presentation — PDF](RoadScan-Presentation.pdf) / [PPTX](RoadScan-Presentation.pptx) | 31 October deck; seven main slides and five appendices | Historical only; final presentation withheld pending image-rights clearance |
+| [Presentation — PDF](RoadScan-Presentation.pdf) / [PPTX](RoadScan-Presentation.pptx) | Final twelve-slide presentation; nine main slides and three backups | Exact submitted files, 1 November |
 | [Speaker-Notes.txt](Speaker-Notes.txt) | Final English speaking text | Exact English sections from submitted notes; nine main slides and three backups |
-| [Presentation-Guide.md](Presentation-Guide.md) | Final timing and publication status | Ten minutes including 2.5 minutes live; final deck not public |
+| [Presentation-Guide.md](Presentation-Guide.md) | Final timing and publication status | Ten minutes including 2.5 minutes live |
 | [Quick-Start.md](Quick-Start.md) | Short source-download walkthrough | Uses the verified root setup instructions |
 | [Iriun-Webcam-Guide.md](Iriun-Webcam-Guide.md) | Phone as a computer camera, permissions and automatic recognition | Official setup sources checked; physical integration unverified |
 | [Run-On-Another-Computer.md](Run-On-Another-Computer.md) | Docker setup and portable-bundle guidance | Linux x86-64 CPU checked; Mac/ARM unverified |

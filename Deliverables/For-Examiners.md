@@ -6,7 +6,7 @@ Start with the [25-page technical report](RoadScan-Project-Report.pdf) or its [e
 
 ## Presentation and demonstration
 
-The final course plan has nine main slides and three backups. The ten-minute slot includes 2.5 minutes of panel-chosen live input; see [the timing guide](Presentation-Guide.md) and [approved English speaking text](Speaker-Notes.txt). The final presentation files remain unpublished because two saved project prediction images lack confirmed public redistribution rights. The retained [31 October PDF](RoadScan-Presentation.pdf) and [PPTX](RoadScan-Presentation.pptx) are historical and do not match the final script.
+The final course plan has nine main slides and three backups. The ten-minute slot includes 2.5 minutes of panel-chosen live input; see [the final PDF](RoadScan-Presentation.pdf), [editable PPTX](RoadScan-Presentation.pptx), [timing guide](Presentation-Guide.md) and [approved English speaking text](Speaker-Notes.txt). The deck bytes match the submitted package; team ownership and public publication permission for its two project prediction images were subsequently confirmed.
 
 ## Evidence boundaries
 
@@ -23,4 +23,4 @@ The final course plan has nine main slides and three backups. The ten-minute slo
 - [Model availability](Models.md), [trainer provenance](Trainer-Provenance-2026-10-31.md) and the [historical submission audit](Submission-Audit-2026-10-30.md).
 - [Application source](../roadscan/), [tests](../tests/) and [research scripts](../tools/).
 
-The report and guide binaries are unchanged from the submitted ZIP. Native Word/PowerPoint playback has not been newly tested during this publication pass. Finished videos and runtime data are unchanged.
+All six document binaries are unchanged from the submitted ZIP. Native Word/PowerPoint playback has not been newly tested during this publication pass. Finished videos and runtime data are unchanged.

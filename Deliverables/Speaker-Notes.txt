@@ -2,7 +2,7 @@ RoadScan final presentation speaking text — 1 November 2026
 
 These English speaking sections are copied without editorial changes from the submitted twelve-slide presentation. Slides 1–9 are the main talk; 10–12 are backups. The ten-minute plan includes a 150-second live demonstration on slide 8. Rehearsal timing remains unmeasured.
 
-The final PPTX/PDF is not published because the two saved prediction images on slide 3 lack confirmed public redistribution rights. RoadScan-Presentation.pptx/pdf in this repository are the historical 31 October deck and do not match this script. The submitted Arabic revision guide contains supplementary explanations and questions.
+RoadScan-Presentation.pptx/pdf in this repository are the exact submitted final deck and match this script. The owner subsequently confirmed team ownership and public publication permission for the two project prediction images. The earlier rights caveat retained inside the unchanged presentation is superseded by the publication record. The Arabic revision guide contains supplementary explanations and questions.
 
 Source code snapshot: 58e7c3e494b5e1c5f2ca4d431b24d3f099003205
 
