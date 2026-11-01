@@ -7,8 +7,9 @@ OPEN_STATUSES={'New','Needs Review','Confirmed','Assigned'}
 PREPROCESS='dinov2-vits14-crop-resize518-imagenet-v1'
 
 def comparable_sources(left,right):
-    """Manual and device GPS are both recorded locations; simulated positions never mix with them."""
-    return (left=='simulated')==(right=='simulated')
+    """Manual and device GPS are both recorded locations; simulated only matches simulated; anything else matches nothing."""
+    recorded={'manual','device_gps'}
+    return (left in recorded and right in recorded) or left==right=='simulated'
 
 def distance_m(left,right):
     for point in (left,right):

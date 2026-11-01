@@ -230,10 +230,12 @@ def training_export(actor:str=Depends(admin_access),session=Depends(db)):
 
 def location_filters():
     # Recorded = real sources with both coordinates; simulated stays separate; everything else has no usable location.
-    located=and_(Report.latitude.isnot(None),Report.longitude.isnot(None))
+    # Range-checked too: upload validates, but legacy rows have no schema constraint.
+    located=and_(Report.latitude.isnot(None),Report.longitude.isnot(None),Report.latitude.between(-90,90),Report.longitude.between(-180,180))
     recorded=and_(located,Report.location_source.in_(('manual','device_gps')))
     simulated=and_(located,Report.location_source=='simulated')
-    none=or_(Report.latitude.is_(None),Report.longitude.is_(None),Report.location_source.is_(None),Report.location_source.notin_(('manual','device_gps','simulated')))
+    none=or_(Report.latitude.is_(None),Report.longitude.is_(None),~Report.latitude.between(-90,90),~Report.longitude.between(-180,180),
+             Report.location_source.is_(None),Report.location_source.notin_(('manual','device_gps','simulated')))
     return {'recorded':recorded,'simulated':simulated,'none':none}
 
 @app.get('/api/reports')

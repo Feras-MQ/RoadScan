@@ -33,9 +33,10 @@ def test_faiss_crops_exclude_closed_distant_and_simulated_reports(tmp_path):
         def encode(self,path,box):self.calls+=1;assert box==[0,0,8,8];return [1.]+[0.]*383
     fake=Fake();finder=DuplicateFinder(checkpoint,tmp_path/'cache',fake)
     query={'id':'q','status':'Needs Review','gps':[24,46],'location_source':'manual','image':str(image),'detections':[{'box':[0,0,8,8]}]}
-    gallery=[dict(query,id='near',gps=[24.0001,46]),dict(query,id='closed',status='Resolved'),dict(query,id='far',gps=[25,46]),dict(query,id='sim',location_source='simulated'),dict(query)]
+    gallery=[dict(query,id='near',gps=[24.0001,46]),dict(query,id='closed',status='Resolved'),dict(query,id='far',gps=[25,46]),dict(query,id='sim',location_source='simulated'),dict(query),
+             dict(query,id='device',gps=[24.0002,46],location_source='device_gps'),dict(query,id='unknown',gps=[24.0001,46],location_source=None)]
     result=finder.search(query,gallery)
-    assert result['candidate_reports']==1 and result['matches'][0]['report_id']=='near'
+    assert result['candidate_reports']==2 and {m['report_id'] for m in result['matches']}=={'near','device'}
     assert result['matches'][0]['similarity']==pytest.approx(1) and fake.calls==1
     assert finder.search(query,gallery)['matches']==result['matches'] and fake.calls==1
     with pytest.raises(ValueError):finder.search(dict(query,gps=[None,None]),gallery)
@@ -62,3 +63,6 @@ def test_recorded_sources_compare_but_simulated_stays_separate():
     assert comparable_sources('manual', 'device_gps') and comparable_sources('device_gps', 'manual')
     assert comparable_sources('simulated', 'simulated') and comparable_sources('manual', 'manual')
     assert not comparable_sources('simulated', 'manual') and not comparable_sources('device_gps', 'simulated')
+    for other in (None, 'not_provided', 'unknown'):
+        for known in ('manual', 'device_gps', 'simulated', other):
+            assert not comparable_sources(other, known) and not comparable_sources(known, other)
