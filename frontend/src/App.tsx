@@ -279,6 +279,8 @@ export default function App() {
     if (next === section) return null;
     if (busy || batchRunning.current) return tx('Wait for the current task to finish before changing screens.', 'انتظر انتهاء المهمة الحالية قبل تغيير الشاشة.');
     if (reviewDirty && next !== 'reports') return tx('You have unsaved review changes. Close the guide and save your review first, or open Review queue to return to your draft.', 'لديك تغييرات مراجعة غير محفوظة. أغلق الدليل واحفظ المراجعة أولًا، أو افتح قائمة المراجعة للعودة إلى المسودة.');
+    // Report tools own jobs, results and drafts that are not reflected in reviewDirty.
+    if (section === 'reports' && selected && !window.confirm(tx('Leaving this report cancels any running model vote and discards comparison results, model choices, and unsaved training settings. Continue to another screen?', 'مغادرة هذا البلاغ تلغي أي تصويت نماذج جارٍ وتتخلص من نتائج المقارنة واختيارات النماذج وإعدادات التدريب غير المحفوظة. هل تريد الانتقال إلى شاشة أخرى؟'))) return tx('Stayed on this report. Your comparison and training work remain open.', 'بقيت في هذا البلاغ. لا يزال عمل المقارنة والتدريب مفتوحًا.');
     if (['live', 'settings', 'learning'].includes(section) && !window.confirm(tx('Leaving this screen can stop ongoing work or clear selections. Finish any work first. Continue to another screen?', 'قد يؤدي مغادرة هذه الشاشة إلى إيقاف العمل الجاري أو مسح الاختيارات. أنهِ عملك أولًا. هل تريد الانتقال إلى شاشة أخرى؟'))) return tx('Stayed on this screen. Your next action is up to you.', 'بقيت في هذه الشاشة. الإجراء التالي يعود إليك.');
     setAutoStartLive(false);
     setSection(next);

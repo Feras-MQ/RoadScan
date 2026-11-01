@@ -5,6 +5,7 @@ import {createServer} from 'node:http';
 import {readFile, mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
+import {checkReportWorkGuard} from './guide-report-work.browser.mjs';
 const {chromium} = await import(process.env.ROADSCAN_PLAYWRIGHT_MODULE || 'playwright');
 const {expect} = await import(process.env.ROADSCAN_PLAYWRIGHT_EXPECT || 'playwright/test');
 const dist = path.resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
@@ -97,6 +98,7 @@ try {
   await expect(page.locator('.unsaved-review-alert')).toBeVisible();
   await page.getByRole('button', {name: 'Keep editing', exact: true}).click();
   await page.getByLabel('Inspector note', {exact: true}).fill('');
+  page.once('dialog', dialog => dialog.accept());
   await launch(); await topic('Find reports on the map'); await navigate(); await screen('map');
   await page.getByRole('navigation', {name: 'Main navigation'}).getByRole('button', {name: 'Overview', exact: true}).click();
   await expect(page.locator('.website-guide-highlight')).toHaveCount(0);
@@ -152,6 +154,7 @@ try {
   await expect(offlinePage.locator('[data-screen]')).toHaveAttribute('data-screen', 'settings');
   await expect(offlinePage.getByRole('heading', {name: 'Connect your workspace', exact: true})).toBeVisible();
   await offline.close();
-  console.log(JSON.stringify({result: 'PASS', coverage: 'EN/AR desktop/mobile; typed questions; fallback; all destinations; keyboard/focus; back/close/reopen; highlight cleanup; unsaved review guard; existing report-switch guard; pending photo preserved; no analysis or write requests', requests: requests.length, artifacts}, null, 2));
+  await checkReportWorkGuard(browser, origin, report, expect);
+  console.log(JSON.stringify({result: 'PASS', coverage: 'EN/AR desktop/mobile; typed questions; fallback; all destinations; keyboard/focus; back/close/reopen; highlight cleanup; unsaved review guard; existing report-switch guard; pending photo preserved; guide actions do not submit; report-work regression uses two explicit mocked vote clicks', requests: requests.length, artifacts}, null, 2));
   await context.close();
 } finally {await browser?.close(); await new Promise(resolve => server.close(resolve));}

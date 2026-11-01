@@ -22,7 +22,12 @@ dismissal, or reopening the guide. The modal supports Escape, a sticky Close
 button, focus containment/return, and Arabic RTL.
 
 Navigation through the guide blocks leaving an unsaved review or an App-level
-busy task. The existing report-switch guard remains in place. Leaving Live
+busy task. The existing report-switch guard remains in place. Leaving a selected
+report asks for confirmation because its model-vote job/results/choices and
+training fields live in child components, outside the review-dirty flag. Cancel
+keeps those components mounted and their work intact; Continue intentionally
+unmounts them, cancelling a running vote and discarding their local state. This
+guard also asks for a selected report with no child work in progress. Leaving Live
 recognition, Settings, or Learning asks for confirmation because child workflows
 can stop or lose selections on unmount. This is conservative: it also asks when
 those screens are idle. The guide does not change the existing sidebar navigation
@@ -48,8 +53,14 @@ screenshot output directory. It does not install anything.
 
 The test serves only the built frontend and in-memory synthetic API fixtures on
 a temporary localhost port. It uses fresh browser contexts, blocks external
-requests, rejects API writes, and closes the browser/server afterward. It checks
+requests, rejects API writes at the fixture server, and closes the browser/server afterward. It checks
 English/Arabic at desktop and mobile sizes, typing/fallback, destinations,
 keyboard/close/reopen, highlight cleanup, unsaved review guards, retained photo
-selection, and disconnected help. It does not run real detector inference or
-read actual report storage.
+selection, and disconnected help. The report-work regression additionally uses
+three synthetic models and an eligible training fixture to exercise the actual
+ModelVote/TrainingApproval components. Two explicit test clicks start mocked vote
+requests intercepted in the browser; no inference occurs. It verifies Cancel
+preserves an in-flight vote, completed unapplied results, model choices, and
+capture-group/split/checkbox edits. Continue discards local state and aborts an
+in-flight vote only after confirmation. No model activation or training submission
+is performed, and no actual report storage is read.
