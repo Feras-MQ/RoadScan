@@ -17,9 +17,24 @@ test('short English and Arabic questions find factual website instructions', () 
 test('unknown, ambiguous and unsupported commands get an honest fallback', () => {
   for (const query of ['', '   ', 'weather tomorrow', 'this pothole is dangerous?',
     'delete all reports', 'execute upload command', 'حذف البلاغات', 'photo video',
-    'analyze my report data', 'my password', 'x'.repeat(301), 'photography']) {
+    'analyze my report data', 'my password', 'x'.repeat(301), 'photography',
+    'upload a video and a photo', 'save my review and compare models',
+    'download training examples or export PDF', 'رفع فيديو وصورة', 'train a model']) {
     assert.equal(matchGuideTopic(query), null, query);
   }
+});
+
+test('specific curated phrases handle filler words and Arabic normalization without guessing mixed intents', () => {
+  for (const [query, id] of [
+    ['upload video', 'video'], ['how do I upload a video', 'video'], ['upload a mov file', 'video'],
+    ['UPLOAD THE MP4 FILE!', 'video'], ['رفع فيديو', 'video'], ['كيف يتم رَفْع الـفِيدْيُو؟', 'video'],
+    ['how to save my review', 'save'], ['save the review', 'save'], ['حفظ المُراجعة', 'save'],
+    ['change the model', 'settings'], ['change my model', 'settings'], ['تغيير النموذج', 'settings'],
+    ['download training examples', 'training'], ['download the approved training examples', 'training'],
+    ['export approved dataset', 'training'], ['download approved dataset', 'training'], ['export training examples', 'training'],
+    ['تنزيل أمثلة التدريب', 'training'], ['تصدير البيانات المعتمدة', 'training'], ['تنزيل البيانات المعتمدة', 'training'],
+    ['upload a photo', 'upload'], ['export to pdf', 'export'], ['download reports', 'export'],
+  ]) assert.equal(matchGuideTopic(query)?.id, id, query);
 });
 
 test('navigation accepts only curated topic IDs and never a URL or command', () => {
@@ -28,6 +43,7 @@ test('navigation accepts only curated topic IDs and never a URL or command', () 
     review: ['reports', 'review-annotations'], video: ['live', 'guide-live'],
     save: ['reports', 'review-decision'], export: ['reports', 'review-queue'],
     map: ['map', 'guide-map'], settings: ['settings', 'guide-settings'], errors: ['settings', 'guide-settings'],
+    training: ['learning', 'guide-learning'],
   };
   for (const [id, [screen, target]] of Object.entries(expected)) {
     assert.deepEqual(guideDestination(id, true), {screen, target});

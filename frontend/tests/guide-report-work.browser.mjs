@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 
 // Exercise the real report components; only HTTP responses are synthetic.
-export async function checkReportWorkGuard(browser, origin, report, expect) {
-  const context = await browser.newContext({viewport: {width: 1440, height: 1000}, reducedMotion: 'reduce'});
+export async function checkReportWorkGuard(browser, origin, report, expect, mode = 'guide', width = 1440) {
+  const context = await browser.newContext({viewport: {width, height: 1000}, reducedMotion: 'reduce'});
   await context.route('**/*', route => route.request().url().startsWith(origin + '/') ? route.continue() : route.abort());
   await context.addInitScript(() => {sessionStorage.setItem('roadscan_token', 'synthetic-guide-only'); localStorage.setItem('roadscan_language', 'en');});
   const page = await context.newPage();
@@ -39,17 +39,21 @@ export async function checkReportWorkGuard(browser, origin, report, expect) {
     await expect(page.locator('.review-statusbar')).toContainText('Saved report');
 
     async function leaveReport(accept) {
-      await page.getByRole('button', {name: 'Website guide', exact: true}).click();
       const guide = page.getByRole('dialog');
-      await guide.getByRole('button', {name: 'Find reports on the map', exact: true}).click();
+      if (mode === 'guide') {
+        await page.getByRole('button', {name: 'Website guide', exact: true}).click();
+        await guide.getByRole('button', {name: 'Find reports on the map', exact: true}).click();
+      }
       let prompt = '';
       const answer = async dialog => {prompt = dialog.message(); await (accept ? dialog.accept() : dialog.dismiss());};
       page.once('dialog', answer);
-      await guide.getByRole('button', {name: 'Open this screen', exact: true}).click();
+      if (mode === 'guide') await guide.getByRole('button', {name: 'Open this screen', exact: true}).click();
+      else if (mode === 'brand') await page.getByRole('link', {name: 'RoadScan overview', exact: true}).click();
+      else await page.getByRole('navigation', {name: 'Main navigation'}).getByRole('button', {name: 'Map & results', exact: true}).click();
       page.removeListener('dialog', answer);
       assert.match(prompt, /running model vote/, 'leaving a selected report must warn about child work');
-      await expect(page.locator('[data-screen]')).toHaveAttribute('data-screen', accept ? 'map' : 'reports');
-      if (!accept) await page.keyboard.press('Escape');
+      await expect(page.locator('[data-screen]')).toHaveAttribute('data-screen', accept ? mode === 'brand' ? 'dashboard' : 'map' : 'reports');
+      if (!accept && mode === 'guide') await page.keyboard.press('Escape');
     }
     async function assertDrafts() {
       await expect(group).toHaveValue('draft-group'); await expect(split).toHaveValue('val');
@@ -58,6 +62,12 @@ export async function checkReportWorkGuard(browser, origin, report, expect) {
     }
     await page.getByRole('button', {name: 'Run model vote', exact: true}).click();
     await expect.poll(() => voteCount).toBe(1);
+    let sameScreenPrompt = false;
+    const unexpected = async dialog => {sameScreenPrompt = true; await dialog.dismiss();};
+    page.once('dialog', unexpected);
+    await page.getByRole('navigation', {name: 'Main navigation'}).getByRole('button', {name: /Review queue/}).click();
+    page.removeListener('dialog', unexpected);
+    assert.equal(sameScreenPrompt, false, 'the current screen is a harmless no-op');
     await leaveReport(false);
     await expect(page.getByRole('button', {name: 'Models are comparing…', exact: true})).toBeDisabled();
     await assertDrafts();
@@ -68,6 +78,14 @@ export async function checkReportWorkGuard(browser, origin, report, expect) {
     await assertDrafts();
     await expect(page.locator('.vote-model-results > div')).toHaveCount(2);
     assert.equal(voteCount, 1, 'guide actions never run another vote');
+    await page.getByLabel('Inspector note', {exact: true}).fill('unsaved synthetic review');
+    await page.getByRole('navigation', {name: 'Main navigation'}).getByRole('button', {name: 'Map & results', exact: true}).click();
+    await expect(page.locator('[data-screen]')).toHaveAttribute('data-screen', 'reports');
+    await expect(page.getByLabel('Inspector note', {exact: true})).toHaveValue('unsaved synthetic review');
+    await expect(page.locator('.alert.success')).toContainText('unsaved review changes');
+    await page.getByRole('link', {name: 'RoadScan overview', exact: true}).click();
+    await expect(page.locator('[data-screen]')).toHaveAttribute('data-screen', 'reports');
+    await page.getByLabel('Inspector note', {exact: true}).fill('');
     await leaveReport(true);
     await page.getByRole('navigation', {name: 'Main navigation'}).getByRole('button', {name: /Review queue/}).click();
     await expect(group).toHaveValue('saved-group'); await expect(split).toHaveValue('train');
@@ -82,6 +100,6 @@ export async function checkReportWorkGuard(browser, origin, report, expect) {
     releaseVote();
     assert.deepEqual(writes, Array.from({length: 2}, () => ({method: 'POST', path: `/api/reports/${report.id}/vote`})), 'only the two explicit synthetic vote clicks make requests; no model activation or training submission');
     assert.deepEqual(errors, []);
-    console.log('PASS: report guard preserves running/completed votes, model choices and training fields on Cancel; Continue intentionally discards child state and aborts a running vote.');
+    console.log(`PASS: report guard (${mode}, ${width}px) preserves running/completed votes, choices/training edits on Cancel; Continue intentionally discards/aborts; sidebar/brand protect review drafts; current-screen click is harmless.`);
   } finally {releaseVote?.(); await context.close();}
 }

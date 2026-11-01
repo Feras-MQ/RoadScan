@@ -112,7 +112,6 @@ export default function WebsiteGuide({lang, screen, hasReport, onNavigate}: Prop
         {notice && <p className="website-guide-notice" role="alert">{notice}</p>}
         <h3>{tx('For this screen', 'لهذه الشاشة')}</h3>
         <div className="website-guide-topics">{guideTopics.filter(item => item.screen === screen).map(item => <button key={item.id} onClick={() => selectTopic(item)}>{copy(item.title)}</button>)}</div>
-        {screen === 'learning' && <p>{tx('For learning and approval, follow the instructions on that screen. This guide covers the tasks below.', 'للتعلم والاعتماد، اتبع التعليمات المعروضة في تلك الشاشة. يغطي هذا الدليل المهام أدناه.')}</p>}
         <h3>{tx('All topics', 'كل المواضيع')}</h3>
         <div className="website-guide-topics">{guideTopics.map(item => <button key={item.id} aria-pressed={topic?.id === item.id} onClick={() => selectTopic(item)}>{copy(item.title)}</button>)}</div>
       </div>

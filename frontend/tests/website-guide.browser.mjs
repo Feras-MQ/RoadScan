@@ -6,6 +6,7 @@ import {readFile, mkdir} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {checkReportWorkGuard} from './guide-report-work.browser.mjs';
+import {checkVideoNavigation} from './video-navigation.browser.mjs';
 const {chromium} = await import(process.env.ROADSCAN_PLAYWRIGHT_MODULE || 'playwright');
 const {expect} = await import(process.env.ROADSCAN_PLAYWRIGHT_EXPECT || 'playwright/test');
 const dist = path.resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
@@ -26,6 +27,7 @@ const server = createServer(async (req, res) => {
       : url.pathname === `/api/reports/${report.id}` ? report
       : url.pathname === `/api/reports/${second.id}` ? second
       : url.pathname.endsWith('/audit') ? {items: []}
+      : url.pathname === '/api/training' ? {approved: 1, stale: 0, counts: {train: 1, val: 0, test: 0}, can_export: true}
       : url.pathname === '/api/models' ? {items: [], available: false, can_manage: false, active_id: null} : null;
     res.writeHead(data ? 200 : 404, {'Content-Type': 'application/json'}); res.end(JSON.stringify(data || {detail: 'No fixture for this endpoint'})); return;
   }
@@ -57,6 +59,9 @@ try {
   await expect(page.locator('#website-guide-title')).toBeFocused();
   for (let i = 0; i < 18; i++) {await page.keyboard.press('Tab'); assert.ok(await guide.evaluate(el => el.contains(document.activeElement)));}
   const beforeQuestion = requests.length;
+  await guide.getByLabel('What would you like to do?').fill('how do I upload a video');
+  await guide.getByRole('button', {name: 'Find steps'}).click();
+  await expect(guide.locator('h3#website-guide-topic')).toHaveText('Analyze a video');
   await guide.getByLabel('What would you like to do?').fill('how do I compare models?');
   await guide.getByRole('button', {name: 'Find steps'}).click();
   await expect(guide.locator('h3#website-guide-topic')).toHaveText('Compare models');
@@ -113,6 +118,16 @@ try {
   await expect(page.getByAltText('Selected road photo', {exact: true})).toBeVisible();
   await launch(); await topic('Connection and model settings'); await navigate(); await screen('settings');
   await expect(page.locator('#guide-settings')).toHaveClass(/website-guide-highlight/);
+  await launch();
+  await guide.getByLabel('What would you like to do?').fill('download the training examples');
+  await guide.getByRole('button', {name: 'Find steps'}).click();
+  await expect(guide.locator('#website-guide-topic')).toHaveText('Download training examples');
+  page.once('dialog', dialog => dialog.accept()); await navigate(); await screen('learning');
+  await expect(page.locator('#guide-learning')).toHaveClass(/website-guide-highlight/);
+  await expect(page.getByRole('button', {name: 'Export approved dataset', exact: true})).toBeEnabled();
+  assert.ok(!requests.some(request => request.path.endsWith('/export')), 'the guide opens Learning without downloading');
+  page.once('dialog', dialog => dialog.accept());
+  await page.getByRole('navigation', {name: 'Main navigation'}).getByRole('button', {name: 'Settings', exact: true}).click();
   await page.getByRole('button', {name: 'Switch to Arabic'}).click();
   await page.setViewportSize({width: 390, height: 844});
   await page.getByRole('button', {name: 'دليل الموقع', exact: true}).click();
@@ -154,7 +169,10 @@ try {
   await expect(offlinePage.locator('[data-screen]')).toHaveAttribute('data-screen', 'settings');
   await expect(offlinePage.getByRole('heading', {name: 'Connect your workspace', exact: true})).toBeVisible();
   await offline.close();
-  await checkReportWorkGuard(browser, origin, report, expect);
-  console.log(JSON.stringify({result: 'PASS', coverage: 'EN/AR desktop/mobile; typed questions; fallback; all destinations; keyboard/focus; back/close/reopen; highlight cleanup; unsaved review guard; existing report-switch guard; pending photo preserved; guide actions do not submit; report-work regression uses two explicit mocked vote clicks', requests: requests.length, artifacts}, null, 2));
+  for (const width of [1440, 390]) for (const mode of ['guide', 'sidebar', 'brand']) {
+    await checkReportWorkGuard(browser, origin, report, expect, mode, width);
+    await checkVideoNavigation(browser, origin, expect, mode, width);
+  }
+  console.log(JSON.stringify({result: 'PASS', coverage: 'EN/AR desktop/mobile; typed questions; fallback; all destinations; keyboard/focus; back/close/reopen; highlight cleanup; unsaved review guard; existing report-switch guard; pending photo preserved; guide actions do not submit; guard scenarios use explicit mocked vote/video requests', requests: requests.length, artifacts}, null, 2));
   await context.close();
 } finally {await browser?.close(); await new Promise(resolve => server.close(resolve));}
