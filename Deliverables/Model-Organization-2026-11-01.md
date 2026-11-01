@@ -12,7 +12,7 @@ This is a reversible documentation recommendation, not a change to the running s
 - **Support:** DINOv2 for visual matching; never present it as a road-damage detector.
 - **Research archive:** retain every other unique research weight with source/configuration, results, checksums, notices and lineage. Archiving here means intended organization, not moving or deleting installed files. Keep original packages and their restoration/import mapping by full hash.
 
-The reviews agreed on Main and Compact, preserving research weights and retaining DINOv2. Dot initially preferred the original baseline as a third everyday option; Ahmed's review preferred experimental Road v1. The organization above is the coordinating synthesis, not a claim of unanimous preference for a third model. The review evidence is recorded in repository PR 1, comments 6561054223 and 6561265109.
+This organization is the joint recommendation of Dot and Ahmed's Claude, confirmed in repository PR 1, comment 6561418345, on 1 November 2026 at 17:31:50 UTC. The reviews initially proposed different third everyday options; the agreed plan uses two defaults with separate Experimental and Baseline / Advanced groups. Earlier review evidence is in comments 6561054223 and 6561265109. The agreement concerns organization and preservation, not a performance ranking or implemented library changes.
 
 | Catalog key | Proposed display alias | Intended group |
 |---|---|---|

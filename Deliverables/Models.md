@@ -14,7 +14,7 @@ Use the [complete naming and organization guide](Model-Organization-2026-11-01.m
 - **Support:** DINOv2 visual matching, outside the detector selector.
 - **Research archive:** other unique weights with provenance and restoration mapping.
 
-These are proposed display aliases and intended categories. No selector filtering, model activation, stable-ID rename, file move or deletion is implemented by this documentation. Main was selected in the last inspected historical configuration; the present runtime was not verified. The recommendation is not a new performance ranking or a claim of unanimous reviewer preference.
+These are proposed display aliases and intended categories. No selector filtering, model activation, stable-ID rename, file move or deletion is implemented by this documentation. Main was selected in the last inspected historical configuration; the present runtime was not verified. This joint recommendation concerns organization and preservation, not a new performance ranking. The [organization guide](Model-Organization-2026-11-01.md) records the confirmed reviewer agreement.
 
 ## Distinguish the released road fine-tunes
 
