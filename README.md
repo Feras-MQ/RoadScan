@@ -154,7 +154,7 @@ Detailed guides: [live recognition and models](docs/LIVE_AND_MODELS.md), [learni
 
 ## Model access
 
-See [Models](Deliverables/Models.md) for the current 22 weights, hashes, license conditions and publication status; the older 19-weight inventory is a dated snapshot. Use [this repository’s Issues](https://github.com/Feras-MQ/RoadScan/issues) for support, provenance or licensing questions.
+See [Models](Deliverables/Models.md) for the current 22 weights, hashes, license conditions and publication status; the [CSV/JSON catalog](Deliverables/public-model-inventory.json) now includes all 22 verified identities, with [two peer-reported additions and proposed organization](Deliverables/Model-Organization-2026-11-01.md) kept distinct. Use [this repository’s Issues](https://github.com/Feras-MQ/RoadScan/issues) for support, provenance or licensing questions.
 
 Model weights are supplied separately from source code. The full common-set comparison remains incomplete; there is no verified universal top-five ranking. Only import trusted checkpoints with compatible road-damage classes. Generic COCO models are not road-damage-trained models.
 

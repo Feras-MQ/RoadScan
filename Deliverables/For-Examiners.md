@@ -23,7 +23,7 @@ The PDF stands alone if there is no live presentation. If the official ten-minut
 - [Project report — DOCX](RoadScan-Project-Report.docx) / [PDF](RoadScan-Project-Report.pdf): dated 27 October, 18-page PDF; read the current supplement alongside it; Word pagination remains unverified.
 - [Presentation — PPTX](RoadScan-Presentation.pptx) / [PDF](RoadScan-Presentation.pdf): refreshed 31 October, seven main slides plus five appendices.
 - [Submission audit](Submission-Audit-2026-10-30.md): evidence and remaining hand-in checks.
-- [Current model matrix](Model-Release-Matrix-2026-10-30.md) / [JSON](Model-Release-Matrix-2026-10-30.json): 22 checkpoint identities and provenance; [original CSV inventory](public-model-inventory.csv) is historical.
+- [Current model matrix](Model-Release-Matrix-2026-10-30.md) / [JSON](Model-Release-Matrix-2026-10-30.json): 22 checkpoint identities and provenance; [current CSV inventory](public-model-inventory.csv) includes all 22 locally verified weights. [Organization and peer evidence](Model-Organization-2026-11-01.md) records two additional identities without claiming local byte verification.
 - [Validation status](Validation-Status.md): verified checks and current limits.
 - [Application source](../roadscan/) / [tests](../tests/) / [research scripts](../tools/).
 

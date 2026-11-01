@@ -1,0 +1,50 @@
+{
+  "date": "2026-11-01",
+  "scope": "Two peer-reported additional checkpoint identities; excluded from the 22 locally byte-verified rows in public-model-inventory.json.",
+  "verification": "Reported metadata only. No independent checkpoint download, hash verification, model loading or inference in this review.",
+  "public_evidence": {
+    "repository": "Feras-MQ/RoadScan",
+    "pull_request": 1,
+    "comment_id": 6561054223
+  },
+  "models": [
+    {
+      "id": "d66e7ddacc35",
+      "sha256": "d66e7ddacc35383055e421b1b4b9d18fbecc3d228b519be028f9fe6455c627bc",
+      "bytes": 263739626,
+      "reported_filename": "last.pt",
+      "recommended_display_name": "RT-DETR L · Final saved checkpoint · E70 (peer-reported)",
+      "recommended_organization": "research_archive",
+      "reported_architecture": "RT-DETR L",
+      "input_resolution": null,
+      "app_model_id": null,
+      "public_url": null,
+      "availability": "not_verified",
+      "run_evidence": "Peer reports same run as b636269a303539174ab208d125ab60de149fe832c4fda7aa4c25c8f109b45b60; embedded epoch 69 and 70 results rows of 200 planned. Stop reason unknown.",
+      "limitations": [
+        "Exact occurrence and bytes not independently verified here.",
+        "Same-run evidence does not make last.pt identical to best.pt.",
+        "No publication/redistribution clearance inferred."
+      ]
+    },
+    {
+      "id": "02ab48febc4e",
+      "sha256": "02ab48febc4e18b830a7acf4af02746f300e17dffb537025da1227849c03ed48",
+      "bytes": 52039250,
+      "reported_filename": "yolo8m_183epochs.pt",
+      "recommended_display_name": "YOLOv8m · 183-labelled variant (peer-reported)",
+      "recommended_organization": "research_archive",
+      "reported_architecture": "YOLOv8m",
+      "input_resolution": null,
+      "app_model_id": null,
+      "public_url": null,
+      "availability": "not_verified",
+      "run_evidence": "183epochs is a filename label only; embedded epoch -1. Trainer, split, arguments and results unavailable.",
+      "limitations": [
+        "Exact occurrence and bytes not independently verified here.",
+        "Do not treat the filename as verified completed epochs.",
+        "No publication/redistribution clearance inferred."
+      ]
+    }
+  ]
+}

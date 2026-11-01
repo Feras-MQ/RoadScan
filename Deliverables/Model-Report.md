@@ -203,7 +203,7 @@ Earlier application diagnostics used three warm requests on one synthetic image 
 
 Release authorization, asset terms and tested behavior are separate
 
-All 19 original weights are authorized for publication; no ranking or top-five privacy restriction remains. The following asset-specific preparation status is dated 28 October 2026 and may change. Check the [live model inventory](public-model-inventory.json) and [model availability](Models.md) for current downloads and remaining conditions.
+All 19 original weights are authorized for publication; no ranking or top-five privacy restriction remains. The following asset-specific preparation status is dated 28 October 2026 and may change. Check the [current model inventory](public-model-inventory.json) and [model availability](Models.md) for current downloads and remaining conditions.
 
 | Asset group | Release route / remaining condition |
 | --- | --- |
@@ -243,7 +243,7 @@ Submission deadline: 31 October 2026
 
 | Reference | What it supports |
 | --- | --- |
-| [Model CSV](public-model-inventory.csv) / [JSON](public-model-inventory.json) | All 19 identities, full hashes, exact bytes, roles and asset-specific publication conditions. |
+| [Model CSV](public-model-inventory.csv) / [JSON](public-model-inventory.json) | Current inventory expanded to 22 verified identities; this report retains its dated 19-weight analysis. Full hashes, exact bytes, roles and publication conditions. |
 | [Detector map](detector-config-provenance-map.json) | All 16 detector class maps, original input sizes, available configurations and explicit provenance gaps. |
 | [Team models and results](Team-Models-and-Results.md) | Reported data counts, supplied detection results, E1-E5, leakage, thresholds and prior CPU diagnostics. |
 | [Validation status](Validation-Status.md) | Verified software behavior and unfinished model/field evaluation. |
