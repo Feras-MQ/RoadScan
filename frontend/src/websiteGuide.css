@@ -1,4 +1,5 @@
 .website-guide-launcher{position:fixed;inset-inline-end:20px;bottom:20px;z-index:30;display:flex;align-items:center;gap:9px;padding:13px 18px;border:1px solid #38504a;border-radius:30px;background:#172e29;color:#f1f8e8;box-shadow:0 5px 24px #102b2926;font-weight:700;min-height:44px}
+.website-guide-launcher span{text-align:start}.website-guide-launcher small{display:block;font-size:11px;font-weight:400;margin-top:3px;color:#c2d7c9}
 .website-guide{position:fixed;inset: auto 20px 80px auto;margin:0;padding:0;width:440px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 110px);border:1px solid #bdcdc4;border-radius:20px;background:#f8faf6;color:#20352f;box-shadow:0 18px 70px #102b2940;text-align:start;overflow:auto}
 [dir=rtl] .website-guide{inset-inline-start:auto;inset-inline-end:20px}
 .website-guide::backdrop{background:#10221d60}

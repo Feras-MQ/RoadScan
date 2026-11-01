@@ -2,6 +2,31 @@ import {googleMapsUrl} from './reportLocation.ts';
 
 export type ReportLocation = {id:string; latitude?:number|null; longitude?:number|null; location_source?:string};
 
+export type LocationGroup = 'recorded' | 'unlocated' | 'simulated';
+export type LocationCounts = {recorded:number; simulated:number; none:number};
+
+export function readLocationCounts(value:unknown, total?:number):LocationCounts|null {
+  if (!value || typeof value !== 'object') return null;
+  const counts = value as LocationCounts;
+  const values = [counts.recorded, counts.simulated, counts.none];
+  return values.every(count => Number.isSafeInteger(count) && count >= 0) && values.reduce((sum, count) => sum + count, 0) === total ? counts : null;
+}
+
+export function mapRequestPath(page:number, group:LocationGroup, status:string, search:string, supportsLocation:boolean) {
+  const params = new URLSearchParams({size:'20', page:String(page)});
+  if (supportsLocation) params.set('location', group === 'unlocated' ? 'none' : group);
+  if (status) params.set('status', status);
+  if (search) params.set('search', search);
+  return '/api/reports?' + params;
+}
+
+/** Unknown provenance is never treated as a verified real-world position. */
+export function locationGroup(report: ReportLocation): LocationGroup {
+  if (report.location_source === 'simulated' && googleMapsUrl(report.latitude, report.longitude)) return 'simulated';
+  return ['manual', 'device_gps'].includes(report.location_source || '') && googleMapsUrl(report.latitude, report.longitude)
+    ? 'recorded' : 'unlocated';
+}
+
 /** Fit recorded coordinates into an 800×500 local coordinate view; no invented basemap. */
 export function projectLocations<T extends ReportLocation>(reports:T[]) {
   const located=reports.filter(r=>['manual','device_gps','simulated'].includes(r.location_source||'')&&googleMapsUrl(r.latitude,r.longitude)!==null);

@@ -7,6 +7,7 @@ import {fileURLToPath} from 'node:url';
 import path from 'node:path';
 import {checkReportWorkGuard} from './guide-report-work.browser.mjs';
 import {checkVideoNavigation} from './video-navigation.browser.mjs';
+import {checkMapWorkspace} from './map-workspace.browser.mjs';
 const {chromium} = await import(process.env.ROADSCAN_PLAYWRIGHT_MODULE || 'playwright');
 const {expect} = await import(process.env.ROADSCAN_PLAYWRIGHT_EXPECT || 'playwright/test');
 const dist = path.resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
@@ -162,6 +163,15 @@ try {
   await offline.route('**/*', route => route.request().url().startsWith(origin + '/') ? route.continue() : route.abort());
   const offlinePage = await offline.newPage();
   await offlinePage.goto(origin);
+  await offlinePage.getByRole('navigation').getByRole('button', {name: 'Map & results', exact: true}).click();
+  await expect(offlinePage.locator('.map-empty-state')).toContainText('Connect to see report locations');
+  await expect(offlinePage.locator('.map-marker')).toHaveCount(0);
+  await expect(offlinePage.locator('.map-filters input')).toBeDisabled();
+  const offlineHelp = offlinePage.getByRole('button', {name: 'How this map works', exact: true});
+  await offlineHelp.click();
+  await expect(offlinePage.locator('#website-guide-topic')).toHaveText('Find reports on the map');
+  await offlinePage.keyboard.press('Escape');
+  await expect(offlineHelp).toBeFocused();
   await offlinePage.getByRole('button', {name: 'Website guide', exact: true}).click();
   await expect(offlinePage.getByRole('dialog')).toBeVisible();
   await offlinePage.getByRole('dialog').getByRole('button', {name: 'Connection and model settings', exact: true}).click();
@@ -173,6 +183,7 @@ try {
     await checkReportWorkGuard(browser, origin, report, expect, mode, width);
     await checkVideoNavigation(browser, origin, expect, mode, width);
   }
+  await checkMapWorkspace(browser, origin, report, expect, artifacts);
   console.log(JSON.stringify({result: 'PASS', coverage: 'EN/AR desktop/mobile; typed questions; fallback; all destinations; keyboard/focus; back/close/reopen; highlight cleanup; unsaved review guard; existing report-switch guard; pending photo preserved; guide actions do not submit; guard scenarios use explicit mocked vote/video requests', requests: requests.length, artifacts}, null, 2));
   await context.close();
 } finally {await browser?.close(); await new Promise(resolve => server.close(resolve));}

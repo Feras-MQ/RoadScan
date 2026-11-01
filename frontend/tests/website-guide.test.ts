@@ -44,6 +44,7 @@ test('navigation accepts only curated topic IDs and never a URL or command', () 
     save: ['reports', 'review-decision'], export: ['reports', 'review-queue'],
     map: ['map', 'guide-map'], settings: ['settings', 'guide-settings'], errors: ['settings', 'guide-settings'],
     training: ['learning', 'guide-learning'],
+    'map-location': ['dashboard', 'guide-inspection'],
   };
   for (const [id, [screen, target]] of Object.entries(expected)) {
     assert.deepEqual(guideDestination(id, true), {screen, target});
@@ -54,5 +55,41 @@ test('navigation accepts only curated topic IDs and never a URL or command', () 
   for (const topic of guideTopics) {
     assert.ok(topic.title.every(Boolean));
     assert.ok(topic.steps.length >= 2 && topic.steps.every(step => step.every(Boolean)));
+  }
+});
+
+test('map questions explain missing pins and location entry without claiming GPS collection', () => {
+  for (const query of ['why are there no pins?', 'missing GPS', 'my photo has no GPS', 'لا توجد نقاط', 'الموقع مفقود']) {
+    assert.equal(matchGuideTopic(query)?.id, 'map', query);
+  }
+  for (const query of ['add a location', 'how do I add a location to a photo?', 'add GPS to my photo', 'add coordinates to a photo', 'add a location to a new photo', 'add coordinates', 'photo location', 'location source', 'إضافة الموقع', 'إضافة إحداثيات', 'إضافة موقع إلى الصورة', 'إضافة إحداثيات إلى الصورة', 'موقع الصورة', 'مصدر الموقع']) {
+    assert.equal(matchGuideTopic(query)?.id, 'map-location', query);
+  }
+  for (const query of ['add location and analyze video', 'upload photo and delete location', 'إضافة موقع وحذف البلاغ']) {
+    assert.equal(matchGuideTopic(query), null, query);
+  }
+  const map = guideTopics.find(topic => topic.id === 'map')!;
+  assert.match(map.steps.map(step => step[0]).join(' '), /no streets, routes or distance scale/);
+  const location = guideTopics.find(topic => topic.id === 'map-location')!;
+  assert.match(location.steps.map(step => step[0]).join(' '), /GPS is not extracted automatically/);
+});
+
+test('map UI labels and video-report location questions match without swallowing mixed intents', () => {
+  for (const query of ['recorded locations', 'simulated locations', 'simulation', 'no usable location',
+    'What are the recorded locations?', 'مواقع مسجلة', 'مواقع محاكاة', 'محاكاة', 'بلا موقع صالح', 'المواقع المُسجَّلة']) {
+    assert.equal(matchGuideTopic(query)?.id, 'map', query);
+  }
+  for (const query of ['where is my video report on the map', 'video report location', 'location of my video report',
+    'where are my video reports on the map?', 'video GPS', 'موقع بلاغ الفيديو', 'أين بلاغ الفيديو على الخريطة؟',
+    'وين بلاغ الفيديو في الخريطة', 'إحداثيات الفيديو']) {
+    assert.equal(matchGuideTopic(query)?.id, 'map-location', query);
+  }
+  for (const query of ['analyze video', 'upload a video', 'how do I upload a mov file', 'تحليل الفيديو', 'رفع فيديو']) {
+    assert.equal(matchGuideTopic(query)?.id, 'video', query);
+  }
+  for (const query of ['recorded locations and analyze video', 'simulation and save review',
+    'video report location and upload photo', 'where is my video report on the map and analyze video',
+    'مواقع مسجلة وتحليل فيديو', 'موقع بلاغ الفيديو وتحليل فيديو', 'حذف مواقع المحاكاة']) {
+    assert.equal(matchGuideTopic(query), null, query);
   }
 });

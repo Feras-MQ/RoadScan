@@ -8,14 +8,16 @@ type Props = {
   lang: string;
   screen: GuideScreen;
   hasReport: boolean;
+  requestedTopic?: {id: string; version: number};
   onNavigate: (screen: GuideScreen) => string | null;
 };
 
-export default function WebsiteGuide({lang, screen, hasReport, onNavigate}: Props) {
+export default function WebsiteGuide({lang, screen, hasReport, requestedTopic, onNavigate}: Props) {
   const copy = (value: readonly [string, string]) => value[lang === 'ar' ? 1 : 0];
   const tx = (en: string, ar: string) => copy([en, ar]);
   const dialog = useRef<HTMLDialogElement>(null);
   const launcher = useRef<HTMLButtonElement>(null);
+  const returnFocus = useRef<HTMLElement | null>(null);
   const heading = useRef<HTMLHeadingElement>(null);
   const answerHeading = useRef<HTMLHeadingElement>(null);
   const [open, setOpen] = useState(false);
@@ -30,9 +32,10 @@ export default function WebsiteGuide({lang, screen, hasReport, onNavigate}: Prop
     setOpen(false);
     setQuestion('');
     setNotice('');
-    launcher.current?.focus({preventScroll: true});
+    (returnFocus.current?.isConnected ? returnFocus.current : launcher.current)?.focus({preventScroll: true});
   }
   function show() {
+    returnFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : launcher.current;
     setHighlight(null);
     setTopic(null);
     setUnmatched(false);
@@ -69,12 +72,15 @@ export default function WebsiteGuide({lang, screen, hasReport, onNavigate}: Prop
     const timeout = window.setTimeout(() => setHighlight(null), 8000);
     return () => {window.cancelAnimationFrame(frame); window.clearTimeout(timeout); element.classList.remove('website-guide-highlight');};
   }, [highlight, screen]);
-  useEffect(() => {if (topic) answerHeading.current?.focus();}, [topic]);
+  useEffect(() => {if (open && topic) answerHeading.current?.focus();}, [topic, open]);
+  useEffect(() => {
+    if (requestedTopic) {show(); selectTopic(guideTopics.find(item => item.id === requestedTopic.id) || null);}
+  }, [requestedTopic]);
 
   // The native modal handles focus containment and makes the underlying workspace inert.
   return <>
     <button ref={launcher} className="website-guide-launcher" aria-haspopup="dialog" aria-expanded={open} aria-controls="website-guide" onClick={show}>
-      <BookOpen size={19}/>{tx('Website guide', 'دليل الموقع')}
+      <BookOpen size={19}/><span>{tx('Website guide', 'دليل الموقع')}<small aria-hidden="true">{tx('Steps & navigation', 'خطوات وانتقال للشاشات')}</small></span>
     </button>
     {highlight && <div className="website-guide-hint" role="status">
       <span>{tx('Highlighted where to continue. Open the guide again for steps.', 'تم تحديد مكان المتابعة. افتح الدليل مجددًا لعرض الخطوات.')}</span>
@@ -93,6 +99,8 @@ export default function WebsiteGuide({lang, screen, hasReport, onNavigate}: Prop
         <header className="website-guide-header"><h2 id="website-guide-title" ref={heading} tabIndex={-1}>{tx('Website guide', 'دليل الموقع')}</h2><button className="icon-button" aria-label={tx('Close guide', 'إغلاق الدليل')} onClick={close}><X size={20}/></button></header>
         <p id="website-guide-description">{tx('Short, curated instructions — not an AI chat. Questions stay in this panel; no reports or files are read by the guide.', 'تعليمات مختصرة ومعدّة مسبقًا، وليست محادثة ذكاء اصطناعي. تبقى الأسئلة داخل هذه اللوحة؛ لا يقرأ الدليل البلاغات أو الملفات.')}</p>
         <p className="website-guide-context">{tx('Current screen: ', 'الشاشة الحالية: ')}<strong>{copy(screenNames[screen])}</strong></p>
+        <h3>{tx('For this screen', 'لهذه الشاشة')}</h3>
+        <div className="website-guide-topics">{guideTopics.filter(item => item.screen === screen).map(item => <button key={item.id} onClick={() => selectTopic(item)}>{copy(item.title)}</button>)}</div>
         <form onSubmit={event => {event.preventDefault(); selectTopic(matchGuideTopic(question));}}>
           <label htmlFor="website-guide-question">{tx('What would you like to do?', 'ماذا تريد أن تفعل؟')}</label>
           <div className="website-guide-search"><input id="website-guide-question" value={question} onChange={event => setQuestion(event.target.value)} maxLength={300} autoComplete="off" placeholder={tx('For example: compare models', 'مثلًا: مقارنة النماذج')}/><button className="secondary" disabled={!question.trim()}>{tx('Find steps', 'عرض الخطوات')}</button></div>
@@ -110,8 +118,6 @@ export default function WebsiteGuide({lang, screen, hasReport, onNavigate}: Prop
           </section>}
         </div>
         {notice && <p className="website-guide-notice" role="alert">{notice}</p>}
-        <h3>{tx('For this screen', 'لهذه الشاشة')}</h3>
-        <div className="website-guide-topics">{guideTopics.filter(item => item.screen === screen).map(item => <button key={item.id} onClick={() => selectTopic(item)}>{copy(item.title)}</button>)}</div>
         <h3>{tx('All topics', 'كل المواضيع')}</h3>
         <div className="website-guide-topics">{guideTopics.map(item => <button key={item.id} aria-pressed={topic?.id === item.id} onClick={() => selectTopic(item)}>{copy(item.title)}</button>)}</div>
       </div>
