@@ -1,19 +1,21 @@
 # RoadScan instructor deliverables
 
-**31 October update:** [ten additional model downloads and trainer provenance](Trainer-Provenance-2026-10-31.md); the [22-model matrix](Model-Release-Matrix-2026-10-30.md) now separates twelve mirrored weights, one upstream initializer and nine individual holds. The presentation and speaker notes now reflect the 31 October model release; the report remains a dated snapshot.
+**1 November 2026:** the presentation, full technical report and Arabic revision guide below are the exact submitted files, pinned to source commit `58e7c3e494b5e1c5f2ca4d431b24d3f099003205`. The presentation and report supersede their previous current versions; earlier versions remain in Git history. See the [publication record](Submission-2026-11-01.md) for hashes and scope.
 
-**Team:** Feras Alyamani, Ahmed Salamah, Ahmed Alhejaili. **Release:** 2026-10-27.1. **Prepared:** 27 October 2026.
+**Team:** Feras Alyamani, Ahmed Salamah, Ahmed Alhejaili.
 
-Start with the report PDF and the [30 October supplement](Submission-Audit-2026-10-30.md), then the presentation. Source code is in the repository root; the report retains its dated 27 October snapshot, and the presentation was refreshed on 31 October. The [current 22-weight matrix](Model-Release-Matrix-2026-10-30.md) separates publication permission, source terms and missing evaluations for every model; the model report remains historical. The [current inventory](public-model-inventory.json) now covers all 22 verified identities; [names and organization](Model-Organization-2026-11-01.md) distinguish two additional peer-reported checkpoints.
+Start with the 25-page report PDF. The 23-page Arabic guide is supplementary study material. The final course presentation has nine main slides and three backups, with a ten-minute slot including 2.5 minutes of live demonstration. All six submitted documents are published below. The owner confirmed permission to publish the project prediction images; photo attribution and the submitted content are preserved.
+
+The [current inventory](public-model-inventory.json) covers 22 locally verified identities; [names and organization](Model-Organization-2026-11-01.md) distinguish two additional peer-reported checkpoints. Historical model reports and supplements retain their original evidence dates.
 
 | File | Contents | Status |
 |---|---|---|
-| [RoadScan-Project-Report.pdf](RoadScan-Project-Report.pdf) | Full report, results, screenshots and appendices; 18 pages | PDF visually checked |
-| [RoadScan-Project-Report.docx](RoadScan-Project-Report.docx) | Editable report | Content checked; Word pagination unverified |
-| [RoadScan-Presentation.pdf](RoadScan-Presentation.pdf) | Static presentation; 12 slides | All slide visuals checked |
-| [RoadScan-Presentation.pptx](RoadScan-Presentation.pptx) | Editable slides, diagrams and tables | Static; native PowerPoint playback unverified |
-| [Speaker-Notes.txt](Speaker-Notes.txt) | English presentation script | Seven main slides, about five minutes |
-| [Presentation-Guide.md](Presentation-Guide.md) | Timing and optional appendix/demo guidance | Current |
+| [RoadScan-Project-Report.pdf](RoadScan-Project-Report.pdf) | Final technical report; 25 pages | Exact submitted PDF, 1 November |
+| [RoadScan-Project-Report.docx](RoadScan-Project-Report.docx) | Editable final report | Exact submitted DOCX; no content changes |
+| [Arabic revision guide — PDF](Revision/RoadScan-Arabic-Revision-Guide.pdf) / [DOCX](Revision/RoadScan-Arabic-Revision-Guide.docx) | Supplementary Arabic study guide; 23-page PDF | Exact submitted files, 1 November |
+| [Presentation — PDF](RoadScan-Presentation.pdf) / [PPTX](RoadScan-Presentation.pptx) | Final twelve-slide presentation; nine main slides and three backups | Exact submitted files, 1 November |
+| [Speaker-Notes.txt](Speaker-Notes.txt) | Final English speaking text | Exact English sections from submitted notes; nine main slides and three backups |
+| [Presentation-Guide.md](Presentation-Guide.md) | Final timing and publication status | Ten minutes including 2.5 minutes live |
 | [Quick-Start.md](Quick-Start.md) | Short source-download walkthrough | Uses the verified root setup instructions |
 | [Iriun-Webcam-Guide.md](Iriun-Webcam-Guide.md) | Phone as a computer camera, permissions and automatic recognition | Official setup sources checked; physical integration unverified |
 | [Run-On-Another-Computer.md](Run-On-Another-Computer.md) | Docker setup and portable-bundle guidance | Linux x86-64 CPU checked; Mac/ARM unverified |

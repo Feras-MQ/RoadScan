@@ -1,47 +1,75 @@
-SLIDE 1 / 20 seconds
-Road damage needs a reviewable record before it can support a maintenance decision. RoadScan connects local detection to human correction, priority support and controlled preparation of training examples. Our contribution is that complete inspection workflow. This remains a capstone prototype, rather than structural safety certification.
-Sources: RoadScan-Project-Report.pdf sections 1–2; OLO AIEP brief, Track A; assets/readme/overview.png, original RoadScene illustration. Team members supplied by the project owner.
+RoadScan final presentation speaking text — 1 November 2026
 
-SLIDE 2 / 50 seconds
-The browser accepts photos, a camera or video. App.tsx and LiveRecognition.tsx call FastAPI in api.py, which checks access, input size and image dimensions. ModelRuntime in model_library.py selects the checkpoint, while inference.py runs local detection. There are two paths. Temporary recognition returns boxes without saving a report. Explicit report creation stores the image, initial prediction and a reviewable record. Review and workflow modules validate corrections and status changes, retaining audit history in SQLite. Approved examples can enter a training export. Keeping these boundaries separate avoids turning every live camera frame into permanent project data.
-Sources: roadscan/api.py:136,151,280; model_library.py:220; inference.py:78; core.py; review.py; workflow.py; training_data.py; frontend/src/App.tsx and LiveRecognition.tsx. Diagram is native editable slide objects.
+These English speaking sections are copied without editorial changes from the submitted twelve-slide presentation. Slides 1–9 are the main talk; 10–12 are backups. The ten-minute plan includes a 150-second live demonstration on slide 8. Rehearsal timing remains unmeasured.
 
-SLIDE 3 / 45 seconds
-This is the real review interface with private road imagery excluded. A reviewer checks the detection boxes, corrects them and records a decision. Model comparison runs two or three checkpoints sequentially and keeps their individual outputs visible. A majority is one suggestion. If the third model is more credible, the reviewer can choose that model instead. The choice only replaces draft boxes until the review is explicitly saved. Priority provides a transparent triage aid. It cannot infer physical crack depth or certify whether a road is safe from one photograph.
-Sources: assets/readme/review.png, cleared screenshot; frontend/src/ModelVote.tsx:45 and App.tsx:337; roadscan/voting.py; vote_worker.py; review.py; priority.py. Screenshot shows the application controls, not an accuracy evaluation.
+RoadScan-Presentation.pptx/pdf in this repository are the exact submitted final deck and match this script. The owner subsequently confirmed team ownership and public publication permission for the two project prediction images. The earlier rights caveat retained inside the unchanged presentation is superseded by the publication record. The Arabic revision guide contains supplementary explanations and questions.
 
-SLIDE 4 / 55 seconds
-We retained nineteen unique weight files, including sixteen road detectors. The baseline used eight thousand training images, a separate Czech validation set of one thousand, and a US test set of one thousand. The team reports twenty-six thousand eight hundred sixty-nine RDD training images plus roughly fourteen thousand external images for its main run. That total is approximate. The table preserves each experiment’s scope. The main YOLO26 result and RT-DETR validation score cannot establish a universal winner against the baseline’s US holdout. The team also reported near-duplicate leakage. A complete shared benchmark and labeled Saudi test set are still needed.
-Sources: Deliverables/Model-Report.md sections 01–03; Model-Inventory.json; baseline training records and held-out metrics; supplied teammate E1/main results; saved RT-DETR-L validation. mAP50 is mean AP at IoU 0.5; mAP50–95 averages stricter overlap thresholds. Scores rounded from original records, not newly measured.
+Source code snapshot: 58e7c3e494b5e1c5f2ca4d431b24d3f099003205
 
-SLIDE 5 / 45 seconds
-For a laptop, USB camera or Iriun phone camera, live recognition analyzes fresh frames automatically and shows an overlay. It samples at the pace the detector can sustain. For an uploaded file, Analyze every frame is different. The video module decodes frames sequentially and waits for inference before continuing. A busy response retains the same frame for retry, and completion checks available metadata. This improves decoded-frame coverage, but it can take longer than the video’s playback duration. Heavy models such as RT-DETR may be unsuitable for responsive CPU viewing. Saving a selected frame remains an explicit action.
-Sources: frontend/src/LiveRecognition.tsx; liveFrames.ts; FullVideoAnalysis.tsx:34; roadscan/video_analysis.py:93; api.py video-analysis routes. Hardware-specific sustained frame rate and drone integration remain unverified.
+SLIDE 1
+MAIN TALK — target 25 seconds. Rehearsal timing remains unmeasured.
 
-SLIDE 6 / 40 seconds
-A saved review does not teach the active model instantly. First, the reviewer corrects the boxes, confirms the report and approves the example. The Learning screen exports approved images, labels, split information and provenance. A trainer prepares that export for a separate training run, evaluates the new checkpoint on unused test data and imports it through the model library. The current export needs dataset-layout preparation for the training runner, so we do not claim one-click retraining. This deliberate boundary keeps an incorrect review from silently changing a model during a demonstration.
-Sources: assets/readme/learning.png; TrainingApproval.tsx; Learning.tsx; roadscan/training_data.py:40,78; detector_train.py:71; ModelLibrary.tsx:49. Export images/train layout requires preparation for the runner’s train/images expectation.
+A pothole can be obvious. Smaller cracks can be much harder to notice in a road image. Taking a photo is a useful start, but someone still needs to look closely, identify what needs attention, and record the decision. That is the starting point for RoadScan.
 
-SLIDE 7 / 45 seconds
-The recorded release checks passed two hundred twenty-one backend tests, twenty-four frontend tests and sixty-seven browser checks. One optional backend test was skipped. These establish software behavior, not detection accuracy. Our delivery includes source code, reports, guides and eleven published road detectors, DINOv2 and their source or license companions. The remaining research work is concrete: collect labeled Saudi road images and real repeated-damage pairs, repair data leakage, compare models on the same test and measure camera latency on representative hardware. RoadScan provides a working, inspectable foundation for that work, with human review central to the workflow.
-Sources: Deliverables/Validation-Status.md; For-Examiners.md; Model-Report.md; GitHub-Publication-Verification.json; Baseline-Publication-Verification.json. These are previously recorded release tests, not a claim that the tests were rerun while authoring this presentation. Repository: https://github.com/Feras-MQ/RoadScan; model resources: releases/tag/model-resources-2026-10-28.
+SLIDE 2
+MAIN TALK — target 35 seconds. Rehearsal timing remains unmeasured.
 
-SLIDE 8 / appendix
-The current matrix records twenty-two unique local weight files, including nineteen road detectors. Eleven road detectors and DINOv2 are downloadable from our release. The stock COCO initializer links upstream. Eight older detectors and the ResNet18 classifier remain on individual publication holds. Road v1, Road A and Road v2b are experimental. Their shared-video selection evidence is not an independent test, and the Main model remains the default. Two additional filenames named by the trainer have not been located and are excluded from this inventory. Published downloads passed anonymous full-SHA256 and size verification. These integrity checks do not establish model accuracy.
-Sources: Deliverables/Model-Release-Matrix-2026-10-30.md, updated 31 October; Trainer-Provenance-2026-10-31.md; Trainer-Byte-Reconciliation-2026-10-31.json; model-resources-2026-10-28 release. Inventory and publication status as of 31 October 2026.
+Meet RoadScan. You upload a road photo. A trained detector suggests where damage may be. Then a person checks the result, corrects it, and saves the review. These three steps are the core of the project: upload, detect and review. AI helps point out what to inspect; the person keeps the final decision.
 
-SLIDE 9 / appendix
-The live endpoint bounds input bytes and decoded pixels, marks the result as not persisted and closes the decoded image. The model-vote callback updates draft boxes and marks them edited. It does not save the review automatically. These excerpts illustrate the boundaries, rather than presenting the full implementation.
-Sources: roadscan/api.py:139–148; frontend/src/App.tsx:337, exact callback statements and interface message. Comment “Response excerpt” is a presentation annotation.
+SLIDE 3
+MAIN TALK — target 50 seconds. Rehearsal timing remains unmeasured.
 
-SLIDE 10 / appendix
-The repository README contains the setup commands. Keep the local token private and retain the Docker data volume to preserve reports. Import trusted model files through Settings, then verify the Active label before testing. A road detector is required for road-damage boxes. The baseline, seven RunPod detectors and three experimental road fine-tunes have downloadable weights and source companions on the model-resources release. Rename fine-tune files to their documented distinct labels before fresh imports. Full fresh-machine download-to-inference acceptance remains unverified. Physical drone integration and Mac/ARM setup have not been verified.
-Sources: README.md Quick start Windows; Deliverables/Run-On-Another-Computer.md; Iriun-Webcam-Guide.md; https://github.com/Feras-MQ/RoadScan/releases/tag/model-resources-2026-10-28.
+These are saved predictions from our Main YOLO26s model on two road images in the project. The boxes show where it suggested cracks or potholes. We have kept every box from the supplied scorecard, including the dashed boxes it flagged as false alarms. The examples also contain missed damage. That makes the model's role clear: it gives the reviewer a starting point, rather than a final verdict. These selected examples show the kind of output the model produces. They are not a new accuracy test. Next, we will explain how the Main model and the road variants developed.
 
-SLIDE 11 / appendix
-This appendix is a presenter checklist rather than additional five-minute narration. Use a permitted road image for a live demonstration, clearly label any synthetic sample, and avoid exposing private locations or tokens. If the detector or camera is unavailable, show the cleared screenshots and distinguish saved evidence from a live test. For model questions, consult the complete model report rather than compressing several datasets into one accuracy number.
-Sources: Deliverables/For-Examiners.md; Model-Report.md; Validation-Status.md; cleared screenshot assets. No claimed drone flight or measured Saudi-road performance.
+SLIDE 4
+MAIN TALK — target 45 seconds. Rehearsal timing remains unmeasured.
 
-SLIDE 12 / appendix
-This appendix maps the supplied experiments to the project brief. E1 compares image classification with detection, which requires different metrics. E2 studies detector size and resolution. E3 includes augmentation ablations. E4 studies country shift and later road adaptation, but reported near-duplicate leakage and shared-video selection prevent independent field-accuracy claims. E5 compares duplicate representations in simulations. The replacement DINOv2 and FAISS matcher exists, but real same-damage and different-damage pairs still need calibration and evaluation. Collect forty to eighty labeled local test photos without adding them to training. Suggested speaking handoff: Feras presents slides one and two, Ahmed Salamah three and four, and Ahmed Alhejaili five through seven. This is a suggested presentation rotation, not an attribution of individual implementation work.
-Sources: Deliverables/Submission-Audit-2026-10-30.md; RoadScan-Project-Report.pdf sections E1 through E5; Model-Release-Matrix-2026-10-30.md; OLO AIEP Track A brief. Trainer evidence clarifies the ResNet18 initializer as IMAGENET1K_V1; publication terms and original run reproduction remain separate unresolved issues.
+We explored more than one detector family. The project includes YOLO11 nano, small and medium; YOLOv8 medium; and YOLO26 nano and small. We also explored RT-DETR L and X, which use a transformer-based detector design. ResNet18 is a separate image-level baseline: it predicts which damage types are present but does not locate them. The current inventory records 19 detector choices across models and training variants. That is an inventory count, not 19 fair head-to-head tests. The model engineering story here focuses on YOLO26s Main and its later Road fine-tunes.
+
+SLIDE 5
+MAIN TALK — target 65 seconds. Rehearsal timing remains unmeasured.
+
+We started with pretrained YOLO detectors and adapted them to road damage. The recorded RDD training split contains about 27,000 images, with separate validation and test groups of 5,758 each. The work included checking the split and labels, then experimenting with model size, resolution, augmentation and label cleaning. The 640-pixel experiments favored small over nano and standard augmentation over no augmentation. Label cleaning did not improve the validation measure, so Main kept the original labels. Main used pretrained YOLO26s at 1024 pixels, with mosaic and horizontal flips rather than vertical flips. Its recorded run lasted 120 epochs and selected epoch 84 on validation. Later, Road v1, A and v2b explored further adaptation to reviewed road frames.
+
+SLIDE 6
+MAIN TALK — target 60 seconds. Rehearsal timing remains unmeasured.
+
+Main's reported Ultralytics RDD test result is 63.04 percent mAP50 and 33.01 percent at the stricter mAP50–95 measure. These measure box detection across four damage classes, not the percentage of photos that are correct. The smaller experiments helped us understand the choices: at 640 pixels, small scored above nano, and standard augmentation scored above no augmentation. Main also used 1024-pixel input and other training choices; its exact external-data exposure is unresolved, so we cannot attribute its result to one change. The source audit found near-duplicate leakage, and these historical scores have not been independently rerun. That is why predictions still need review.
+
+SLIDE 7
+MAIN TALK — target 55 seconds. Rehearsal timing remains unmeasured.
+
+Detection is useful only if the result can be checked. The reviewer looks at the whole image, removes a wrong box, changes a label or adds something the model missed. These are the actual decision controls. In this example, the pothole annotation was manual and no inference was run. The screenshot shows the editing stage, with unsaved changes. The note was saved afterward in the demonstration workspace. A reviewer can also compare model opinions and choose an individual result before saving. Agreement does not guarantee correctness. The point is to make the human review explicit, instead of treating the first set of boxes as the final answer.
+
+SLIDE 8
+MAIN TALK — 85 seconds explanation + 150 seconds live demonstration; target 235 seconds total. Rehearsal timing remains unmeasured.
+
+The full system goes beyond drawing boxes. A selected detector returns damage classes, locations and confidence. A documented formula combines type, relative box area, count and confidence into a priority score. That score helps order a review queue; it is not measured pavement severity. The optional duplicate branch crops damage, makes DINOv2 embeddings and searches nearby open reports with FAISS. It offers candidates, never an automatic merge. The implementation is present, but the optional FAISS path was not accepted end to end in the latest checks and its threshold remains uncalibrated. We must say that plainly rather than imply every branch is proven.
+
+LIVE DEMO CUE — reserve 2.5 minutes; leave the slides and use the actual app.
+Ask the panel to choose an unseen road image. Confirm the intended model is active before the demonstration. Upload the image, show actual boxes/classes/confidence, then explain the priority components and review the result. Save only after the reviewer confirms. Show its queue position. If a second view and the optional duplicate dependencies are available, inspect the actual candidate list and similarity score; otherwise state the unavailable branch rather than substituting a prepared screenshot. Missing or simulated coordinates must be labeled. Do not call a stored screenshot a live demo, do not claim an unseen-input pass before it happens, and do not change the finished videos. Budget: first image and detection55sec, priority/review/save45sec, second view/duplicate status and queue50sec. If inference fails, show the real error and clearly identify any recorded backup as a fallback.
+
+SLIDE 9
+MAIN TALK — target 30 seconds. Rehearsal timing remains unmeasured.
+
+RoadScan connects damage detection with a decision a person can inspect and correct. Main's reported RDD results are promising, but we still need a protected local road test and real duplicate-pair calibration. The next step is to collect and label that evidence, test without tuning on it, and use the failures to guide further development.
+
+SLIDE 10
+BACKUP — outside the ten-minute presentation and live demo.
+
+Road fine-tunes use the same 343-frame selection set: Road v1 46.74/31.26%; Road A 46.80/28.98%; Road v2b 48.61/29.37% (mAP50/mAP50–95). Main 63.04/33.01% is a separate team-reported RDD protocol. These are not a shared independent ranking.
+
+SLIDE 11
+BACKUP — optional map and curated guide; outside the ten-minute presentation and live demo.
+
+After the review, the report should be easy to find again. Search and filters help locate it, and the coordinate view offers another route when a location has been supplied. These are example coordinates entered manually in an isolated demonstration, not verified field GPS. The map links back to the report and its review; it does not verify GPS. The help panel explains the steps in English or Arabic and can point the user to the right screen. Its instructions are written in advance, not generated by an AI assistant. Together, the report list, coordinate view and guide help a user return to the evidence without pretending that a pin is proof.
+
+SLIDE 12
+BACKUP — outside the ten-minute presentation and live demo.
+
+E1 asks what localization adds to image-level classification. E2 explores detector size and resolution; E3 explores augmentation and labels. E4 exposes country shift, and E5 compares retrieval representations on simulated repeat observations. These rows have separate metrics and populations, so they are not a common ranking. The Main and Road test/selection distinction remains essential.
+
+PHOTO CREDIT FROM SUBMITTED NOTES
+Frankie Fouganthin, “Pothole in an asphalt pavement”. Source: https://commons.wikimedia.org/wiki/File:Pothole_in_an_asphalt_pavement.jpg
+License: CC BY-SA 4.0 — https://creativecommons.org/licenses/by-sa/4.0/
+Adaptation: display crop and resizing. Photo adaptations remain CC BY-SA 4.0. The real pothole photo appears only on the opening slide in the main story.

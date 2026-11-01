@@ -1,30 +1,26 @@
-# RoadScan — demonstration and evidence
+# RoadScan demonstration and evidence
 
-Team: Feras Alyamani, Ahmed Salamah, Ahmed Alhejaili. Prepared release: 2026-10-27.1.
+Team: Feras Alyamani, Ahmed Salamah, Ahmed Alhejaili. Submitted documents: 1 November 2026. Source snapshot: `58e7c3e494b5e1c5f2ca4d431b24d3f099003205`.
 
-Read the [30 October supplement](Submission-Audit-2026-10-30.md) with the dated report and refreshed 31 October deck: three additional experimental detectors are locally available, bringing the inventory to 22 unique weights. The baseline's published download and remaining per-weight conditions are in the [current matrix](Model-Release-Matrix-2026-10-30.md).
+Start with the [25-page technical report](RoadScan-Project-Report.pdf) or its [editable DOCX](RoadScan-Project-Report.docx). These replace the previous current report. The [Arabic revision guide PDF](Revision/RoadScan-Arabic-Revision-Guide.pdf) and [DOCX](Revision/RoadScan-Arabic-Revision-Guide.docx) are supplementary study materials, not substitutes for the full report.
 
-## Five-minute presentation
+## Presentation and demonstration
 
-Use slides 1–7 for the main story and 8–12 for optional questions; see [Presentation-Guide.md](Presentation-Guide.md) for timings and [Speaker-Notes.txt](Speaker-Notes.txt) for the script.
+The final course plan has nine main slides and three backups. The ten-minute slot includes 2.5 minutes of panel-chosen live input; see [the final PDF](RoadScan-Presentation.pdf), [editable PPTX](RoadScan-Presentation.pptx), [timing guide](Presentation-Guide.md) and [approved English speaking text](Speaker-Notes.txt). The deck bytes match the submitted package; team ownership and public publication permission for its two project prediction images were subsequently confirmed.
 
-The PDF stands alone if there is no live presentation. If the official ten-minute presentation/demo slot is used, expand the experiment appendix and add a rehearsed demonstration. Rehearse the actual camera and presentation files beforehand; native PowerPoint animation/playback is unverified and the delivered deck is static.
+## Evidence boundaries
 
-## Defensible answers
+- Main's 63.04% mAP50 and 33.01% mAP50–95 are supplied historical RDD results, with reported near-duplicate leakage; they are not independently reproduced field accuracy.
+- Road fine-tune scores use a 343-frame selection set reused for checkpoint and threshold choices, with overlapping video groups. They do not support a common independent ranking against Main.
+- Software test counts retain their dates, commits and scopes in the report. They do not establish deployment, camera performance or model accuracy.
+- The 0–100 priority is a transparent heuristic. Crop similarity and its duplicate threshold remain uncalibrated on genuine repeat-damage pairs.
+- Human review can approve examples for export; training, evaluation and accepted-model import remain separate operations.
 
-- **63.04% mAP50 / 33.01% mAP50–95:** team-reported labeled RDD holdout results; not official leaderboard scores or independently reproduced accuracy.
-- **221 backend + 24 frontend tests passed; 67 browser checks passed:** software checks; one optional scikit-learn baseline test skipped because its dependency is absent from the app image.
-- **0–100 priority:** transparent heuristic using class, image-relative area, count and confidence/review weight; not measured depth or certified engineering severity.
-- **0.80 duplicate threshold:** experimental crop similarity within 50 m, not calibrated on real repeat-damage pairs.
-- **Human learning loop:** review > approve > export > train separately > evaluate > import accepted weights.
+## Supporting records
 
-## Files
+- [Publication record and hashes](Submission-2026-11-01.md) / [all deliverables](README.md).
+- [Model inventory](public-model-inventory.json) and [organization](Model-Organization-2026-11-01.md): 22 verified identities and two separately peer-reported identities.
+- [Model availability](Models.md), [trainer provenance](Trainer-Provenance-2026-10-31.md) and the [historical submission audit](Submission-Audit-2026-10-30.md).
+- [Application source](../roadscan/), [tests](../tests/) and [research scripts](../tools/).
 
-- [Project report — DOCX](RoadScan-Project-Report.docx) / [PDF](RoadScan-Project-Report.pdf): dated 27 October, 18-page PDF; read the current supplement alongside it; Word pagination remains unverified.
-- [Presentation — PPTX](RoadScan-Presentation.pptx) / [PDF](RoadScan-Presentation.pdf): refreshed 31 October, seven main slides plus five appendices.
-- [Submission audit](Submission-Audit-2026-10-30.md): evidence and remaining hand-in checks.
-- [Current model matrix](Model-Release-Matrix-2026-10-30.md) / [JSON](Model-Release-Matrix-2026-10-30.json): 22 checkpoint identities and provenance; [current CSV inventory](public-model-inventory.csv) includes all 22 locally verified weights. [Organization and peer evidence](Model-Organization-2026-11-01.md) records two additional identities without claiming local byte verification.
-- [Validation status](Validation-Status.md): verified checks and current limits.
-- [Application source](../roadscan/) / [tests](../tests/) / [research scripts](../tools/).
-
-The PDF is the current layout-checked reference. Word is installed, but its controls could not be targeted reliably and no connected document-control session was available; DOCX pagination remains unverified.
+All six document binaries are unchanged from the submitted ZIP. Native Word/PowerPoint playback has not been newly tested during this publication pass. Finished videos and runtime data are unchanged.
