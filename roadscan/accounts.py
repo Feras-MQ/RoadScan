@@ -91,7 +91,8 @@ def update_account_file(path: str, action: str, username: str, role: str | None 
         raise ValueError('Unsupported action')
     fd, tmp = tempfile.mkstemp(prefix='.roadscan-accounts-', dir=target.parent)
     try:
-        os.fchmod(fd, 0o600)
+        if hasattr(os, 'fchmod'):  # absent on Windows before Python 3.13; there the file inherits the folder's ACL
+            os.fchmod(fd, 0o600)
         with os.fdopen(fd, 'w', encoding='utf-8') as handle:
             json.dump({'accounts': accounts}, handle, indent=2)
             handle.flush()
@@ -123,7 +124,8 @@ def rotate_account_token(path: str, username: str) -> str:
     matches[0]['token_sha256'] = token_digest(token)
     fd, temp = tempfile.mkstemp(prefix='.roadscan-accounts-', dir=target.parent)
     try:
-        os.fchmod(fd, 0o600)
+        if hasattr(os, 'fchmod'):  # absent on Windows before Python 3.13; there the file inherits the folder's ACL
+            os.fchmod(fd, 0o600)
         with os.fdopen(fd, 'w', encoding='utf-8') as handle:
             json.dump(data, handle, indent=2)
             handle.flush()

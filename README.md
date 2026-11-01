@@ -104,11 +104,11 @@ Extract `RoadScan-Ready-To-Run-2026-10-27.1.zip`, open its `RoadScan` folder and
 
 ## Stop and restart
 
-From the **same project folder**:
+From the **same project folder**, using the **same Compose project name** as setup. If your existing project name is not `roadscan`, replace `roadscan` in every `-p roadscan` command below (including rebuild and logs) with that name; see [existing-installation checks](Deliverables/Run-On-Another-Computer.md#existing-installations-preserve-your-project-name).
 
 ```powershell
-docker compose stop
-docker compose start
+docker compose -p roadscan stop
+docker compose -p roadscan start
 ```
 
 For the Ready-To-Run bundle, you can also reopen **Start-RoadScan.cmd**. Reports and imported models stay in the Docker data volume; keep that volume and your `.env`, and do **not** use `docker compose down -v` to restart or update.
@@ -122,13 +122,13 @@ For the Ready-To-Run bundle, you can also reopen **Start-RoadScan.cmd**. Reports
 | Port 8000 is already in use | Open the existing RoadScan first; stop only the conflicting workspace you own before starting another |
 | Invalid token | Run COPY_ACCESS_TOKEN.cmd from this project's folder and paste again; the presentation demo on port 18004 is a separate prepared workspace |
 | Model is not configured | Import a trusted team checkpoint and choose **Use model** |
-| Model import says detector build is required | In this local `.env`, set `ROADSCAN_WITH_DETECTOR=1` without changing the token, then run `docker compose up --build -d`; the helper deliberately preserves existing settings |
+| Model import says detector build is required | In this local `.env`, set `ROADSCAN_WITH_DETECTOR=1` without changing the token, then run `docker compose -p roadscan up --build -d`; the helper deliberately preserves existing settings |
 | Imported file is rejected | Keep the rejection reason, use a supported trusted YOLO/RT-DETR `.pt` or model ZIP, and keep the previous working model |
 | App is slow on a heavy model | Try the smaller supplied model for camera use; full video analysis deliberately waits for each frame's inference |
 | Camera is missing | Allow browser camera access and check that Iriun/USB appears as a camera on this computer |
 | Old screen after an update | Refresh the page once |
 
-Logs: `docker compose logs --tail 50 roadscan` (inspect locally; redact sensitive content before sharing).
+Logs: `docker compose -p roadscan logs --tail 50 roadscan` (inspect locally; redact sensitive content before sharing).
 
 **macOS/Linux:** use the separate [CPU Docker guide](docs/CPU_DOCKER.md); physical Mac/ARM installation remains unverified. The Windows/Docker path and isolated Linux x86-64 CPU inference have been checked; this is not a claim about every computer.
 

@@ -57,7 +57,7 @@ export default function ModelVote(props:Props) {
     props.onApply(boxes.map(box=>({...box,box:[...box.box]})));
     setEmptyConfirmed({});
   }
-  return <section className="detail-section vote-panel" style={{'--stagger': 1} as CSSProperties}>
+  return <section id="guide-model-vote" tabIndex={-1} className="detail-section vote-panel" style={{'--stagger': 1} as CSSProperties}>
     <div className="panel-heading"><div><div className="mini-label">{tx('SECOND OPINION','رأي ثانٍ')}</div><h3><GitCompareArrows size={20}/> {tx('Model voting','تصويت النماذج')}</h3></div><span className="pill">2–3 {tx('models','نماذج')}</span></div>
     <p className="muted">{tx('Compare the same saved image. Two models need agreement from both; three need two votes for the same damage type and location.','قارن الصورة المحفوظة نفسها. يحتاج نموذجان لاتفاقهما معًا؛ وتحتاج ثلاثة نماذج لصوتين لنوع الضرر وموقعه.')}</p>
     <details className="vote-picker"><summary>{tx('Choose voting models','اختيار نماذج التصويت')} · {chosen.length}/3</summary><div className="vote-options">{items.map(item=><label key={item.id}><input type="checkbox" checked={chosen.includes(item.id)} disabled={busy || (!chosen.includes(item.id)&&chosen.length>=3)} onChange={event=>setChosen(old=>event.target.checked?[...old,item.id]:old.filter(id=>id!==item.id))}/><span title={item.name}>{modelName(item.name)}<small>{item.family.toUpperCase()} · {item.sha256.slice(0,10)}</small></span></label>)}</div></details>

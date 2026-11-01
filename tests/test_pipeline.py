@@ -13,13 +13,14 @@ def test_synthetic_pipeline_smoke():
     with TestClient(app) as client:
         key={'X-API-Key':'test-secret-only'}
         b=io.BytesIO();Image.new('RGB',(120,80),'gray').save(b,'PNG')
+        before=client.get('/api/reports',headers=key).json()['total']
         r=client.post('/api/reports',files={'photo':('synthetic.png',b.getvalue(),'image/png')},headers=key)
         assert r.status_code==201,r.text
         d=r.json();assert d['inference_state']=='not_configured' and d['score'] is None and d['detections']==[]
         rid=d['id'];assert client.get('/api/reports/'+rid,headers=key).status_code==200
         assert client.get('/api/reports/'+rid+'/image',headers=key).status_code==200
         assert client.patch('/api/reports/'+rid,headers=key,json={'revision':d['revision'],'reviewer':'Test reviewer','status':'Confirmed','action':'confirm'}).status_code==200
-        assert client.get('/api/reports',headers=key).json()['total']==1
+        assert client.get('/api/reports',headers=key).json()['total']==before+1
         assert client.get('/api/mock/government/'+rid,headers=key).json()['sent'] is False
         assert client.delete('/api/reports/'+rid,headers=key).status_code==204
 
