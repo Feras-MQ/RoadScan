@@ -134,6 +134,7 @@ def _next(session, detector):
             if time.monotonic() - started_decode > 60:
                 return session.finish(False, 'decode_time_limit')
             # grab() decodes only; skipped frames are never converted to BGR (about 2x faster sampling at 4K).
+            # So a conversion-only failure on a skipped frame is not observed; a grab/decode failure still ends the run.
             if not session.capture.grab():
                 return _decoder_end(session)
             session.source_frame = session.decoded

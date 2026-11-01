@@ -204,7 +204,7 @@ class FakeCapture:
         self.grabs = self.retrieves = 0
         self.fail_retrieve_at = None
     def isOpened(self): return True
-    def release(self): pass
+    def release(self): self.released = True
     def get(self, prop):
         return {cv2.CAP_PROP_FRAME_WIDTH: 4, cv2.CAP_PROP_FRAME_HEIGHT: 4,
                 cv2.CAP_PROP_FRAME_COUNT: len(self.timestamps), cv2.CAP_PROP_FPS: self.fps,
@@ -305,6 +305,44 @@ def test_cancel_between_frames_retrieves_nothing_more(monkeypatch):
     session.cancelled.set()
     assert video._next(session, detector)['reason'] == 'cancelled'
     assert capture.retrieves == 1 and capture.grabs == 1
+
+
+def test_selected_frame_retrieve_failure_ends_sampled_run(monkeypatch):
+    capture = FakeCapture([i*40 for i in range(25)], 25)
+    capture.fail_retrieve_at = 8  # selected at 10/s: 0,3,5,8,...
+    frames, final = sample_fixture(monkeypatch, [], 25, 10, capture)
+    assert [f['source_frame'] for f in frames] == [0, 3, 5]
+    assert final['complete'] is False and final['reason'] == 'metadata_mismatch_coverage_unverified'
+    assert final['processed_count'] == 3 and final['total_frames'] is None
+
+
+def test_skipped_frame_retrieve_failure_is_not_observed(monkeypatch):
+    # Intentional: skipped frames are grabbed (decoded) but never retrieved, so a conversion-only fault there is unseen.
+    capture = FakeCapture([i*40 for i in range(25)], 25)
+    capture.fail_retrieve_at = 4  # skipped at 10/s
+    frames, final = sample_fixture(monkeypatch, [], 25, 10, capture)
+    assert [f['source_frame'] for f in frames] == [0,3,5,8,10,13,15,18,20,23]
+    assert final['complete'] is True and capture.retrieves == len(frames)
+
+
+def test_cancel_during_skip_run_releases_capture_and_files(monkeypatch):
+    capture = FakeCapture([i*1000/120 for i in range(240)], 120)
+    session = video.VideoSession('fixture', 'balanced', 'fixture')
+    grab = capture.grab
+    def cancelling_grab():
+        if capture.grabs == 40: session.cancelled.set()  # mid-way through the 119 skipped frames after frame 0
+        return grab()
+    capture.grab = cancelling_grab
+    monkeypatch.setattr(cv2, 'VideoCapture', lambda *args: capture)
+    session.path.write_bytes(b'RIFF0000AVI ')
+    session.sample = 1
+    detector = SimpleNamespace(version='fixture', predict=lambda *a, **k: dict(state='completed', model_version='fixture', detections=[]))
+    video._open(session)
+    assert video._next(session, detector)['source_frame'] == 0
+    result = video._next(session, detector)
+    assert result['reason'] == 'cancelled' and result['complete'] is False
+    assert capture.grabs == 41 and capture.retrieves == 1
+    assert getattr(capture, 'released', False) and not session.path.parent.exists()
 
 
 def test_low_disk_removes_partial_file_and_frees_slot(setup, monkeypatch):
