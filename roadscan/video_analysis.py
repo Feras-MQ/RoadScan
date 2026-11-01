@@ -6,6 +6,7 @@ reported as incomplete, never silently called successful full coverage.
 import base64
 import io
 import math
+import os
 from pathlib import Path
 import tempfile
 import threading
@@ -18,7 +19,8 @@ from PIL import Image
 from starlette.concurrency import run_in_threadpool
 from .access import review_access
 
-MAX_UPLOAD = 200 * 1024 * 1024
+MAX_UPLOAD = int(os.getenv('ROADSCAN_MAX_VIDEO_MB', '2048')) * 1024 * 1024  # phone 4K MOV clips are often >1 GB
+DETAIL_SIDE = 1280  # 'detail' keeps 1080p/4K frames large enough for 1024-pixel road models
 MAX_FRAMES = 50_000
 MAX_SESSIONS = 2
 SESSION_TTL = 15 * 60
@@ -38,6 +40,8 @@ class VideoSession:
         self.processed = 0
         self.total = None
         self.fps = None
+        self.sample = 0  # analyzed frames per video second; 0 = every frame
+        self.step = 1
         self.terminal = None
         self.cancelled = threading.Event()
 
@@ -86,6 +90,10 @@ def _open(session):
     total, fps = cap.get(cv2.CAP_PROP_FRAME_COUNT), cap.get(cv2.CAP_PROP_FPS)
     session.total = int(total) if math.isfinite(total) and total > 0 else None
     session.fps = fps if math.isfinite(fps) and fps > 0 else None
+    if session.sample and session.fps:
+        session.step = max(1, round(session.fps / session.sample))
+        if session.total:
+            session.total = math.ceil(session.total / session.step)  # frames that will actually be analyzed
     if session.total and session.total > MAX_FRAMES:
         raise HTTPException(413, 'Video exceeds the 50,000 frame limit; split it into shorter clips')
 
@@ -97,6 +105,10 @@ def _next(session, detector):
     if detector.version != session.version:
         return session.finish(False, 'model_changed')
     if session.pending is None:
+        if session.processed and session.step > 1:
+            for _ in range(session.step - 1):  # skipped frames are only demuxed/decoded, never analyzed
+                if not session.capture.grab():
+                    break  # the read below then reports the end of the video
         ok, frame = session.capture.read()
         if not ok:
             complete = session.processed > 0 and (session.total is not None and session.processed == session.total)
@@ -107,7 +119,7 @@ def _next(session, detector):
         if frame.ndim != 3 or frame.shape[0] * frame.shape[1] > MAX_PIXELS:
             return session.finish(False, 'invalid_frame_dimensions')
         height, width = frame.shape[:2]
-        factor = min(1., 960 / max(width, height))
+        factor = min(1., (DETAIL_SIDE if session.mode == 'detail' else 960) / max(width, height))
         if factor < 1:
             frame = cv2.resize(frame, (max(1, round(width * factor)), max(1, round(height * factor))), interpolation=cv2.INTER_AREA)
         session.pending = Image.fromarray(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
@@ -126,6 +138,7 @@ def _next(session, detector):
     image.save(output, 'JPEG', quality=88)
     result = {**prediction, 'jpeg_base64': base64.b64encode(output.getvalue()).decode('ascii'),
               'width': image.width, 'height': image.height, 'frame_index': session.processed,
+              'source_frame': session.processed * session.step,
               'timestamp_ms': session.timestamp, 'total_frames': session.total,
               'processed_count': session.processed + 1, 'persisted': False,
               'elapsed_ms': round((time.perf_counter() - started) * 1000, 2)}
@@ -186,7 +199,8 @@ def create_video_router(detector_getter):
 
     @router.post('')
     async def upload(request: Request, filename: str = Query(..., min_length=1, max_length=200),
-                     mode: str = Query('balanced', pattern='^(balanced|detail)$'), actor: str = Depends(review_access)):
+                     mode: str = Query('balanced', pattern='^(balanced|detail)$'),
+                     sample: int = Query(0, ge=0, le=60), actor: str = Depends(review_access)):
         nonlocal janitor
         if Path(filename).suffix.lower() not in {'.mp4', '.mov', '.avi', '.webm', '.mkv'}:
             raise HTTPException(415, 'Choose an MP4, MOV, AVI, MKV or WebM video')
@@ -196,6 +210,7 @@ def create_video_router(detector_getter):
             if len(sessions) >= MAX_SESSIONS:
                 raise HTTPException(429, 'Two video sessions are already open; stop one first')
             session = VideoSession(actor, mode, detector_getter().version)
+            session.sample = sample
             session.lock.acquire()
             sessions[session.id] = session
             if janitor is None:
@@ -207,10 +222,10 @@ def create_video_router(detector_getter):
                 async for chunk in request.stream():
                     size += len(chunk)
                     if size > MAX_UPLOAD:
-                        raise HTTPException(413, 'Video exceeds the 200 MiB upload limit')
+                        raise HTTPException(413, f'Video exceeds the {MAX_UPLOAD // (1024 * 1024)} MiB upload limit')
                     output.write(chunk)
             await run_in_threadpool(_open, session)
-            return dict(id=session.id, state='ready', total_frames=session.total, fps=session.fps)
+            return dict(id=session.id, state='ready', total_frames=session.total, fps=session.fps, step=session.step)
         except BaseException:
             session.close()
             with lock:

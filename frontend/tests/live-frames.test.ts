@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import {frameLoop, frameSize, validRecognition} from '../src/liveFrames.ts';
+import {addDamageEvent, frameLoop, frameSize, validRecognition} from '../src/liveFrames.ts';
 
 const tick = () => new Promise(resolve => setTimeout(resolve, 0));
 test('live frames preserve aspect ratio and remain bounded without enlarging small sources', () => {
@@ -49,4 +49,12 @@ test('a slow frame times out and the serial loop can recover without overlap', a
   try {await Promise.race([recovery,new Promise<void>(resolve=>{timeout=setTimeout(resolve,2000)})])}
   finally {clearTimeout(timeout);loop.stop()}
   assert.equal(failures,1);assert.ok(calls>=2);assert.equal(peak,1);
+});
+test('video damage frames group into events that keep the most confident frame', () => {
+  const f = (frame_index: number, confs: number[], cls = 'D00') => ({frame_index, timestamp_ms: frame_index * 200, detections: confs.map(confidence => ({class_id: cls, box: [0, 0, 5, 5], confidence}))});
+  let events: ReturnType<typeof addDamageEvent<ReturnType<typeof f>>> = [];
+  for (const frame of [f(0, []), f(1, [.4]), f(2, [.9]), f(4, [.5], 'D40'), f(8, [.3]), f(9, [])]) events = addDamageEvent(events, frame);
+  assert.equal(events.length, 2);
+  assert.deepEqual([events[0].first, events[0].last, events[0].best.frame_index, events[0].classes], [1, 4, 2, ['D00', 'D40']]);
+  assert.deepEqual([events[1].first, events[1].last, events[1].confidence], [8, 8, .3]);
 });

@@ -48,3 +48,21 @@ export function frameLoop(step: (signal: AbortSignal) => Promise<void>, onError:
   }
   return {start() {stop(); active = true; queue(++generation)}, stop};
 }
+
+export type HitFrame = {frame_index: number; timestamp_ms: number | null; detections: Detection[]};
+export type DamageEvent<F extends HitFrame> = {first: number; last: number; classes: string[]; best: F; confidence: number};
+export const MAX_EVENTS = 200; // shortcut: later damage is counted but not listed past 200 events; page if long surveys need it
+
+// Consecutive damage frames (one empty frame allowed between them) are one event, so a crack seen in 30 frames is listed once, with its most confident frame.
+export function addDamageEvent<F extends HitFrame>(events: DamageEvent<F>[], frame: F): DamageEvent<F>[] {
+  if (!frame.detections.length) return events;
+  const confidence = Math.max(...frame.detections.map(d => d.confidence));
+  const classes = [...new Set(frame.detections.map(d => d.class_id))];
+  const last = events[events.length - 1];
+  if (last && frame.frame_index - last.last <= 2) {
+    const merged = {...last, last: frame.frame_index, classes: [...new Set([...last.classes, ...classes])].sort()};
+    return [...events.slice(0, -1), confidence > last.confidence ? {...merged, best: frame, confidence} : merged];
+  }
+  if (events.length >= MAX_EVENTS) return events;
+  return [...events, {first: frame.frame_index, last: frame.frame_index, classes: classes.sort(), best: frame, confidence}];
+}

@@ -55,6 +55,20 @@ def test_every_frame_and_honest_eof(setup):
     assert [v[1] for v in calls]==sorted(v[1] for v in calls)
 
 
+def test_sampled_frames_and_detail_resolution(setup):
+    client,headers,raw,_,calls=setup
+    # 12 fps clip, 6 analyzed frames per second -> every 2nd of the 4 frames
+    meta=client.post('/api/video-analysis?filename=clip.mov&sample=6&mode=detail',content=raw,headers=headers).json()
+    assert meta['step']==2 and meta['total_frames']==2
+    for index in range(2):
+        frame=client.post(f"/api/video-analysis/{meta['id']}/next",headers=headers).json()
+        assert frame['frame_index']==index and frame['source_frame']==index*2
+        assert (frame['width'],frame['height'])==(1280,720)
+    final=client.post(f"/api/video-analysis/{meta['id']}/next",headers=headers).json()
+    assert final['state']=='finished' and final['complete'] is True and len(calls)==2
+    assert [abs(value-expected)<=4 for value,expected in zip([v[1] for v in calls],[30,110])]==[True,True]
+
+
 def test_busy_retains_frame_and_model_change_aborts(setup):
     client,headers,_,detector,calls=setup
     ident=start(setup).json()['id']; original=detector.predict
