@@ -75,8 +75,9 @@ node --test tests/*.test.ts
 node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json
 ```
 
-`tests/website-guide.browser.mjs` is the executable entry point: run it directly;
-no importing runner or backend server is needed. It serves `frontend/dist`, so
+`tests/website-guide.browser.mjs` is the aggregate browser entry point. It includes
+guide, map, unreadable-report and navigation suites. Run it directly; no importing
+runner or backend server is needed. It serves `frontend/dist`, so
 rebuild before every check of changed source. Set both Playwright variables to
 **file URLs**, not filesystem paths. `ROADSCAN_CHROME` is an executable path;
 `ROADSCAN_QA_OUTPUT` is a directory for generated screenshots.
