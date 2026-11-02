@@ -15,7 +15,7 @@ export async function checkUnreadableReports(browser,origin,base,expect) {
     page.on('dialog',async dialog=>{dialogs++;await (accept?dialog.accept():dialog.dismiss());});
     page.on('pageerror',error=>errors.push(error.message));
     await page.route('**/api/models',route=>route.fulfill({json:{items:models,available:true,can_manage:false}}));
-    await page.route('**/api/reports**',async route=>{
+    await page.route(url=>url.pathname==='/api/reports'||url.pathname.startsWith('/api/reports/'),async route=>{
       const request=route.request(),url=new URL(request.url());
       if(url.pathname==='/api/reports')return route.fulfill({json:{items:rows,total:rows.length}});
       const row=rows.find(r=>url.pathname===`/api/reports/${r.id}` || url.pathname.startsWith(`/api/reports/${r.id}/`));
