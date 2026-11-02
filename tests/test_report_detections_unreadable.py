@@ -2,6 +2,7 @@
 import hashlib
 import io
 import json
+import os
 from PIL import Image
 from roadscan import api
 from test_review_api import review_client  # noqa: F401  (fixture)
@@ -14,7 +15,8 @@ MALFORMED = ['null', '1', '{broken', '[{}]', '[null]', '{"D40": true}', '[{"clas
 
 def stored(client, headers, raw):
     image = io.BytesIO()
-    Image.new('RGB', (120, 80), 'gray').save(image, 'PNG')
+    # Random pixels: training approval rejects perceptually identical images, and flat colours all hash alike.
+    Image.frombytes('RGB', (120, 80), os.urandom(120 * 80 * 3)).save(image, 'PNG')
     rid = client.post('/api/reports', headers=headers, files={'photo': ('d.png', image.getvalue(), 'image/png')}).json()['id']
     with api.Session() as session:  # write the raw value as a legacy row would hold it
         session.query(api.Report).filter_by(id=rid).update({'detections': raw})
@@ -67,3 +69,50 @@ def test_patch_keeps_unreadable_raw_value_unless_boxes_are_redrawn(review_client
         audit = [json.loads(a.details) for a in session.query(api.Audit).filter_by(report_id=rid).all()]
     replaced = [d for d in audit if d.get('manual_detections')]
     assert replaced and replaced[-1]['previous_detections'] is None and replaced[-1]['previous_detections_unreadable'] is True
+
+
+def confirm(client, headers, rid):
+    revision = client.get(f'/api/reports/{rid}', headers=headers).json()['revision']
+    response = client.patch(f'/api/reports/{rid}', headers=headers,
+                            json={'revision': revision, 'reviewer': 'Reviewer', 'status': 'Confirmed', 'action': 'confirm'})
+    assert response.status_code == 200, response.text
+    return response.json()['revision']
+
+
+def approve(client, headers, rid, revision, group):
+    return client.put(f'/api/reports/{rid}/training', headers=headers,
+                      json={'revision': revision, 'split': 'train', 'capture_group': group,
+                            'rights_confirmed': True, 'negative_confirmed': True})
+
+
+def test_training_never_approves_or_exports_unreadable_detections(review_client):
+    import zipfile
+    from roadscan.training_data import TrainingApproval
+    client, headers, _ = review_client
+    for raw in ['null', '{broken', '{"D40": true}', '[{}]', '[{"class_id": "LEGACY"}]', None]:
+        rid = stored(client, headers, raw)
+        response = approve(client, headers, rid, confirm(client, headers, rid), 'legacy')
+        assert response.status_code == 409 and 'unreadable' in response.json()['detail'], raw
+        state = client.get(f'/api/reports/{rid}/training', headers=headers).json()
+        assert state['approved'] is False and state['detections_readable'] is False, raw
+
+    negative = stored(client, headers, '[]')  # a genuine readable empty list stays an eligible negative
+    assert approve(client, headers, negative, confirm(client, headers, negative), 'neg').status_code == 200
+    damaged = stored(client, headers, VALID['d40'])
+    response = approve(client, headers, damaged, confirm(client, headers, damaged), "pos")
+    assert response.status_code == 200, response.text
+    legacy = stored(client, headers, '[]')
+    assert approve(client, headers, legacy, confirm(client, headers, legacy), 'old').status_code == 200
+    with api.Session() as session:  # an approval stored before this guard, whose detections later became unreadable
+        row = session.get(api.Report, legacy)
+        row.detections = 'null'
+        session.get(TrainingApproval, legacy).revision = api.annotation_revision(row)
+        session.commit()
+    state = client.get(f'/api/reports/{legacy}/training', headers=headers).json()
+    assert state['approved'] is False and state['stale'] is True and state['detections_readable'] is False
+    assert client.get('/api/training', headers=headers).json()['counts']['train'] == 2
+    export = client.get('/api/training/export', headers=headers)
+    assert export.status_code == 200
+    with zipfile.ZipFile(io.BytesIO(export.content)) as archive:
+        manifest = archive.read('manifest.json').decode()
+    assert negative in manifest and damaged in manifest and legacy not in manifest
