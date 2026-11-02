@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from PIL import Image
 from sqlalchemy import Column, String, ForeignKey, Text
-from .core import BASE, Report, Audit, annotation_revision
+from .core import BASE, Report, Audit, annotation_revision, read_detections
 from .review import validate_detections
 
 CLASSES = ['D00', 'D10', 'D20', 'D40', 'OTHER']
@@ -28,13 +28,15 @@ class TrainingApproval(BASE):
 
 def current_approval(session, report):
     item = session.get(TrainingApproval, report.id)
-    valid = bool(item and report.status in ELIGIBLE and item.revision == annotation_revision(report))
+    readable = read_detections(report.detections) is not None
+    # Unreadable detections can never count as approved, even for an approval stored before this check.
+    valid = bool(item and readable and report.status in ELIGIBLE and item.revision == annotation_revision(report))
     return {'approved': valid, 'stale': bool(item and not valid),
             'revision': annotation_revision(report),
             'split': item.split if item else 'train', 'capture_group': item.capture_group if item else '',
             'reviewer': item.reviewer if valid else None, 'approved_at': item.approved_at if valid else None,
             'negative_confirmed': bool(item and item.negative_confirmed == 'yes'),
-            'eligible': report.status in ELIGIBLE, 'weights_changed': False}
+            'eligible': report.status in ELIGIBLE, 'detections_readable': readable, 'weights_changed': False}
 
 
 def approve(session, report, *, revision, split, capture_group, rights_confirmed, negative_confirmed, actor):
@@ -46,7 +48,10 @@ def approve(session, report, *, revision, split, capture_group, rights_confirmed
         raise ValueError('Confirm permission to use this image for training or evaluation')
     if split not in {'train', 'val', 'test'} or not re.fullmatch(r'[A-Za-z0-9_-]{1,80}', capture_group):
         raise ValueError('Use a capture group with letters, numbers, hyphens or underscores')
-    if not json.loads(report.detections) and not negative_confirmed:
+    detections = read_detections(report.detections)
+    if detections is None:
+        raise ValueError('Saved detections are unreadable. Redraw the boxes and save the review before approving')
+    if not detections and not negative_confirmed:
         raise ValueError('Explicitly confirm an empty image as a reviewed negative example')
     for other, approval in session.query(Report, TrainingApproval).join(TrainingApproval, Report.id == TrainingApproval.report_id).all():
         if other.id == report.id or not current_approval(session, other)['approved']:
@@ -99,7 +104,9 @@ def export_dataset(session, storage):
                     raise ValueError('Capture group crosses splits; correct approvals before exporting')
                 hashes.add(digest); groups[item.capture_group] = item.split
                 with Image.open(image) as decoded: width, height = decoded.size
-                boxes = validate_detections(json.loads(report.detections), width, height)
+                stored = read_detections(report.detections)
+                if stored is None: raise ValueError('An approved report has unreadable detections; review it again')
+                boxes = validate_detections(stored, width, height)
                 if not boxes and item.negative_confirmed != 'yes': raise ValueError('Empty labels require negative confirmation')
                 name = digest
                 lines = []

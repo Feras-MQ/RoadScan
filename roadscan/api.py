@@ -353,7 +353,9 @@ def update(rid:str,change:Change,actor:str=Depends(review_access),session=Depend
             validate_detections(change.detections,width,height)
         except ValueError as exc:
             raise HTTPException(422,str(exc)) from exc
-        annotation_audit={'previous_detections':json.loads(r.detections), 'detections':change.detections,
+        previous=read_detections(r.detections)
+        annotation_audit={'previous_detections':previous, 'detections':change.detections,
+                          **({'previous_detections_unreadable':True} if previous is None else {}),
                           'previous_inference_state':r.inference_state, 'previous_model_version':r.model_version}
         value,rparts=score(change.detections,width,height)
         values.update(detections=json.dumps(change.detections),score=value,score_parts=json.dumps(rparts),
