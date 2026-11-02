@@ -64,12 +64,20 @@ try {
   await expect(page.locator('#website-guide-title')).toBeFocused();
   for (let i = 0; i < 18; i++) {await page.keyboard.press('Tab'); assert.ok(await guide.evaluate(el => el.contains(document.activeElement)));}
   const beforeQuestion = requests.length;
+  for (const query of ['analyze images', 'road photos']) {
+    await guide.getByLabel('What would you like to do?').fill(query);
+    await guide.getByRole('button', {name: 'Find steps'}).click();
+    await expect(guide.locator('#website-guide-topic')).toHaveText('Upload and analyze a photo');
+    await screen('dashboard');
+    await expect(page.locator('.website-guide-highlight')).toHaveCount(0);
+  }
   await guide.getByLabel('What would you like to do?').fill('how do I upload a video');
   await guide.getByRole('button', {name: 'Find steps'}).click();
   await expect(guide.locator('h3#website-guide-topic')).toHaveText('Analyze a video');
   await guide.getByLabel('What would you like to do?').fill('how do I compare models?');
   await guide.getByRole('button', {name: 'Find steps'}).click();
   await expect(guide.locator('h3#website-guide-topic')).toHaveText('Compare models');
+  await expect(guide).toContainText('choose this topic again, and select Open this screen');
   assert.equal(requests.length, beforeQuestion, 'questions do not make requests');
   await page.screenshot({path: path.join(artifacts, 'desktop-en.png')});
   await navigate();
@@ -174,6 +182,15 @@ try {
   await expect(offlineHelp).toBeFocused();
   await offlinePage.getByRole('button', {name: 'Website guide', exact: true}).click();
   await expect(offlinePage.getByRole('dialog')).toBeVisible();
+  await offlinePage.keyboard.press('Escape');
+  await offlinePage.getByRole('button', {name: 'Switch to Arabic'}).click();
+  await offlinePage.getByRole('button', {name: 'دليل الموقع', exact: true}).click();
+  await offlinePage.getByRole('dialog').getByRole('button', {name: 'مقارنة النماذج', exact: true}).click();
+  await expect(offlinePage.getByRole('dialog')).toContainText('واختر هذا الموضوع مرة أخرى، واضغط «افتح هذه الشاشة»');
+  await expect(offlinePage.locator('[data-screen]')).toHaveAttribute('data-screen', 'map');
+  await offlinePage.keyboard.press('Escape');
+  await offlinePage.getByRole('button', {name: 'Switch to English'}).click();
+  await offlinePage.getByRole('button', {name: 'Website guide', exact: true}).click();
   await offlinePage.getByRole('dialog').getByRole('button', {name: 'Connection and model settings', exact: true}).click();
   await offlinePage.getByRole('button', {name: 'Open this screen', exact: true}).click();
   await expect(offlinePage.locator('[data-screen]')).toHaveAttribute('data-screen', 'settings');

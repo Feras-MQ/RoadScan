@@ -37,6 +37,18 @@ test('specific curated phrases handle filler words and Arabic normalization with
   ]) assert.equal(matchGuideTopic(query)?.id, id, query);
 });
 
+test('exact plural photo phrases keep mixed and unsupported requests conservative', () => {
+  for (const query of ['analyze images', 'how to analyze images', 'road photos', 'inspect road photos',
+    'رفع صورتي', 'كيف أحلل الصور؟', 'تحليل الصور']) {
+    assert.equal(matchGuideTopic(query)?.id, 'upload', query);
+  }
+  for (const query of ['analyze images and compare models', 'road photos and export PDF',
+    'delete road photos', 'execute analyze images', 'حذف road photos',
+    'analyze images and حذف البلاغات', 'images', 'photos', 'analyze videos']) {
+    assert.equal(matchGuideTopic(query), null, query);
+  }
+});
+
 test('navigation accepts only curated topic IDs and never a URL or command', () => {
   const expected = {
     upload: ['dashboard', 'guide-inspection'], compare: ['reports', 'guide-model-vote'],
