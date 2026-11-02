@@ -5,6 +5,7 @@ import type {PinResult} from './streetMap';
 import type {LocationGroup} from './reportMap';
 import {locationSourceLabel} from './reportLocation';
 import LocationLinks from './LocationLinks';
+import ReportPhoto from './ReportPhoto';
 import './streetMap.css';
 import {streetTileProvider} from './streetTileProvider';
 
@@ -16,19 +17,19 @@ class MapBoundary extends Component<{children:ReactNode; onFailure:()=>void},{fa
   render(){return this.state.failed?null:this.props.children;}
 }
 type Props={
-  lang:string; group:LocationGroup; connected:boolean; busy:boolean; queryKey:string; searchActive:boolean;
+  lang:string; sessionKey:string; group:LocationGroup; connected:boolean; busy:boolean; queryKey:string; searchActive:boolean;
   resetVersion:number; onViewingMap:(active:boolean)=>void;
   loadPins:(damageClass:string,signal:AbortSignal)=>Promise<PinResult>;
   labelStatus:(status:string)=>string; onOpen:(id:string)=>void; fallback:ReactNode;
 };
 
-export default function StreetMapPanel({lang,group,connected,busy,queryKey,searchActive,resetVersion,onViewingMap,loadPins,labelStatus,onOpen,fallback}:Props) {
+export default function StreetMapPanel({lang,sessionKey,group,connected,busy,queryKey,searchActive,resetVersion,onViewingMap,loadPins,labelStatus,onOpen,fallback}:Props) {
   const tx=(en:string,ar:string)=>lang==='ar'?ar:en;
   const [enabled,setEnabled]=useState(false),[attempt,setAttempt]=useState(0),[damageClass,setDamageClass]=useState('');
   const [data,setData]=useState<{key:string;result:PinResult}|null>(null),[error,setError]=useState(false),[loading,setLoading]=useState(false);
   const [selectedId,setSelectedId]=useState('');
   const loader=useRef(loadPins);loader.current=loadPins;
-  const selection=useRef<HTMLHeadingElement>(null);
+  const selection=useRef<HTMLHeadingElement>(null),selector=useRef<HTMLSelectElement>(null);
   const key=queryKey+'|'+damageClass;
   useEffect(()=>{if(searchActive)setEnabled(false);},[searchActive]);
   useEffect(()=>setEnabled(false),[resetVersion]);
@@ -72,12 +73,18 @@ export default function StreetMapPanel({lang,group,connected,busy,queryKey,searc
         {showMap&&<>
           <p>{tx('Pin colours show review status, not damage severity. Numbers refer to the selector below. Overlapping pins remain separately selectable.','توضح ألوان النقاط حالة المراجعة، لا شدة الضرر. تشير الأرقام إلى القائمة أدناه. يمكن اختيار كل بلاغ على حدة حتى عند تداخل النقاط.')}</p>
           <ul className="street-map-legend">{Array.from(new Set(pins.map(pin=>pin.status))).map(status=><li key={status}><i style={{background:pinStatusColor(status)}}/>{labelStatus(status)}</li>)}</ul>
-          <label className="street-map-selector">{tx('Select a street-map report','اختر بلاغاً من خريطة الشوارع')}<select value={selected?.id||''} onChange={e=>select(e.target.value)}><option value="">{tx('Choose a pin or report','اختر نقطة أو بلاغاً')}</option>{pins.map((pin,i)=><option key={pin.id} value={pin.id}>{i+1} · {pin.id} · {labelStatus(pin.status)}</option>)}</select></label>
+          <label className="street-map-selector">{tx('Select a street-map report','اختر بلاغاً من خريطة الشوارع')}<select ref={selector} value={selected?.id||''} onChange={e=>select(e.target.value)}><option value="">{tx('Choose a pin or report','اختر نقطة أو بلاغاً')}</option>{pins.map((pin,i)=><option key={pin.id} value={pin.id}>{i+1} · {pin.id} · {labelStatus(pin.status)}</option>)}</select></label>
           {selected&&<section className="street-map-selection" aria-labelledby="street-selected-title">
             <h3 id="street-selected-title" ref={selection} tabIndex={-1}>{tx('Selected street-map report','البلاغ المحدد على خريطة الشوارع')} <bdi>{selected.id}</bdi></h3>
+            {/* First-party fetch for the selected pin only; never passed to Leaflet or the tile provider. */}
+            <ReportPhoto key={selected.id+sessionKey} id={selected.id} sessionKey={sessionKey} lang={lang}/>
             <dl><div><dt>{tx('Review status','حالة المراجعة')}</dt><dd>{labelStatus(selected.status)}</dd></div><div><dt>{tx('Saved damage classes','فئات الضرر المحفوظة')}</dt><dd>{selected.classes===null?tx('Unreadable detection data','بيانات الاكتشافات غير قابلة للقراءة'):selected.classes.map(code=>damageClassLabel(code,lang)).join(' · ')||tx('No detections','بلا اكتشافات')}</dd></div><div><dt>{tx('Location source','مصدر الموقع')}</dt><dd>{locationSourceLabel(selected.location_source,lang)}</dd></div></dl>
-            <p><bdi>{selected.latitude}, {selected.longitude}</bdi> · {tx('Saved coordinates are not independently verified. Review the report photo before deciding.','الإحداثيات المحفوظة غير متحقَّق منها بشكل مستقل. راجع صورة البلاغ قبل اتخاذ القرار.')}</p>
-            <button className="primary" disabled={busy||!connected} onClick={()=>onOpen(selected.id)}>{tx('Open report','فتح البلاغ')}</button>
+            <p><bdi>{selected.latitude}, {selected.longitude}</bdi></p>
+            <p className="street-map-review-hint">{tx('Saved coordinates are not independently verified. Check the photo preview, then open the report to inspect detection boxes and save your review.','لم يُتحقق من الإحداثيات المحفوظة بشكل مستقل. راجع معاينة الصورة، ثم افتح البلاغ لفحص التحديدات وحفظ مراجعتك.')}</p>
+            <div className="street-map-selection-actions">
+              <button className="primary" disabled={busy||!connected} onClick={()=>onOpen(selected.id)}>{tx('Open report to review','فتح البلاغ للمراجعة')}</button>
+              <button type="button" className="secondary" onClick={()=>selector.current?.focus()}>{tx('Back to pin selector','العودة إلى قائمة النقاط')}</button>
+            </div>
             <LocationLinks report={selected} lang={lang}/>
           </section>}
         </>}

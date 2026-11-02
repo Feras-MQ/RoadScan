@@ -3,7 +3,7 @@ import path from 'node:path';
 
 // Actual React + Leaflet UI, synthetic API records and intercepted synthetic tiles only.
 export async function checkStreetMap(browser,origin,baseReport,expect,artifacts) {
- for(const lang of ['en','ar'])for(const width of [1440,390]) {
+ for(const lang of ['en','ar'])for(const width of [1440,390,320]) {
   const context=await browser.newContext({viewport:{width,height:1000},reducedMotion:'reduce'});
   await context.addInitScript(language=>{sessionStorage.setItem('roadscan_token','street-map-synthetic-only');localStorage.setItem('roadscan_language',language);},lang);
   const tx=(en,ar)=>lang==='ar'?ar:en;
@@ -13,6 +13,7 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
   let mode='normal',tileFailure=false,tilePartial=false,partialFailed=false,tileStall='',releasePins=null;
   const releaseTiles=[];
   const tiles=[],pinRequests=[],external=[],writes=[],errors=[];
+  const imageRequests=[],releaseImage=[],failImage=new Set(),imageWidths={'pin-one':321,'pin-overlap':333};let holdImage='';
   await context.route('**/*',async route=>{
    const req=route.request(),url=new URL(req.url());
    if(url.hostname==='tile.openstreetmap.org'){
@@ -24,7 +25,15 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
    }
    if(url.origin!==origin){external.push(url.href);await route.abort();return;}
    if(!url.pathname.startsWith('/api/')){await route.continue();return;}
-   if(/^\/api\/reports\/[^/]+\/image$/.test(url.pathname)){await route.fulfill({contentType:'image/svg+xml',body:'<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240"><rect width="320" height="240" fill="#76878d"/><text x="20" y="80">SYNTHETIC REPORT</text></svg>'});return;}
+   const imagePath=url.pathname.match(/^\/api\/reports\/([^/]+)\/image$/);
+   if(imagePath){
+    const id=decodeURIComponent(imagePath[1]);imageRequests.push({id,key:req.headers()['x-api-key']});
+    if(holdImage===id){holdImage='';await new Promise(resolve=>releaseImage.push(resolve));}
+    if(failImage.delete(id)){await route.fulfill({status:503,body:'synthetic image failure'}).catch(()=>{});return;}
+    // A per-report width lets the test tell which report's photo the card is showing.
+    const w=imageWidths[id]||320;
+    await route.fulfill({contentType:'image/svg+xml',body:`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="240"><rect width="${w}" height="240" fill="#76878d"/><text x="20" y="80">SYNTHETIC REPORT</text></svg>`}).catch(()=>{});return;
+   }
    if(req.method()!=='GET'){writes.push(url.pathname);await route.fulfill({status:405,json:{detail:'No writes in street map tests'}});return;}
    if(url.pathname==='/api/reports/map'){
     pinRequests.push(url.searchParams.toString());
@@ -64,9 +73,11 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
    await expect(panel).toBeVisible();assert.equal(tiles.length,0);assert.equal(pinRequests.length,0);
    await expect(page.locator('.coordinate-map')).toBeVisible();
    await expect(page.locator('.evidence-inspector a[href*="map_action=pano"]')).toHaveCount(1);
+   const imagesBeforeStreet=imageRequests.length;
    await load();await expect(panel.locator('.leaflet-tile-loaded').first()).toBeVisible();
    await expect(page.locator('.evidence-inspector')).toBeHidden();
    await expect(panel.locator('.leaflet-marker-icon')).toHaveCount(3);
+   assert.equal(imageRequests.length,imagesBeforeStreet,'no street photo is fetched before a pin is selected');
    await expect(panel.locator('.street-map-count')).toContainText('4');
    await expect(panel).toContainText(tx('outside the street map’s latitude range','خارج نطاق خطوط العرض'));
    await expect(panel.locator('.leaflet-control-attribution')).toBeVisible();
@@ -75,6 +86,36 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
    for(const tile of tiles){assert.equal(tile.headers['x-api-key'],undefined);assert.equal(tile.headers.referer,origin+'/');assert.equal(new URL(tile.url).search,'');}
    await panel.locator('.leaflet-marker-icon').first().focus();await page.keyboard.press('Enter');
    await expect(panel.locator('#street-selected-title')).toBeFocused();
+   const streetPhoto=panel.locator('.street-map-selection .evidence-photo img');
+   const selectorBox=panel.locator('.street-map-selector select');
+   const shownWidth=()=>streetPhoto.evaluate(img=>img.naturalWidth);
+   const firstId=await selectorBox.inputValue();
+   await expect(streetPhoto).toBeVisible();
+   await expect(panel.locator('#street-selected-title')).toBeFocused();  // loading the photo does not steal focus
+   assert.deepEqual(imageRequests.at(-1),{id:firstId,key:'street-map-synthetic-only'});
+   assert.equal(imageRequests.length,imagesBeforeStreet+1,'exactly one first-party photo request for the selected pin');
+   // Failure keeps metadata and opening usable; retry recovers.
+   failImage.add('pin-overlap');await selectorBox.selectOption('pin-overlap');
+   await expect(panel.locator('.street-map-selection [role="alert"]')).toContainText(tx('Image unavailable','تعذر تحميل الصورة'));
+   await expect(panel.locator('.street-map-selection')).toContainText(tx('No detections','بلا اكتشافات'));
+   await expect(panel.getByRole('button',{name:tx('Open report to review','فتح البلاغ للمراجعة'),exact:true})).toBeEnabled();
+   await panel.locator('.street-map-selection').getByRole('button',{name:tx('Retry image','إعادة المحاولة')}).click();
+   await expect(streetPhoto).toBeVisible();assert.equal(await shownWidth(),333);
+   // A slow photo for a previously selected report never replaces the current report's photo.
+   holdImage='pin-overlap';await selectorBox.selectOption('pin-one');await expect(streetPhoto).toBeVisible();
+   await selectorBox.selectOption('pin-overlap');await expect.poll(()=>releaseImage.length).toBe(1);
+   await selectorBox.selectOption('pin-one');await expect(panel.locator('#street-selected-title')).toContainText('pin-one');
+   releaseImage.shift()();await page.waitForTimeout(150);
+   await expect(streetPhoto).toHaveCount(1);assert.equal(await shownWidth(),321);
+   assert.ok(imageRequests.every(r=>r.key==='street-map-synthetic-only'),'photos use the session key, same origin only');
+   assert.ok(!tiles.some(t=>t.url.includes('/api/')||t.headers['x-api-key']),'no report image or key reaches the tile provider');
+   assert.ok(!external.some(u=>u.includes('/image')),'no image request leaves the origin');
+   await panel.getByRole('button',{name:tx('Back to pin selector','العودة إلى قائمة النقاط'),exact:true}).click();
+   await expect(selectorBox).toBeFocused();
+   for(const name of [tx('Open report to review','فتح البلاغ للمراجعة'),tx('Back to pin selector','العودة إلى قائمة النقاط')]){
+    const box=await panel.getByRole('button',{name,exact:true}).boundingBox();
+    assert.ok(box&&box.x>=0&&box.x+box.width<=width+1,`${name} is reachable without horizontal clipping at ${width}px`);
+   }
    await panel.locator('.street-map-selector select').selectOption('pin-overlap');
    await expect(panel.locator('.street-map-selection')).toContainText(tx('No detections','بلا اكتشافات'));
    await expect(panel.locator('a[href*="map_action=pano"]')).toHaveAttribute('href','https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=24.7%2C46.7');
@@ -87,7 +128,7 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
    await expect(page.locator('.evidence-inspector')).toBeVisible();
    await expect(page.locator('.evidence-inspector h2')).toBeFocused();
    await load();await panel.locator('.street-map-selector select').selectOption('pin-outside-page');
-   await panel.getByRole('button',{name:tx('Open report','فتح البلاغ'),exact:true}).click();
+   await panel.getByRole('button',{name:tx('Open report to review','فتح البلاغ للمراجعة'),exact:true}).click();
    await expect(page.locator('[data-screen]')).toHaveAttribute('data-screen','reports');
    await expect(page.locator('.panel.detail')).toContainText('PIN-OUTS');
    // Existing main guard: accept its report-leave warning. Guard refinement is a separate branch.
