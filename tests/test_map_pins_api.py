@@ -12,7 +12,9 @@ def make(client, headers, **row):
     Image.new('RGB', (120, 80), 'gray').save(image, 'PNG')
     rid = client.post('/api/reports', headers=headers, data={'latitude': '24.7', 'longitude': '46.7', 'location_source': 'manual'},
                       files={'photo': ('pin.png', image.getvalue(), 'image/png')}).json()['id']
-    if 'detections' in row:
+    if 'raw_detections' in row:
+        row['detections'] = row.pop('raw_detections')  # stored as-is, like a legacy row
+    elif 'detections' in row:
         row['detections'] = json.dumps([{'class_id': c, 'box': [1, 1, 5, 5], 'confidence': .9} for c in row['detections']])
     with api.Session() as session:  # set provenance, coordinates and times directly, as legacy rows could hold them
         session.query(api.Report).filter_by(id=rid).update(row)
@@ -42,7 +44,7 @@ def test_map_pins_contract(review_client):
     ids = [p['id'] for p in body['items']]
     assert ids == [r1, *sorted([r2, r3]), r9]  # created_at desc, id asc tie-break, null created_at last
     assert not set(excluded) & set(ids) and sim not in ids
-    assert body['total'] == body['returned'] == 4 and body['limit'] == 2000 and body['truncated'] is False
+    assert body['total'] == body['returned'] == 4 and body['limit'] == 2000 and body['truncated'] is False and body['unreadable'] == 0
     first = body['items'][0]
     assert set(first) == {'id', 'latitude', 'longitude', 'location_source', 'status', 'score', 'classes', 'created_at'}
     assert first['classes'] == ['D00', 'D40'] and first['score'] == 72.5 and first['created_at'] == '2026-11-02T09:00:00'
@@ -77,3 +79,22 @@ def test_map_pins_rejects_bad_parameters_and_requires_auth(review_client):
                   'location=recorded&status=Bogus', 'location=recorded&limit=0', 'location=recorded&limit=2001']:
         assert client.get('/api/reports/map?' + query, headers=headers).status_code == 422, query
     assert client.get('/api/reports/map?location=recorded').status_code in (401, 403)
+
+
+def test_malformed_legacy_detections_are_unreadable_not_zero(review_client):
+    client, headers, _ = review_client
+    t = lambda m: datetime(2026, 11, 2, 9, m)
+    valid = make(client, headers, detections=['D40'], created_at=t(59))
+    empty = make(client, headers, detections=[], created_at=t(58))
+    raws = ['null', '1', '{broken', '[{}]', '[null]', '{"D40": true}', '[{"class_id": "LEGACY"}]',
+            '[{"class_id": "D40"}, {"class_id": 7}]', '"[]"', None]
+    bad = [make(client, headers, raw_detections=raw, created_at=t(m)) for m, raw in enumerate(raws)]
+    first = pins(client, headers, 'location=recorded&limit=1')  # older malformed rows must not break a capped request
+    assert [p['id'] for p in first['items']] == [valid] and first['total'] == 12 and first['unreadable'] == len(raws)
+    body = pins(client, headers, 'location=recorded')
+    unreadable = {p['id'] for p in body['items'] if p['classes'] is None}
+    assert unreadable == set(bad) and body['unreadable'] == len(raws)
+    assert [p['id'] for p in pins(client, headers, 'location=recorded&damage=none')['items']] == [empty]
+    d40 = pins(client, headers, 'location=recorded&damage=D40')
+    assert [p['id'] for p in d40['items']] == [valid] and d40['unreadable'] == 0
+    assert pins(client, headers, 'location=recorded&damage=OTHER')['total'] == 0

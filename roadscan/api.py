@@ -251,6 +251,20 @@ def reports(status:str|None=None,search:str=Query('',max_length=200),page:int=Qu
     total=q.count();items=q.order_by(Report.created_at.desc()).offset((page-1)*size).limit(size).all()
     return {'items':[serialize(r) for r in items],'page':page,'size':size,'total':total}
 
+MAP_CLASSES={'D00','D10','D20','D40','OTHER'}
+
+def detection_classes(raw):
+    """Sorted damage classes, or None when stored detections are not a readable list of known classes."""
+    try:value=json.loads(raw)
+    except (TypeError,ValueError):return None
+    if not isinstance(value,list):return None
+    classes=set()
+    for item in value:
+        # Unreadable legacy data is never coerced to "no damage" or passed through as an unknown class.
+        if not isinstance(item,dict) or item.get('class_id') not in MAP_CLASSES:return None
+        classes.add(item['class_id'])
+    return sorted(classes)
+
 # Static path: must stay registered before /api/reports/{rid}.
 @app.get('/api/reports/map')
 def report_map(location:str=Query(...,pattern='^(recorded|simulated)$'),status:str|None=None,
@@ -265,13 +279,14 @@ def report_map(location:str=Query(...,pattern='^(recorded|simulated)$'),status:s
     pins=[]
     # shortcut: damage classes are parsed from the detections JSON in Python; add an indexed class column if reports reach tens of thousands
     for row in q.order_by(Report.created_at.desc().nullslast(),Report.id.asc()).all():
-        classes=sorted({d['class_id'] for d in json.loads(row.detections or '[]') if isinstance(d,dict) and isinstance(d.get('class_id'),str)})
-        if damage and (bool(classes) if damage=='none' else damage not in classes):continue
+        classes=detection_classes(row.detections)
+        if damage and (classes is None or (bool(classes) if damage=='none' else damage not in classes)):continue
         pins.append({'id':row.id,'latitude':row.latitude,'longitude':row.longitude,'location_source':row.location_source,
                      'status':row.status,'score':row.score,'classes':classes,
                      'created_at':row.created_at.isoformat() if row.created_at else None})
     items=pins[:limit]
-    return {'items':items,'total':len(pins),'returned':len(items),'limit':limit,'truncated':len(pins)>len(items)}
+    return {'items':items,'total':len(pins),'returned':len(items),'limit':limit,'truncated':len(pins)>len(items),
+            'unreadable':sum(pin['classes'] is None for pin in pins)}
 
 @app.get('/api/stats')
 def stats(actor:str=Depends(read_access),session=Depends(db)):
