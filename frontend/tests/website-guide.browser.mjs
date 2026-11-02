@@ -1,3 +1,4 @@
+import {checkUnreadableReports} from './unreadable-reports.browser.mjs';
 // Build first. Uses an already installed Playwright and Chrome; never installs a browser.
 // Optional ROADSCAN_PLAYWRIGHT_MODULE is a file URL to an existing Playwright index.mjs.
 import assert from 'node:assert/strict';
@@ -182,6 +183,7 @@ try {
     await checkReportWorkGuard(browser, origin, report, expect, mode, width);
     await checkVideoNavigation(browser, origin, expect, mode, width);
   }
+  await checkUnreadableReports(browser, origin, report, expect);
   await checkPreciseNavigation(browser, origin, report, expect);
   await checkNavigationMedia(browser, origin, expect);
   await checkMapWorkspace(browser, origin, report, expect, artifacts);
