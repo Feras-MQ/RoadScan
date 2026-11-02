@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {readPinResult,streetPinsPath} from './streetMap';
 import EvidenceMap from './EvidenceMap';
 import type {EvidenceReport} from './EvidenceMap';
 import {mapRequestPath, readLocationCounts} from './reportMap';
@@ -17,6 +18,8 @@ export default function MapWorkspace({lang, connected, busy, sessionKey, stats, 
   const [status, setStatus] = useState(''), [search, setSearch] = useState(''), [retry, setRetry] = useState(0);
   const [result, setResult] = useState<{key:string; items:EvidenceReport[]; total:number}|null>(null);
   const [loading, setLoading] = useState(false), [error, setError] = useState('');
+  const [pinVersion,setPinVersion]=useState(0);
+  useEffect(()=>setPinVersion(version=>version+1),[stats]);
   const coverage = readLocationCounts(stats?.by_location, stats?.total);
   const path = mapRequestPath(page, group, status, search, Boolean(coverage));
   useEffect(() => {
@@ -36,6 +39,14 @@ export default function MapWorkspace({lang, connected, busy, sessionKey, stats, 
   return <>
     {error && <div className="alert error" role="alert"><span>{tx('Could not load map reports. ', 'تعذر تحميل بلاغات الخريطة. ')}{error}</span><button disabled={loading} onClick={() => setRetry(value => value + 1)}>{tx('Retry map', 'إعادة تحميل الخريطة')}</button></div>}
     <EvidenceMap {...actions} lang={lang} connected={connected} busy={busy || loading || (connected && !current && !error)} sessionKey={sessionKey}
+      pinQueryKey={`${group}|${status}|${pinVersion}`}
+      loadPins={async(damage,signal)=>{
+        const pinPath=streetPinsPath(group,status,damage);
+        if(!pinPath||search)throw Error('Street pins are unavailable for this view');
+        const value=readPinResult(await request(pinPath,{signal}),group);
+        if(!value)throw Error('Invalid street pin response');
+        return value;
+      }}
       loadFailed={Boolean(error)}
       reports={current?.items || []} total={current?.total || 0} page={page} group={group} coverage={coverage}
       statusFilter={status} searchQuery={search} onPage={setPage}

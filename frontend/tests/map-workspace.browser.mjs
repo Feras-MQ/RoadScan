@@ -59,7 +59,7 @@ export async function checkMapWorkspace(browser, origin, baseReport, expect, art
       await expect(page.locator('.pagination')).toContainText('2 /');
       await nav.getByRole('button', {name:tx('Map & results', 'الخريطة والنتائج'), exact:true}).click();
       await expect(map.locator('h1')).toHaveText(tx('Find a report by location', 'اعثر على بلاغ حسب الموقع'));
-      await expect(map.locator('.map-purpose')).toContainText(tx('no street map, routes or distance scale', 'بلا خريطة شوارع أو مسارات أو مقياس مسافة'));
+      await expect(map.locator('.map-purpose')).toContainText(tx('no streets, routes or distance scale', 'بلا شوارع أو مسارات أو مقياس مسافة'));
       await expect(group('Recorded locations', 'مواقع مسجلة')).toContainText(String(recordedCount));
       await expect(map.locator('.map-coverage-note')).toContainText(mode === 'server' ? tx('Workspace coverage', 'تغطية مساحة العمل') : tx('Limited coverage', 'تغطية محدودة'));
       await expect(group('No usable location', 'بلا موقع صالح')).toContainText('3');
@@ -76,8 +76,8 @@ export async function checkMapWorkspace(browser, origin, baseReport, expect, art
       await map.locator('.map-records button').nth(2).click();
       await expect(inspector.locator('h2')).toBeFocused();
       await expect(inspector).toContainText('overlap-03');
-      await expect(inspector.getByRole('link')).toHaveAttribute('href', 'https://www.google.com/maps/search/?api=1&query=24.7%2C46.7');
-      await expect(inspector.locator('.map-external-note')).toContainText(tx('shares the selected coordinates', 'يرسل هذا الرابط الإحداثيات'));
+      await expect(inspector.locator('a[href*="/maps/search/"]')).toHaveAttribute('href', 'https://www.google.com/maps/search/?api=1&query=24.7%2C46.7');
+      await expect(inspector.locator('.map-external-note')).toContainText(tx('shares the selected coordinates', 'يشارك الإحداثيات المحددة'));
       await inspector.getByRole('button', {name:tx('Back to report list', 'العودة إلى قائمة البلاغات')}).click();
       await expect(map.locator('#map-report-list')).toBeFocused();
       await map.locator('.map-records button').nth(1).click();
@@ -100,7 +100,7 @@ export async function checkMapWorkspace(browser, origin, baseReport, expect, art
       await map.getByRole('button', {name:tx('Next map page', 'صفحة الخريطة التالية')}).click();
       await expect(inspector).toContainText(mode === 'server' ? 'extra-15' : 'page-two-1');
       await expect(map.locator('.map-marker')).toHaveCount(mode === 'server' ? 3 : 2);
-      if (mode === 'legacy') await expect(inspector.getByRole('link')).toHaveAttribute('href', 'https://www.google.com/maps/search/?api=1&query=0%2C0');
+      if (mode === 'legacy') await expect(inspector.locator('a[href*="/maps/search/"]')).toHaveAttribute('href', 'https://www.google.com/maps/search/?api=1&query=0%2C0');
       await expect(map.getByRole('button', {name:tx('Next map page', 'صفحة الخريطة التالية')})).toBeDisabled();
       await map.getByRole('button', {name:tx('Previous map page', 'صفحة الخريطة السابقة')}).click();
       await expect(map.locator('.map-marker')).toHaveCount(firstPagePins);
