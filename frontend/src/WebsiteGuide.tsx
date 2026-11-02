@@ -111,7 +111,7 @@ export default function WebsiteGuide({lang, screen, hasReport, requestedTopic, o
           {topic && <section className="website-guide-answer" aria-labelledby="website-guide-topic">
             <h3 id="website-guide-topic" ref={answerHeading} tabIndex={-1}>{copy(topic.title)}</h3>
             <ol>{topic.steps.map((step, index) => <li key={index}>{copy(step)}</li>)}</ol>
-            {topic.needsReport && !hasReport && <p>{tx('First select a report in Review queue. Then reopen this guide to highlight the control inside it.', 'اختر بلاغًا أولًا في قائمة المراجعة. ثم افتح الدليل مجددًا لتحديد الأداة داخل البلاغ.')}</p>}
+            {topic.needsReport && !hasReport && <p>{tx('First select a report in Review queue. Then reopen this guide, choose this topic again, and select Open this screen to highlight the control inside the report.', 'اختر بلاغًا أولًا في قائمة المراجعة. ثم افتح الدليل مجددًا، واختر هذا الموضوع مرة أخرى، واضغط «افتح هذه الشاشة» لتحديد الأداة داخل البلاغ.')}</p>}
             <button className="primary" onClick={navigate}>{tx('Open this screen', 'افتح هذه الشاشة')}<ArrowUpRight size={17}/></button>
             <p className="website-guide-destination">{copy(screenNames[topic.screen])} · {tx('Navigation only; you choose the next action.', 'انتقال فقط؛ أنت تختار الإجراء التالي.')}</p>
             <button className="text-button" onClick={() => {setTopic(null); setNotice(''); setQuestion(''); heading.current?.focus();}}>{tx('Back to topics', 'العودة إلى المواضيع')}</button>

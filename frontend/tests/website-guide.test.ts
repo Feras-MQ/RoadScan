@@ -37,6 +37,26 @@ test('specific curated phrases handle filler words and Arabic normalization with
   ]) assert.equal(matchGuideTopic(query)?.id, id, query);
 });
 
+test('exact plural photo phrases keep mixed and unsupported requests conservative', () => {
+  for (const query of ['analyze images', 'how to analyze images', 'analyze road photos', 'inspect road photos',
+    'how do I analyze my road photos?',
+    'رفع صورتي', 'كيف أحلل الصور؟', 'تحليل الصور']) {
+    assert.equal(matchGuideTopic(query)?.id, 'upload', query);
+  }
+  for (const query of ['analyze images and compare models', 'inspect road photos and export PDF',
+    'analyze road photos on the map', 'inspect road photos video',
+    'delete analyze road photos', 'execute analyze images', 'حذف inspect road photos',
+    'analyze images and حذف البلاغات', 'images', 'photos', 'analyze videos']) {
+    assert.equal(matchGuideTopic(query), null, query);
+  }
+});
+
+test('viewing road photos does not suggest uploading or analyzing them', () => {
+  for (const query of ['road photos', 'where are my road photos', 'show road photos', 'check road photos']) {
+    assert.equal(matchGuideTopic(query), null, query);
+  }
+});
+
 test('navigation accepts only curated topic IDs and never a URL or command', () => {
   const expected = {
     upload: ['dashboard', 'guide-inspection'], compare: ['reports', 'guide-model-vote'],
