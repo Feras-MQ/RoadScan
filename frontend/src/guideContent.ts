@@ -19,7 +19,7 @@ export const screenNames: Record<GuideScreen, Copy> = {
 // Curated instructions only. This module has no access to reports, files or network APIs.
 export const guideTopics: GuideTopic[] = [
   {id: 'upload', title: ['Upload and analyze a photo', 'رفع صورة وتحليلها'], screen: 'dashboard', target: 'guide-inspection',
-    phrases: ['upload', 'photo', 'image', 'new inspection', 'analyze image', 'analyze images', 'road photos', 'رفع', 'صورة', 'صور', 'تحليل صورة', 'فحص جديد'], steps: [
+    phrases: ['upload', 'photo', 'image', 'new inspection', 'analyze image', 'analyze images', 'analyze road photos', 'inspect road photos', 'رفع', 'صورة', 'صور', 'تحليل صورة', 'فحص جديد'], steps: [
       ['In Overview, find New inspection and choose Browse files. Use JPEG, PNG or WebP within the displayed size limit (up to 25 megapixels).', 'في نظرة عامة، انتقل إلى فحص جديد واختر اختيار صور. استخدم JPEG أو PNG أو WebP ضمن حد الحجم المعروض (حتى 25 ميجابكسل).'],
       ['For one photo, you can add latitude and longitude in Add location (optional). Crop or blur faces and plates before submitting.', 'للصورة الواحدة، يمكنك إدخال خط العرض وخط الطول في إضافة موقع (اختياري). قص أو موّه الوجوه واللوحات قبل الإرسال.'],
       ['Connect your workspace, then choose Analyze & create report. Without a detector, the button is Create report for review. Check the result in Review queue.', 'اتصل بمساحة العمل ثم اختر تحليل وإنشاء بلاغ. عند غياب النموذج يظهر زر إنشاء بلاغ للمراجعة. راجع النتيجة في قائمة المراجعة.'],

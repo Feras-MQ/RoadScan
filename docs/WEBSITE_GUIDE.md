@@ -63,21 +63,57 @@ languages. The every-frame wording appears only for the Every frame option.
 
 ## Verification
 
-From `frontend` with the project's existing dependencies:
+Run from `frontend` with the project's dependencies already present. The verified
+Windows setup used **Node.js 24.22.2**, **Playwright 1.64.1**, and an already
+installed **Google Chrome**. Keep the Playwright test package in a separate QA
+directory, outside the repository's dependencies; these commands install nothing
+and do not download a browser.
 
 ```sh
+node --version
 node --test tests/*.test.ts
 node node_modules/typescript/bin/tsc --noEmit -p tsconfig.json
-node node_modules/vite/bin/vite.js build
-node tests/website-guide.browser.mjs
 ```
 
-The browser check needs an **already installed** Playwright package and Chrome.
-If Playwright is outside normal module resolution, set
-`ROADSCAN_PLAYWRIGHT_MODULE` to its `index.mjs` file URL and
-`ROADSCAN_PLAYWRIGHT_EXPECT` to its `test.mjs` file URL. Optionally set
-`ROADSCAN_CHROME` to an existing Chrome executable and `ROADSCAN_QA_OUTPUT` to a
-screenshot output directory. It does not install anything.
+`tests/website-guide.browser.mjs` is the executable entry point: run it directly;
+no importing runner or backend server is needed. It serves `frontend/dist`, so
+rebuild before every check of changed source. Set both Playwright variables to
+**file URLs**, not filesystem paths. `ROADSCAN_CHROME` is an executable path;
+`ROADSCAN_QA_OUTPUT` is a directory for generated screenshots.
+
+PowerShell example, still from `frontend`. The QA directory and Chrome path below
+are **example paths**: replace them with your existing installation locations.
+The QA directory must already contain `node_modules/playwright` version 1.64.1.
+
+```powershell
+$qaRoot = Join-Path $env:TEMP 'roadscan-browser-qa'
+$playwrightRoot = Join-Path $qaRoot 'node_modules\playwright'
+$env:ROADSCAN_PLAYWRIGHT_MODULE = ([uri](Join-Path $playwrightRoot 'index.mjs')).AbsoluteUri
+$env:ROADSCAN_PLAYWRIGHT_EXPECT = ([uri](Join-Path $playwrightRoot 'test.mjs')).AbsoluteUri
+$env:ROADSCAN_CHROME = 'C:\Program Files\Google\Chrome\Application\chrome.exe'
+$env:ROADSCAN_QA_OUTPUT = Join-Path $qaRoot 'artifacts\website-guide'
+node node_modules/vite/bin/vite.js build
+if ($LASTEXITCODE -ne 0) { throw 'Frontend build failed; do not run stale dist.' }
+node tests/website-guide.browser.mjs
+if ($LASTEXITCODE -ne 0) { throw 'Website guide browser check failed.' }
+```
+
+For Linux, use the same entry point and prerequisites. The following paths are
+also examples; replace them with existing installations. File URLs containing
+spaces must encode them as `%20`. This is the equivalent invocation, not a claim
+that Linux was part of the verified Windows run.
+
+```sh
+export ROADSCAN_PLAYWRIGHT_MODULE='file:///tmp/roadscan-browser-qa/node_modules/playwright/index.mjs'
+export ROADSCAN_PLAYWRIGHT_EXPECT='file:///tmp/roadscan-browser-qa/node_modules/playwright/test.mjs'
+export ROADSCAN_CHROME='/usr/bin/google-chrome'
+export ROADSCAN_QA_OUTPUT='/tmp/roadscan-browser-qa/artifacts/website-guide'
+node node_modules/vite/bin/vite.js build && node tests/website-guide.browser.mjs
+```
+
+The harness creates the output directory. If `ROADSCAN_CHROME` is omitted, it
+uses Playwright's `chrome` channel, which still requires installed Chrome. No
+real workspace token, reports, model files or running RoadScan backend are needed.
 
 The test serves only the built frontend and in-memory synthetic API fixtures on
 a temporary localhost port. It uses fresh browser contexts, blocks external

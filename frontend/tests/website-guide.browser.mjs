@@ -64,10 +64,19 @@ try {
   await expect(page.locator('#website-guide-title')).toBeFocused();
   for (let i = 0; i < 18; i++) {await page.keyboard.press('Tab'); assert.ok(await guide.evaluate(el => el.contains(document.activeElement)));}
   const beforeQuestion = requests.length;
-  for (const query of ['analyze images', 'road photos']) {
+  for (const query of ['analyze images', 'analyze road photos', 'inspect road photos']) {
     await guide.getByLabel('What would you like to do?').fill(query);
     await guide.getByRole('button', {name: 'Find steps'}).click();
     await expect(guide.locator('#website-guide-topic')).toHaveText('Upload and analyze a photo');
+    await screen('dashboard');
+    await expect(page.locator('.website-guide-highlight')).toHaveCount(0);
+  }
+  for (const query of ['where are my road photos', 'show road photos', 'check road photos']) {
+    await guide.getByLabel('What would you like to do?').fill(query);
+    await guide.getByRole('button', {name: 'Find steps'}).click();
+    await expect(guide).toContainText('I do not have a clear guide');
+    await expect(guide.locator('#website-guide-topic')).toHaveCount(0);
+    await expect(guide.getByRole('button', {name: 'Open this screen'})).toHaveCount(0);
     await screen('dashboard');
     await expect(page.locator('.website-guide-highlight')).toHaveCount(0);
   }
