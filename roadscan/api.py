@@ -251,6 +251,28 @@ def reports(status:str|None=None,search:str=Query('',max_length=200),page:int=Qu
     total=q.count();items=q.order_by(Report.created_at.desc()).offset((page-1)*size).limit(size).all()
     return {'items':[serialize(r) for r in items],'page':page,'size':size,'total':total}
 
+# Static path: must stay registered before /api/reports/{rid}.
+@app.get('/api/reports/map')
+def report_map(location:str=Query(...,pattern='^(recorded|simulated)$'),status:str|None=None,
+               damage:str|None=Query(None,pattern='^(D00|D10|D20|D40|OTHER|none)$'),limit:int=Query(2000,ge=1,le=2000),
+               actor:str=Depends(read_access),session=Depends(db)):
+    """Compact pins for one location class; every filter applies before counting and capping."""
+    q=session.query(Report.id,Report.latitude,Report.longitude,Report.location_source,Report.status,Report.score,
+                    Report.detections,Report.created_at).filter(location_filters()[location])
+    if status:
+        if status not in STATUSES:raise HTTPException(422,'Invalid status')
+        q=q.filter(Report.status==status)
+    pins=[]
+    # shortcut: damage classes are parsed from the detections JSON in Python; add an indexed class column if reports reach tens of thousands
+    for row in q.order_by(Report.created_at.desc().nullslast(),Report.id.asc()).all():
+        classes=sorted({d['class_id'] for d in json.loads(row.detections or '[]') if isinstance(d,dict) and isinstance(d.get('class_id'),str)})
+        if damage and (bool(classes) if damage=='none' else damage not in classes):continue
+        pins.append({'id':row.id,'latitude':row.latitude,'longitude':row.longitude,'location_source':row.location_source,
+                     'status':row.status,'score':row.score,'classes':classes,
+                     'created_at':row.created_at.isoformat() if row.created_at else None})
+    items=pins[:limit]
+    return {'items':items,'total':len(pins),'returned':len(items),'limit':limit,'truncated':len(pins)>len(items)}
+
 @app.get('/api/stats')
 def stats(actor:str=Depends(read_access),session=Depends(db)):
     counts=dict(session.query(Report.status,func.count(Report.id)).group_by(Report.status).all())
