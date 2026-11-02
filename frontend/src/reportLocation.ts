@@ -13,3 +13,10 @@ export function locationSourceLabel(source:string|undefined,lang:string) {
 export function recordedMapUrl(report?:{latitude?:number|null;longitude?:number|null;location_source?:string}|null) {
   return report&&['manual','device_gps'].includes(report.location_source||'')?googleMapsUrl(report.latitude,report.longitude):null;
 }
+
+/** An outbound link only: no panorama lookup, imagery request or inferred camera heading. */
+export function recordedStreetViewUrl(report?:{latitude?:number|null;longitude?:number|null;location_source?:string}|null) {
+  return recordedMapUrl(report)
+    ? 'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=' + encodeURIComponent(`${report!.latitude},${report!.longitude}`)
+    : null;
+}
