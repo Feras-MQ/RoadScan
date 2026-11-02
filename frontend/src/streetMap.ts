@@ -1,9 +1,11 @@
 import {locationGroup} from './reportMap.ts';
 import type {LocationGroup, ReportLocation} from './reportMap.ts';
 
-export type StreetPin = ReportLocation & {status:string; score:number|null; classes:string[]; created_at:string|null};
-export type PinResult = {items:StreetPin[]; total:number; returned:number; limit:number; truncated:boolean};
+export type StreetPin = ReportLocation & {status:string; score:number|null; classes:string[]|null; created_at:string|null};
+export type PinResult = {items:StreetPin[]; total:number; returned:number; limit:number; truncated:boolean; unreadable:number};
 export const damageClasses = ['D00', 'D10', 'D20', 'D40', 'OTHER'] as const;
+const damageNames:Record<string,[string,string]>={D00:['Longitudinal crack','شق طولي'],D10:['Transverse crack','شق عرضي'],D20:['Alligator crack','تشققات شبكية'],D40:['Pothole','حفرة'],OTHER:['Other surface damage','أضرار سطحية أخرى']};
+export function damageClassLabel(code:string,lang:string){return code+' · '+(damageNames[code]?.[lang==='ar'?1:0]||code);}
 export const MAX_STREET_PINS = 2000;
 export const OSM_TILE_URL = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 export const OSM_TILE_OPTIONS = {
@@ -43,10 +45,14 @@ export function readPinResult(value:unknown, group:LocationGroup):PinResult|null
     if (!pin || typeof pin.id !== 'string' || !pin.id || ids.has(pin.id) || locationGroup(pin) !== group
       || typeof pin.status !== 'string' || !(pin.created_at === null || typeof pin.created_at === 'string')
       || !(pin.score === null || typeof pin.score === 'number' && Number.isFinite(pin.score))
-      || !Array.isArray(pin.classes) || pin.classes.some(c => !damageClasses.includes(c as typeof damageClasses[number]))) return null;
+      || !(pin.classes===null || Array.isArray(pin.classes) && pin.classes.every(c => damageClasses.includes(c as typeof damageClasses[number])))) return null;
     ids.add(pin.id);
   }
-  return result;
+  const shownUnreadable=result.items.filter(pin=>pin.classes===null).length;
+  // Older compact endpoints omitted this field and never returned null classes.
+  const unreadable=result.unreadable===undefined&&shownUnreadable===0?0:result.unreadable;
+  if(!Number.isSafeInteger(unreadable)||unreadable<shownUnreadable||unreadable>shownUnreadable+result.total-result.returned)return null;
+  return {...result,unreadable};
 }
 
 // Web Mercator cannot draw the poles. Keep those valid saved coordinates in the offline list.

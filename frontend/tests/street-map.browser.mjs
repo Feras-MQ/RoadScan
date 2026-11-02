@@ -10,12 +10,15 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
   const compact=(id,source='manual',classes=['D40'],latitude=24.7,longitude=46.7)=>({id,latitude,longitude,location_source:source,classes,score:null,status:'Confirmed',created_at:null});
   const saved=[compact('pin-one'),compact('pin-overlap','device_gps',[]),compact('pin-outside-page','manual',['D00'],24.71,46.71),compact('polar','manual',[],90,0),compact('simulation','simulated'),{...compact('missing'),latitude:null,longitude:null,location_source:'not_provided'}];
   const full=pin=>({...baseReport,...pin,detections:pin.classes.map(class_id=>({class_id,box:[1,1,30,30],confidence:.7})),image_url:'/api/fixture-image.svg'});
-  let mode='normal',tileFailure=false,releasePins=null;
+  let mode='normal',tileFailure=false,tilePartial=false,partialFailed=false,tileStall='',releasePins=null;
+  const releaseTiles=[];
   const tiles=[],pinRequests=[],external=[],writes=[],errors=[];
   await context.route('**/*',async route=>{
    const req=route.request(),url=new URL(req.url());
    if(url.hostname==='tile.openstreetmap.org'){
     tiles.push({url:url.href,headers:req.headers()});
+    if(tileStall==='all'||tileStall==='partial'&&!releaseTiles.length){await new Promise(resolve=>releaseTiles.push(resolve));await route.abort().catch(()=>{});return;}
+    if(tilePartial&&!partialFailed){partialFailed=true;await route.abort();return;}
     if(tileFailure){await route.abort();return;}
     await route.fulfill({contentType:'image/svg+xml',headers:{'Cache-Control':'public, max-age=604800'},body:'<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"><rect width="256" height="256" fill="#dee5dd"/><path d="M0 128H256M128 0V256" stroke="#fff" stroke-width="12"/><text x="10" y="30">SYNTHETIC TILE</text></svg>'});return;
    }
@@ -29,9 +32,10 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
     if(mode==='unavailable'){await route.fulfill({status:404,json:{detail:'Old backend'}});return;}
     const group=url.searchParams.get('location'),damage=url.searchParams.get('damage');
     assert.ok(['recorded','simulated'].includes(group));assert.equal(url.searchParams.get('limit'),'2000');
-    const candidates=mode==='cap'?Array.from({length:2001},(_,i)=>compact('cap-'+i,'manual',['D40'],24.7+(i%30)*.0001,46.7+Math.floor(i/30)*.0001)):tileFailure?saved.map(p=>p.latitude!==null&&Math.abs(p.latitude)<85?{...p,latitude:p.latitude+2,longitude:p.longitude+2}:p):saved;
-    const all=candidates.filter(p=>(group==='simulated'?p.location_source==='simulated':['manual','device_gps'].includes(p.location_source))&&p.latitude!==null&&(!damage||(damage==='none'?!p.classes.length:p.classes.includes(damage)))&&(!url.searchParams.get('status')||p.status===url.searchParams.get('status')));
-    const data={items:all.slice(0,2000),total:all.length,returned:Math.min(all.length,2000),limit:2000,truncated:all.length>2000};
+    const offset=tileStall==='all'?8:tileStall==='partial'?6:tilePartial?4:tileFailure?2:0;
+    const candidates=mode==='cap'?Array.from({length:2001},(_,i)=>compact('cap-'+i,'manual',['D40'],24.7+(i%30)*.0001,46.7+Math.floor(i/30)*.0001)):saved.map(p=>({...p,...(p.latitude!==null&&Math.abs(p.latitude)<85?{latitude:p.latitude+offset,longitude:p.longitude+offset}:{}),...(mode==='unreadable'&&p.id==='pin-outside-page'?{classes:null}:{})}));
+    const all=candidates.filter(p=>(group==='simulated'?p.location_source==='simulated':['manual','device_gps'].includes(p.location_source))&&p.latitude!==null&&(!damage||(p.classes!==null&&(damage==='none'?!p.classes.length:p.classes.includes(damage))))&&(!url.searchParams.get('status')||p.status===url.searchParams.get('status')));
+    const data={items:all.slice(0,2000),total:all.length,returned:Math.min(all.length,2000),limit:2000,truncated:all.length>2000,unreadable:all.filter(p=>p.classes===null).length};
     if(mode==='invalid')data.items[0]={...data.items[0],location_source:'simulated'};
     await route.fulfill({json:data}).catch(()=>{});return;
    }
@@ -67,6 +71,7 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
    await expect(panel).toContainText(tx('outside the street map’s latitude range','خارج نطاق خطوط العرض'));
    await expect(panel.locator('.leaflet-control-attribution')).toBeVisible();
    await expect(panel.locator('.leaflet-control-attribution')).toContainText('OpenStreetMap contributors');
+   await expect(panel.locator('option[value="D40"]')).toHaveText(tx('D40 · Pothole','D40 · حفرة'));
    for(const tile of tiles){assert.equal(tile.headers['x-api-key'],undefined);assert.equal(tile.headers.referer,origin+'/');assert.equal(new URL(tile.url).search,'');}
    await panel.locator('.leaflet-marker-icon').first().focus();await page.keyboard.press('Enter');
    await expect(panel.locator('#street-selected-title')).toBeFocused();
@@ -110,6 +115,35 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
    tileFailure=false;await panel.getByRole('button',{name:tx('Try street map again','إعادة محاولة تحميل خريطة الشوارع'),exact:true}).click();
    await expect(panel.locator('.leaflet-tile-loaded').first()).toBeVisible();await off();
    await expect(panel.locator('.leaflet-container')).toHaveCount(0);
+   tilePartial=true;partialFailed=false;await load();
+   await expect(panel.locator('.street-map-partial')).toBeVisible();
+   await expect(panel.locator('.leaflet-marker-icon')).toHaveCount(3);
+   await expect(panel.locator('.street-map-fallback-note')).toHaveCount(0);
+   tilePartial=false;await panel.locator('.leaflet-control-zoom-in').click();
+   await expect(panel.locator('.street-map-partial')).toHaveCount(0);
+   await expect(panel.locator('.leaflet-tile-loaded').first()).toBeVisible();
+   await expect(panel.locator('.leaflet-tile:not(.leaflet-tile-loaded)')).toHaveCount(0);
+   tileFailure=true;await panel.locator('.leaflet-control-zoom-in').click();
+   await expect(panel.locator('.street-map-fallback-note')).toBeVisible();tileFailure=false;await off();
+   mode='unreadable';await load();
+   await expect(panel.locator('.street-map-unreadable')).toContainText('1');
+   await panel.locator('.street-map-selector select').selectOption('pin-outside-page');
+   await expect(panel.locator('.street-map-selection')).toContainText(tx('Unreadable detection data','بيانات الاكتشافات غير قابلة للقراءة'));
+   await expect(panel.locator('.street-map-selection')).not.toContainText(tx('No detections','بلا اكتشافات'));
+   await panel.locator('.street-map-filter select').selectOption('none');
+   await expect(panel.locator('.street-map-unreadable')).toHaveCount(0);
+   await expect(panel.locator('.street-map-selector option[value="pin-outside-page"]')).toHaveCount(0);
+   await panel.locator('.street-map-filter select').selectOption('');await off();mode='normal';
+   if(lang==='en'&&width===1440){
+    await page.clock.install();
+    for(const kind of ['partial','all']){
+     tileStall=kind;await load();await expect.poll(()=>releaseTiles.length).toBeGreaterThan(0);
+     if(kind==='partial')await expect(panel.locator('.leaflet-tile-loaded').first()).toBeVisible();
+     await page.clock.fastForward(16000);
+     await expect(panel.locator(kind==='partial'?'.street-map-partial':'.street-map-fallback-note')).toBeVisible();
+     await off();for(const release of releaseTiles.splice(0))release();tileStall='';
+    }
+   }
    for(const failure of ['invalid','unavailable']){mode=failure;await load();await expect(panel.locator('.street-map-fallback-note')).toBeVisible();await off();}
    mode='delay';await load();await expect.poll(()=>Boolean(releasePins)).toBe(true);await off();releasePins();
    await expect(panel.locator('.leaflet-container')).toHaveCount(0);

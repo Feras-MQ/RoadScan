@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {recordedStreetViewUrl} from '../src/reportLocation.ts';
-import {readPinResult,canPlotStreetPin,OSM_TILE_URL,OSM_TILE_OPTIONS,streetPinsPath,osmTileProvider} from '../src/streetMap.ts';
+import {readPinResult,canPlotStreetPin,OSM_TILE_URL,OSM_TILE_OPTIONS,streetPinsPath,osmTileProvider,damageClassLabel} from '../src/streetMap.ts';
 import type {StreetPin} from '../src/streetMap.ts';
 import {matchGuideTopic} from '../src/guideContent.ts';
 const pin:StreetPin={id:'synthetic-1',latitude:0,longitude:0,location_source:'manual',status:'Confirmed',score:null,classes:[],created_at:'2026-01-01T00:00:00Z'};
-const response={items:[pin],returned:1,total:1,limit:2000,truncated:false};
+const response={items:[pin],returned:1,total:1,limit:2000,truncated:false,unreadable:0};
 
 test('street view links use recorded finite coordinates only, including zero and boundaries',()=>{
   assert.equal(recordedStreetViewUrl(pin),'https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=0%2C0');
@@ -28,6 +28,18 @@ test('valid polar coordinates remain unchanged and are excluded from Mercator dr
   assert.equal(canPlotStreetPin(polar),false);assert.equal(polar.latitude,90);
   assert.equal(canPlotStreetPin(pin),true);
   assert.equal(canPlotStreetPin({...pin,location_source:'simulated'}),true);
+});
+test('unreadable detection data stays distinct from empty detections and counts include omitted pins',()=>{
+  const unreadable={...pin,id:'legacy',classes:null};
+  const mixed={...response,items:[pin,unreadable],total:2,returned:2,unreadable:1};
+  assert.deepEqual(readPinResult(mixed,'recorded'),mixed);
+  assert.ok(readPinResult({...mixed,items:[pin],total:5,returned:1,limit:1,truncated:true,unreadable:4},'recorded'));
+  for(const count of [-1,0,2,1.5,undefined])assert.equal(readPinResult({...mixed,unreadable:count},'recorded'),null);
+  assert.equal(readPinResult({...response,total:5,limit:1,truncated:true,unreadable:5},'recorded'),null);
+  assert.equal(readPinResult({...response,unreadable:undefined},'recorded')?.unreadable,0,'older readable-only endpoint');
+  assert.equal(damageClassLabel('D40','en'),'D40 · Pothole');
+  assert.equal(damageClassLabel('D00','ar'),'D00 · شق طولي');
+  for(const code of ['D00','D10','D20','D40','OTHER'])for(const lang of ['en','ar'])assert.notEqual(damageClassLabel(code,lang),code+' · '+code);
 });
 test('standard tile settings disclose origin, use normal browser cache, and avoid prefetch/retina requests',()=>{
   assert.equal(OSM_TILE_URL,'https://tile.openstreetmap.org/{z}/{x}/{y}.png');

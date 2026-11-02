@@ -1,4 +1,4 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {OSM_TILE_OPTIONS, pinStatusColor} from './streetMap';
@@ -14,6 +14,7 @@ type Props = {
 export default function StreetMapCanvas({pins, lang, simulated, selectedId, labelStatus, onSelect, onFailure}:Props) {
   const container=useRef<HTMLDivElement>(null), instance=useRef<L.Map|null>(null);
   const markers=useRef(new Map<string,L.Marker>());
+  const [partial,setPartial]=useState(false);
   const callbacks=useRef({onSelect,onFailure,labelStatus}); callbacks.current={onSelect,onFailure,labelStatus};
   const tx=(en:string,ar:string)=>lang==='ar'?ar:en;
   useEffect(() => {
@@ -23,11 +24,29 @@ export default function StreetMapCanvas({pins, lang, simulated, selectedId, labe
     L.control.zoom({zoomInTitle:lang==='ar'?'تكبير':'Zoom in',zoomOutTitle:lang==='ar'?'تصغير':'Zoom out'}).addTo(map);
     map.attributionControl.setPrefix(false);
     const tiles=L.tileLayer(streetTileProvider.url,OSM_TILE_OPTIONS);
-    let stopped=false, loaded=false;
+    let stopped=false, failed=0, deadline:number|undefined;
     function fail(){if(!stopped){stopped=true;callbacks.current.onFailure();}}
-    tiles.on('tileerror',fail);
-    tiles.on('tileload',()=>{loaded=true;});
-    const deadline=window.setTimeout(()=>{if(!loaded)fail();},15000);
+    // Decide after the current load settles, not on the first individual tile error.
+    // Include cached visible tiles when panning; offscreen tiles cannot mask an empty view.
+    function hasVisibleTile(){
+      const view=container.current?.getBoundingClientRect();
+      return Boolean(view&&Array.from(container.current!.querySelectorAll('.leaflet-tile-loaded')).some(tile=>{
+        const rect=tile.getBoundingClientRect();
+        return rect.width>0&&rect.height>0&&rect.right>view.left&&rect.left<view.right&&rect.bottom>view.top&&rect.top<view.bottom;
+      }));
+    }
+    function finish(timedOut=false){
+      window.clearTimeout(deadline);
+      if(stopped)return;
+      if(!hasVisibleTile())fail();
+      else setPartial(failed>0||timedOut);
+    }
+    tiles.on('loading',()=>{
+      window.clearTimeout(deadline);failed=0;setPartial(false);
+      deadline=window.setTimeout(()=>finish(true),15000);
+    });
+    tiles.on('tileerror',()=>{failed++;});
+    tiles.on('load',()=>finish());
     // Fit observed coordinates only. No default city or inferred location is introduced.
     map.fitBounds(L.latLngBounds(pins.map(pin=>[pin.latitude!,pin.longitude!] as L.LatLngTuple)),{padding:[35,35],maxZoom:16,animate:false});
     for (const [index,pin] of pins.entries()) {
@@ -50,5 +69,5 @@ export default function StreetMapCanvas({pins, lang, simulated, selectedId, labe
     const marker=markers.current.get(selectedId);
     if(marker && instance.current && !instance.current.getBounds().contains(marker.getLatLng()))instance.current.panTo(marker.getLatLng(),{animate:false});
   },[selectedId,pins,lang]);
-  return <div ref={container} className="street-map-canvas" dir="ltr" aria-label={tx('Street map: use arrow keys to pan, plus and minus to zoom. Choose a pin or use the report selector below.','خريطة الشوارع: استخدم الأسهم للتحريك وزرّي الجمع والطرح للتكبير والتصغير. اختر نقطة أو استخدم قائمة البلاغات أدناه.')}/>;
+  return <><div ref={container} className="street-map-canvas" dir="ltr" aria-label={tx('Street map: use arrow keys to pan, plus and minus to zoom. Choose a pin or use the report selector below.','خريطة الشوارع: استخدم الأسهم للتحريك وزرّي الجمع والطرح للتكبير والتصغير. اختر نقطة أو استخدم قائمة البلاغات أدناه.')}/>{partial&&<p className="street-map-partial" role="status">{tx('Some street tiles did not load. Pins remain available, but the background is incomplete. Turn the street map off and load it again to retry, or use the coordinate diagram.','لم تُحمّل بعض أجزاء خريطة الشوارع. النقاط متاحة، لكن الخلفية غير مكتملة. أوقف خريطة الشوارع وحمّلها مجددًا للمحاولة، أو استخدم مخطط الإحداثيات.')}</p>}</>;
 }
