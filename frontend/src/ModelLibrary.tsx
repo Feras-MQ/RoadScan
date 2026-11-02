@@ -2,6 +2,7 @@ import {modelName} from './modelName';
 import {useEffect, useRef, useState} from 'react';
 import {Upload, CheckCircle2, ScanLine, RefreshCw} from 'lucide-react';
 import './models.css';
+import {useNavigationWork} from './navigationWork';
 
 type ModelItem = {id:string;name:string;file:string;sha256:string;bytes:number;family:string;imgsz:number;classes:Record<string,string>;reported_metrics:Record<string,number>;metrics_source:string;checked:string;confidence_profile?:Record<string,number>;threshold_source?:string};
 type Catalog = {items:ModelItem[];active_id:string;can_manage:boolean;available:boolean;warning:string|null;model_version:string};
@@ -13,6 +14,7 @@ export default function ModelLibrary(props:Props) {
   const tx=(en:string,ar:string)=>props.lang==='ar'?ar:en;
   const [catalog,setCatalog]=useState<Catalog|null>(null);
   const [busy,setBusy]=useState(false);
+  useNavigationWork('models', false, busy, true);
   const [notice,setNotice]=useState('');
   const [error,setError]=useState('');
   const [dragging,setDragging]=useState(false);

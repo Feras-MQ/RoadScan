@@ -2,11 +2,13 @@ import type {CSSProperties} from 'react';
 import {useEffect, useState, useRef} from 'react';
 import {GraduationCap, Download, RefreshCw} from 'lucide-react';
 import './learning.css';
+import {useNavigationWork} from './navigationWork';
 type Summary={approved:number;stale:number;counts:Record<string,number>;can_export:boolean};
 type Props={lang:string;connected:boolean;sessionKey:string;request:(path:string,options?:RequestInit)=>Promise<any>};
 export default function Learning(props:Props) {
   const tx=(en:string,ar:string)=>props.lang==='ar'?ar:en;const [summary,setSummary]=useState<Summary|null>(null);
   const [error,setError]=useState('');const [busy,setBusy]=useState(false);const task=useRef<AbortController|null>(null);
+  useNavigationWork('export', false, busy);
   async function refresh(){task.current?.abort();const controller=new AbortController();task.current=controller;setError('');
     try{const data=await props.request('/api/training',{signal:controller.signal});if(!controller.signal.aborted)setSummary(data)}catch(reason){if(!controller.signal.aborted)setError(String(reason instanceof Error?reason.message:reason))}}
   useEffect(()=>{setSummary(null);setBusy(false);if(props.connected)void refresh();return()=>task.current?.abort()},[props.connected,props.sessionKey,props.request]);

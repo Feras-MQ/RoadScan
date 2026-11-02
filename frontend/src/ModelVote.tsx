@@ -5,6 +5,7 @@ import {GitCompareArrows, CheckCircle2} from 'lucide-react';
 import type {Detection} from './annotations';
 import {validAnnotations} from './annotations';
 import './learning.css';
+import {useNavigationWork} from './navigationWork';
 
 type Item = {id:string; name:string; sha256:string; family:string};
 type Vote = {detection:Detection; votes:number; eligible_models:number; required_votes:number; model_ids:string[]};
@@ -25,14 +26,17 @@ export default function ModelVote(props:Props) {
   const [showDisagreements,setShowDisagreements]=useState(true);
   const [emptyConfirmed,setEmptyConfirmed]=useState<Record<string,boolean>>({});
   const task=useRef<AbortController|null>(null);
+  const [initialChoice,setInitialChoice]=useState<string[]>([]);
+  useNavigationWork('vote', Boolean(result) || [...chosen].sort().join(',') !== [...initialChoice].sort().join(','), busy);
   useEffect(()=>{
-    const controller=new AbortController();task.current?.abort();task.current=null;setBusy(false);setResult(null);setError('');setEmptyConfirmed({});
+    const controller=new AbortController();task.current?.abort();task.current=null;setBusy(false);setResult(null);setError('');setEmptyConfirmed({});setChosen([]);setInitialChoice([]);
     props.request('/api/models',{signal:controller.signal}).then(data=>{
       if(controller.signal.aborted)return;
       const unique:Item[]=data.items.filter((item:Item,index:number,array:Item[])=>array.findIndex(x=>x.sha256===item.sha256)===index);
       setItems(unique);
       const recommended=unique.filter(item=>/^(RTDETR_L_RDD2022|YOLO11s_RDD2022|YOLOv8m_RDD2022)/.test(item.name));
-      setChosen((recommended.length>=2?recommended:unique).slice(0,3).map(item=>item.id));
+      const defaults=(recommended.length>=2?recommended:unique).slice(0,3).map(item=>item.id);
+      setChosen(defaults);setInitialChoice(defaults);
     }).catch(reason=>{if(!controller.signal.aborted)setError(reason.message)});
     return ()=>{controller.abort();task.current?.abort();task.current=null};
   },[props.reportId,props.revision,props.request]);
