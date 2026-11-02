@@ -256,10 +256,15 @@ MAP_CLASSES={'D00','D10','D20','D40','OTHER'}
 def _reject_nonfinite(token):
     raise ValueError(f'Non-finite number {token} in stored detections')
 
+def _finite_float(text):
+    value=float(text)  # 1e309 overflows to inf without being a NaN/Infinity token
+    if not math.isfinite(value):_reject_nonfinite(text)
+    return value
+
 def detection_classes(raw):
     """Sorted damage classes, or None when stored detections are not a readable list of known classes."""
     # Same readability rule as core.read_detections (PR #12); reuse it once both branches are combined.
-    try:value=json.loads(raw,parse_constant=_reject_nonfinite)
+    try:value=json.loads(raw,parse_constant=_reject_nonfinite,parse_float=_finite_float)
     except (TypeError,ValueError):return None
     if not isinstance(value,list):return None
     classes=set()

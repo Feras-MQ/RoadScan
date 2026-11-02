@@ -90,7 +90,11 @@ def test_malformed_legacy_detections_are_unreadable_not_zero(review_client):
             '[{"class_id": "D40"}, {"class_id": 7}]', '"[]"', None, '[{"class_id": []}]', '[{"class_id": {}}]',
             '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": NaN}]',
             '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": Infinity}]',
-            '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": -Infinity}]']
+            '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": -Infinity}]',
+            '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": 1e309}]',
+            '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": -1e309}]',
+            '[{"class_id": "D40", "box": [1, 1, 1e309, 5], "confidence": 0.9}]',
+            '[{"class_id": "D40", "box": [-1e309, 1, 5, 5], "confidence": 0.9}]']
     bad = [make(client, headers, raw_detections=raw, created_at=t(m)) for m, raw in enumerate(raws)]
     first = pins(client, headers, 'location=recorded&limit=1')  # older malformed rows must not break a capped request
     assert [p['id'] for p in first['items']] == [valid] and first['total'] == 2 + len(raws) and first['unreadable'] == len(raws)
