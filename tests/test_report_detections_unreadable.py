@@ -15,7 +15,12 @@ MALFORMED = ['null', '1', '{broken', '[{}]', '[null]', '{"D40": true}', '[{"clas
              '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": NaN}]',
              '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": Infinity}]',
              '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": -Infinity}]',
-             '[{"class_id": "D40", "box": [1, NaN, 5, 5], "confidence": 0.9}]']
+             '[{"class_id": "D40", "box": [1, NaN, 5, 5], "confidence": 0.9}]',
+             # Overflowing literals parse to +/-inf without a NaN/Infinity token.
+             '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": 1e309}]',
+             '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": -1e309}]',
+             '[{"class_id": "D40", "box": [1, 1, 1e309, 5], "confidence": 0.9}]',
+             '[{"class_id": "D40", "box": [-1e309, 1, 5, 5], "confidence": 0.9}]']
 
 
 def stored(client, headers, raw):
@@ -95,7 +100,9 @@ def test_training_never_approves_or_exports_unreadable_detections(review_client)
     from roadscan.training_data import TrainingApproval
     client, headers, _ = review_client
     for raw in ['null', '{broken', '{"D40": true}', '[{}]', '[{"class_id": "LEGACY"}]', None, '[{"class_id": []}]',
-                '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": NaN}]']:
+                '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": NaN}]',
+                '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": 1e309}]',
+                '[{"class_id": "D40", "box": [1, -1e309, 5, 5], "confidence": 0.9}]']:
         rid = stored(client, headers, raw)
         response = approve(client, headers, rid, confirm(client, headers, rid), 'legacy')
         assert response.status_code == 409 and 'unreadable' in response.json()['detail'], raw

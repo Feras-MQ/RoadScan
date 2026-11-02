@@ -1,4 +1,4 @@
-import os, json, hashlib, uuid, time, io
+import os, json, math, hashlib, uuid, time, io
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from PIL import Image, ImageOps, UnidentifiedImageError
@@ -84,9 +84,14 @@ def similar(session, h, current_id, limit=5):
 def _reject_nonfinite(token):
     raise ValueError(f'Non-finite number {token} in stored detections')
 
+def _finite_float(text):
+    value = float(text)  # 1e309 overflows to inf without being a NaN/Infinity token
+    if not math.isfinite(value): _reject_nonfinite(text)
+    return value
+
 def read_detections(raw):
     """Stored detections as a list, or None when they are not a readable list of known-class entries."""
-    try: value = json.loads(raw, parse_constant=_reject_nonfinite)
+    try: value = json.loads(raw, parse_constant=_reject_nonfinite, parse_float=_finite_float)
     except (TypeError, ValueError): return None
     # Unreadable legacy data is reported as such, never coerced to [] ("no damage").
     if not isinstance(value, list) or any(not isinstance(item, dict) or not isinstance(item.get('class_id'), str)
