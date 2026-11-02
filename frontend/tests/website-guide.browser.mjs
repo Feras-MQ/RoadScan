@@ -8,6 +8,7 @@ import path from 'node:path';
 import {checkReportWorkGuard} from './guide-report-work.browser.mjs';
 import {checkVideoNavigation} from './video-navigation.browser.mjs';
 import {checkMapWorkspace} from './map-workspace.browser.mjs';
+import {checkNavigationMedia} from './navigation-media.browser.mjs';
 import {checkPreciseNavigation} from './navigation-state.browser.mjs';
 const {chromium} = await import(process.env.ROADSCAN_PLAYWRIGHT_MODULE || 'playwright');
 const {expect} = await import(process.env.ROADSCAN_PLAYWRIGHT_EXPECT || 'playwright/test');
@@ -181,6 +182,7 @@ try {
     await checkVideoNavigation(browser, origin, expect, mode, width);
   }
   await checkPreciseNavigation(browser, origin, report, expect);
+  await checkNavigationMedia(browser, origin, expect);
   await checkMapWorkspace(browser, origin, report, expect, artifacts);
   console.log(JSON.stringify({result: 'PASS', coverage: 'EN/AR desktop/mobile; typed questions; fallback; all destinations; keyboard/focus; back/close/reopen; highlight cleanup; unsaved review guard; existing report-switch guard; pending photo preserved; guide actions do not submit; guard scenarios use explicit mocked vote/video requests', requests: requests.length, artifacts}, null, 2));
   await context.close();

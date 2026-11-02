@@ -21,8 +21,8 @@ export function workWarning(work:NavigationWork[], lang:string):string|null {
   const labels:Record<WorkKind,string>={
     vote:tx('model choices, comparison results or a running model vote','اختيارات النماذج أو نتائج المقارنة أو تصويت جارٍ'),
     training:tx('unsaved training settings','إعدادات التدريب غير المحفوظة'),
-    live:tx('the selected video, captured frame or live session','الفيديو المختار أو الإطار الملتقط أو الجلسة المباشرة'),
-    video:tx('the selected video or analysis results','الفيديو المختار أو نتائج التحليل'),
+    live:tx('an unsaved captured frame or active live session','إطار ملتقط غير محفوظ أو جلسة مباشرة نشطة'),
+    video:tx('unsaved video analysis results or active analysis','نتائج تحليل فيديو غير محفوظة أو تحليل نشط'),
     models:tx('a model update','تحديث النموذج'),
     export:tx('the dataset download','تنزيل بيانات التدريب'),
     analysis:tx('the report analysis','تحليل البلاغ'),

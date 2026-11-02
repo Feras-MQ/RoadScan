@@ -44,7 +44,7 @@ export default function LiveRecognition(props: Props) {
   const [quality,setQuality]=useState<'balanced'|'detail'>('balanced');
   const [processing,setProcessing]=useState(false);
   const qualityRef=useRef(quality);qualityRef.current=quality;
-  useNavigationWork('live', Boolean(videoURL || processed), opening || running || processing);
+  useNavigationWork('live', Boolean(processed), opening || running || processing);
 
   const release=useCallback(() => {
     ++epoch.current; loop.current?.stop();

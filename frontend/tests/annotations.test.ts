@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
-import {dragBox, validAnnotations} from '../src/annotations.ts';
+import {dragBox, validAnnotations, sameAnnotations} from '../src/annotations.ts';
 
 test('reverse drags are normalized and clamped to original image pixels', () => {
   assert.deepEqual(dragBox([80, 70], [-30, -10], 100, 80), [0, 0, 80, 70]);
@@ -15,4 +15,18 @@ test('invalid boxes and unsupported classes cannot be submitted', () => {
     assert.equal(validAnnotations([{...d, ...change}], 100, 80), false);
   }
   assert.equal(validAnnotations(Array(101).fill(d), 100, 80), false);
+});
+
+test('review equality ignores annotation/key ordering without changing either input', () => {
+  const a = {class_id:'D40', box:[1,2,30,40], confidence:0.8, source:'model'};
+  const b = {class_id:'D00', box:[5,6,50,60], confidence:1};
+  const left=[a,b], right=[{confidence:1,box:[5,6,50,60],class_id:'D00'},{source:'model',confidence:0.8,box:[1,2,30,40],class_id:'D40'}];
+  const before=JSON.stringify({left,right});
+  assert.equal(sameAnnotations(left,right),true);
+  assert.equal(JSON.stringify({left,right}),before);
+  for(const change of [{class_id:'D10'},{box:[1,2,31,40]},{confidence:0.9},{source:'human'}])
+    assert.equal(sameAnnotations([a],[{...a,...change}]),false);
+  assert.equal(sameAnnotations([a,a,b],[a,b,b]),false);
+  assert.equal(sameAnnotations([a],[a,a]),false);
+  assert.equal(sameAnnotations([],[]),true);
 });

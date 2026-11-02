@@ -4,7 +4,7 @@ import {motionEnabled, motionQuery, subscribeMotion} from './motionPreference';
 import {recordedMapUrl,locationSourceLabel} from './reportLocation';
 import type {PointerEvent} from 'react';
 import {canReviewTransition, reviewPayload, reviewStatuses} from './reviewWorkflow';
-import {dragBox, validAnnotations} from './annotations';
+import {dragBox, validAnnotations, sameAnnotations} from './annotations';
 import {currentMedia, currentResult} from './currentTask';
 import type {Detection} from './annotations';
 import LiveRecognition from './LiveRecognition';
@@ -225,6 +225,7 @@ export default function App() {
     if (!discard && id === selected?.id && section === 'reports') return;
     if (!discard && reviewDirty) {setPendingReport(id);return;}
     if (!discard) {const blocked=confirmLeavingTools();if(blocked){setMessage(blocked);return;}}
+    stopCamera();
     setPendingReport(null);
     const generation = ++selectionGeneration.current; setBusy(true); setError('');
     try {
@@ -281,10 +282,9 @@ export default function App() {
   const ready = health?.model === 'configured';
   const mapUrl = recordedMapUrl(selected);
   const scoreValue = selected?.score;
-  const reviewDirty = Boolean(selected && ((edited && JSON.stringify(boxes) !== JSON.stringify(selected.detections)) || status !== selected.status || note !== (selected.note || '')));
+  const reviewDirty = Boolean(selected && ((edited && !sameAnnotations(boxes, selected.detections)) || status !== selected.status || note !== (selected.note || '')));
   function confirmLeavingTools():string|null {
     const work=[...navigationWork.current.values()];
-    if (cameraOpen) work.push({kind:'live',running:true});
     if (work.some(item=>item.running && item.blocking)) return tx('Wait for the current save or model update to finish before changing screens.', 'انتظر اكتمال الحفظ أو تحديث النموذج الجاري قبل تغيير الشاشة.');
     const warning=workWarning(work,lang);
     if (warning && !window.confirm(warning)) return tx('Stayed on this screen. Your unfinished work remains open.', 'بقيت في هذه الشاشة. عملك غير المكتمل ما زال مفتوحاً.');
@@ -296,6 +296,7 @@ export default function App() {
     if (reviewDirty && next !== 'reports') return tx('You have unsaved review changes. Save your review before leaving. Open Review queue to return to your draft.', 'لديك تغييرات مراجعة غير محفوظة. احفظ المراجعة قبل المغادرة. افتح قائمة المراجعة للعودة إلى المسودة.');
     const blocked=confirmLeavingTools();
     if (blocked) return blocked;
+    stopCamera();
     setAutoStartLive(false);
     setSection(next);
     return null;
