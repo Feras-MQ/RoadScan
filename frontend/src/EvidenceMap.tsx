@@ -1,12 +1,14 @@
+import {inspectAnnotations, annotationSummary} from './reportDetections';
+import type {StoredAnnotations} from './reportDetections';
 import {useEffect, useRef, useState} from 'react';
 import {ArrowUpRight, ChevronLeft, ChevronRight, FileImage, HelpCircle, MapPin, RefreshCw, Search} from 'lucide-react';
 import {locationGroup, projectLocations} from './reportMap';
 import {googleMapsUrl, recordedMapUrl, locationSourceLabel} from './reportLocation';
 import {reviewStatuses} from './reviewWorkflow';
 import type {LocationCounts, LocationGroup, ReportLocation} from './reportMap';
-import type {Detection} from './annotations';
 
-export type EvidenceReport = ReportLocation & {status:string; created_at:string; score:number|null; model_version:string; detections:Detection[]};
+
+export type EvidenceReport = ReportLocation & StoredAnnotations & {status:string; created_at:string; score:number|null; model_version:string};
 type Props = {
   reports:EvidenceReport[]; total:number; page:number; lang:string; connected:boolean; busy:boolean; sessionKey:string;
   statusFilter:string; searchQuery:string; labelStatus:(status:string)=>string;
@@ -100,7 +102,7 @@ export default function EvidenceMap({reports, total, page, lang, connected, busy
       <aside className="evidence-inspector" aria-label={tx('Selected report details', 'تفاصيل البلاغ المختار')}>{selected ? <>
         <div className="mini-label">{tx('SELECTED REPORT', 'البلاغ المختار')}</div><h2 ref={inspector} tabIndex={-1}>{tx('Report ', 'بلاغ ')}<bdi>{selected.id.slice(0,8).toUpperCase()}</bdi></h2><p className="map-report-id"><bdi>{selected.id}</bdi></p>
         <ReportPhoto key={selected.id + sessionKey} id={selected.id} sessionKey={sessionKey} lang={lang}/>
-        <dl><div><dt>{tx('Review status', 'حالة المراجعة')}</dt><dd className="evidence-source">{labelStatus(selected.status)}</dd></div><div><dt>{tx('Saved boxes', 'التحديدات المحفوظة')}</dt><dd>{selected.detections.length}</dd></div><div><dt>{tx('Location source', 'مصدر الموقع')}</dt><dd className="evidence-source">{locationSourceLabel(selected.location_source, lang)}</dd></div></dl>
+        <dl><div><dt>{tx('Review status', 'حالة المراجعة')}</dt><dd className="evidence-source">{labelStatus(selected.status)}</dd></div><div><dt>{tx('Saved boxes', 'التحديدات المحفوظة')}</dt><dd className={inspectAnnotations(selected).kind==='ready' ? undefined : 'evidence-source'}>{inspectAnnotations(selected).kind==='ready' ? selected.detections!.length : annotationSummary(selected,lang)}</dd></div><div><dt>{tx('Location source', 'مصدر الموقع')}</dt><dd className="evidence-source">{locationSourceLabel(selected.location_source, lang)}</dd></div></dl>
         {validCoordinates ? <p className="evidence-coordinates">{tx('Latitude, longitude', 'خط العرض، خط الطول')}<br/><bdi>{selected.latitude!.toFixed(5)}, {selected.longitude!.toFixed(5)}</bdi></p> : <p className="evidence-help">{tx('No valid coordinate pair was saved.', 'لم يُحفظ زوج صالح من الإحداثيات.')}</p>}
         <p className="evidence-help">{group === 'simulated' ? tx('Simulation is for demonstrations, not evidence of a real location.', 'المحاكاة للعرض وليست دليلًا على موقع فعلي.') : group === 'unlocated' ? tx('Location cannot be verified from this record. Review the image without assuming a place.', 'لا يمكن التحقق من الموقع من هذا السجل. راجع الصورة دون افتراض مكان.') : selected.location_source === 'device_gps' ? tx('GPS was reported by the submitting source. It is not independently verified and may differ from the photo location.', 'أبلغ مصدر الإرسال عن GPS. لم يُتحقق منه بشكل مستقل وقد يختلف عن مكان الصورة.') : tx('Coordinates were entered manually. They are not verified GPS or a location inferred from the image.', 'أُدخلت الإحداثيات يدويًا. ليست GPS موثقًا ولا موقعًا مستنتجًا من الصورة.')}</p>
         <button className="primary" disabled={unavailable} onClick={() => onOpen(selected.id)}>{tx('Open image & review', 'فتح الصورة والمراجعة')}<ArrowUpRight size={17}/></button>
