@@ -253,15 +253,19 @@ def reports(status:str|None=None,search:str=Query('',max_length=200),page:int=Qu
 
 MAP_CLASSES={'D00','D10','D20','D40','OTHER'}
 
+def _reject_nonfinite(token):
+    raise ValueError(f'Non-finite number {token} in stored detections')
+
 def detection_classes(raw):
     """Sorted damage classes, or None when stored detections are not a readable list of known classes."""
-    try:value=json.loads(raw)
+    # Same readability rule as core.read_detections (PR #12); reuse it once both branches are combined.
+    try:value=json.loads(raw,parse_constant=_reject_nonfinite)
     except (TypeError,ValueError):return None
     if not isinstance(value,list):return None
     classes=set()
     for item in value:
         # Unreadable legacy data is never coerced to "no damage" or passed through as an unknown class.
-        if not isinstance(item,dict) or item.get('class_id') not in MAP_CLASSES:return None
+        if not isinstance(item,dict) or not isinstance(item.get('class_id'),str) or item['class_id'] not in MAP_CLASSES:return None
         classes.add(item['class_id'])
     return sorted(classes)
 
