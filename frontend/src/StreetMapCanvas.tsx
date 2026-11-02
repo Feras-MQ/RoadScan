@@ -24,29 +24,40 @@ export default function StreetMapCanvas({pins, lang, simulated, selectedId, labe
     L.control.zoom({zoomInTitle:lang==='ar'?'تكبير':'Zoom in',zoomOutTitle:lang==='ar'?'تصغير':'Zoom out'}).addTo(map);
     map.attributionControl.setPrefix(false);
     const tiles=L.tileLayer(streetTileProvider.url,OSM_TILE_OPTIONS);
-    let stopped=false, failed=0, deadline:number|undefined;
+    let stopped=false, settled=false, timedOut=false, deadline:number|undefined;
+    // Failed tiles by coordinates. Leaflet never re-requests an errored tile, so a later load cycle
+    // (resize, pan) must not forget it; it is cleared only when the tile reloads or is removed.
+    const failedTiles=new Map<string,HTMLElement>();
+    const tileKey=(c:L.Coords)=>`${c.x}:${c.y}:${c.z}`;
     function fail(){if(!stopped){stopped=true;callbacks.current.onFailure();}}
+    function inView(el:Element){
+      const view=container.current?.getBoundingClientRect(), rect=el.getBoundingClientRect();
+      return Boolean(view&&rect.width>0&&rect.height>0&&rect.right>view.left&&rect.left<view.right&&rect.bottom>view.top&&rect.top<view.bottom);
+    }
     // Decide after the current load settles, not on the first individual tile error.
     // Include cached visible tiles when panning; offscreen tiles cannot mask an empty view.
     function hasVisibleTile(){
-      const view=container.current?.getBoundingClientRect();
-      return Boolean(view&&Array.from(container.current!.querySelectorAll('.leaflet-tile-loaded')).some(tile=>{
-        const rect=tile.getBoundingClientRect();
-        return rect.width>0&&rect.height>0&&rect.right>view.left&&rect.left<view.right&&rect.bottom>view.top&&rect.top<view.bottom;
-      }));
+      return Boolean(container.current&&Array.from(container.current.querySelectorAll('.leaflet-tile-loaded')).some(inView));
     }
-    function finish(timedOut=false){
-      window.clearTimeout(deadline);
+    // Still-loading tiles are never recorded; stale zoom layers and offscreen tiles do not count.
+    function hasVisibleFailure(){
+      const zoom=map.getZoom();
+      return Array.from(failedTiles).some(([key,el])=>el.isConnected&&Number(key.split(':')[2])===zoom&&!el.classList.contains('leaflet-tile-loaded')&&inView(el));
+    }
+    function settle(){
       if(stopped)return;
+      settled=true;
       if(!hasVisibleTile())fail();
-      else setPartial(failed>0||timedOut);
+      else setPartial(timedOut||hasVisibleFailure());
     }
     tiles.on('loading',()=>{
-      window.clearTimeout(deadline);failed=0;setPartial(false);
-      deadline=window.setTimeout(()=>finish(true),15000);
+      window.clearTimeout(deadline);
+      deadline=window.setTimeout(()=>{timedOut=true;settle();},15000);
     });
-    tiles.on('tileerror',()=>{failed++;});
-    tiles.on('load',()=>finish());
+    tiles.on('tileerror',event=>failedTiles.set(tileKey(event.coords),event.tile));
+    tiles.on('tileload',event=>failedTiles.delete(tileKey(event.coords)));
+    tiles.on('tileunload',event=>failedTiles.delete(tileKey(event.coords)));
+    tiles.on('load',()=>{window.clearTimeout(deadline);timedOut=false;settle();});
     // Fit observed coordinates only. No default city or inferred location is introduced.
     map.fitBounds(L.latLngBounds(pins.map(pin=>[pin.latitude!,pin.longitude!] as L.LatLngTuple)),{padding:[35,35],maxZoom:16,animate:false});
     for (const [index,pin] of pins.entries()) {
@@ -61,6 +72,10 @@ export default function StreetMapCanvas({pins, lang, simulated, selectedId, labe
       marker.on('remove',()=>element?.removeEventListener('keydown',activate));
     }
     tiles.addTo(map);
+    // A move that needs no new tiles fires no load event; refresh only the partial notice so a failure
+    // that left the view clears. Total failure is decided only at a load or timeout: on a far pan this
+    // handler can run after old tiles are pruned but before GridLayer schedules the new ones.
+    map.on('moveend',()=>{if(settled&&!stopped&&!tiles.isLoading())setPartial(timedOut||hasVisibleFailure());});
     const resize=new ResizeObserver(()=>map.invalidateSize({pan:false}));resize.observe(container.current);
     return()=>{stopped=true;window.clearTimeout(deadline);resize.disconnect();tiles.off();map.remove();markers.current.clear();instance.current=null;};
   },[pins,lang,simulated]);

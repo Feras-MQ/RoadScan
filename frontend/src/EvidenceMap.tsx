@@ -1,12 +1,13 @@
 import {inspectAnnotations, annotationSummary} from './reportDetections';
 import type {StoredAnnotations} from './reportDetections';
 import {useEffect, useRef, useState} from 'react';
-import {ArrowUpRight, ChevronLeft, ChevronRight, FileImage, HelpCircle, MapPin, RefreshCw, Search} from 'lucide-react';
+import {ArrowUpRight, ChevronLeft, ChevronRight, FileImage, HelpCircle, MapPin, Search} from 'lucide-react';
 import {locationGroup, projectLocations} from './reportMap';
 import {googleMapsUrl, locationSourceLabel} from './reportLocation';
 import {reviewStatuses} from './reviewWorkflow';
 import type {LocationCounts, LocationGroup, ReportLocation} from './reportMap';
 import StreetMapPanel from './StreetMapPanel';
+import ReportPhoto from './ReportPhoto';
 import LocationLinks from './LocationLinks';
 import type {PinResult} from './streetMap';
 
@@ -22,19 +23,6 @@ type Props = {
   onNewInspection:()=>void; onHelp:()=>void;
 };
 
-function ReportPhoto({id, sessionKey, lang}:{id:string; sessionKey:string; lang:string}) {
-  const [photo, setPhoto] = useState(''), [failed, setFailed] = useState(false), [attempt, setAttempt] = useState(0);
-  useEffect(() => {
-    const controller = new AbortController(); let objectUrl = ''; setPhoto(''); setFailed(false);
-    // Construct a same-origin path so a report can never redirect the access header elsewhere.
-    fetch(`/api/reports/${encodeURIComponent(id)}/image`, {headers:{'X-API-Key':sessionKey}, signal:controller.signal})
-      .then(async response => {if (!response.ok) throw Error('Image unavailable'); return response.blob();})
-      .then(blob => {if (!controller.signal.aborted) {objectUrl = URL.createObjectURL(blob); setPhoto(objectUrl);}})
-      .catch(() => {if (!controller.signal.aborted) setFailed(true);});
-    return () => {controller.abort(); if (objectUrl) URL.revokeObjectURL(objectUrl);};
-  }, [id, sessionKey, attempt]);
-  return <div className="evidence-photo">{failed ? <div role="alert"><FileImage/><p>{lang === 'ar' ? 'تعذر تحميل الصورة. يمكنك فتح البلاغ للمراجعة.' : 'Image unavailable. You can still open the report for review.'}</p><button onClick={() => setAttempt(n => n + 1)}><RefreshCw size={15}/>{lang === 'ar' ? 'إعادة المحاولة' : 'Retry image'}</button></div> : photo ? <img src={photo} alt={lang === 'ar' ? 'صورة البلاغ المحفوظة' : 'Saved report image'} onError={() => setFailed(true)}/> : <span role="status">{lang === 'ar' ? 'جارٍ تحميل الصورة.' : 'Loading image.'}</span>}</div>;
-}
 
 export default function EvidenceMap({reports, total, page, lang, connected, busy, sessionKey, statusFilter, searchQuery, labelStatus, group, coverage, loadFailed, pinQueryKey, loadPins, onGroup, onFilters, onPage, onOpen, onNewInspection, onHelp}:Props) {
   const tx = (en:string, ar:string) => lang === 'ar' ? ar : en;
@@ -85,7 +73,7 @@ export default function EvidenceMap({reports, total, page, lang, connected, busy
     {group === 'simulated' && <p className="map-simulation-note">{tx('Simulation only. These coordinates were labeled as simulated; they do not establish where damage occurred.', 'للمحاكاة فقط. صُنفت هذه الإحداثيات كمحاكاة؛ ولا تثبت مكان وقوع الضرر.')}</p>}
     <div className={'evidence-layout'+(streetActive?' street-map-expanded':'')}>
       <div className="evidence-map-column">
-        <StreetMapPanel key={sessionKey+'|'+group} lang={lang} group={group} connected={connected} busy={busy} queryKey={pinQueryKey} searchActive={Boolean(searchQuery)} resetVersion={streetReset} onViewingMap={setStreetActive} loadPins={loadPins} labelStatus={labelStatus} onOpen={onOpen} fallback={visible.length > 0 && group !== 'unlocated' && points.length > 0 && <div className={'coordinate-map ' + (group === 'simulated' ? 'is-simulation' : '')} role="group" aria-label={tx('Report coordinate diagram', 'مخطط إحداثيات البلاغات')}>
+        <StreetMapPanel key={sessionKey+'|'+group} lang={lang} sessionKey={sessionKey} group={group} connected={connected} busy={busy} queryKey={pinQueryKey} searchActive={Boolean(searchQuery)} resetVersion={streetReset} onViewingMap={setStreetActive} loadPins={loadPins} labelStatus={labelStatus} onOpen={onOpen} fallback={visible.length > 0 && group !== 'unlocated' && points.length > 0 && <div className={'coordinate-map ' + (group === 'simulated' ? 'is-simulation' : '')} role="group" aria-label={tx('Report coordinate diagram', 'مخطط إحداثيات البلاغات')}>
           <div className="map-context"><span>{group === 'simulated' ? tx('SIMULATED COORDINATES', 'إحداثيات محاكاة') : tx('SAVED COORDINATES', 'إحداثيات محفوظة')}</span><small>{tx('North ↑ · East → · Auto-fit to this page', 'الشمال ↑ · الشرق → · ضبط حسب هذه الصفحة')}</small></div>
           <div className="coordinate-canvas" dir="ltr">
             {selectedPoint && <svg className="map-crosshair" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true"><path d={`M ${selectedPoint.x} 0 V 500 M 0 ${selectedPoint.y} H 800`}/><circle cx={selectedPoint.x} cy={selectedPoint.y} r="29"/></svg>}
