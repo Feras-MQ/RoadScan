@@ -81,12 +81,16 @@ def similar(session, h, current_id, limit=5):
         if sim>=.85: results.append({'report_id':r.id,'similarity':round(sim,4),'method':'dhash','threshold':.85,'threshold_validated':False})
     return sorted(results,key=lambda x:-x['similarity'])[:limit]
 
+def _reject_nonfinite(token):
+    raise ValueError(f'Non-finite number {token} in stored detections')
+
 def read_detections(raw):
     """Stored detections as a list, or None when they are not a readable list of known-class entries."""
-    try: value = json.loads(raw)
+    try: value = json.loads(raw, parse_constant=_reject_nonfinite)
     except (TypeError, ValueError): return None
     # Unreadable legacy data is reported as such, never coerced to [] ("no damage").
-    if not isinstance(value, list) or any(not isinstance(item, dict) or item.get('class_id') not in CLASSES for item in value): return None
+    if not isinstance(value, list) or any(not isinstance(item, dict) or not isinstance(item.get('class_id'), str)
+                                          or item['class_id'] not in CLASSES for item in value): return None
     return value
 
 def annotation_revision(r):

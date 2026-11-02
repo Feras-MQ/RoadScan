@@ -10,7 +10,12 @@ from test_review_api import review_client  # noqa: F401  (fixture)
 VALID = {'d40': '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": 0.9}]', 'empty': '[]',
          'legacy': '[{"class_id": "D00", "box": [1, 2, 30, 40]}]'}
 MALFORMED = ['null', '1', '{broken', '[{}]', '[null]', '{"D40": true}', '[{"class_id": "LEGACY"}]',
-             '[{"class_id": "D40"}, {"class_id": 7}]', '"[]"', None]
+             '[{"class_id": "D40"}, {"class_id": 7}]', '"[]"', None,
+             '[{"class_id": []}]', '[{"class_id": {}}]',  # unhashable classes must not raise
+             '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": NaN}]',
+             '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": Infinity}]',
+             '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": -Infinity}]',
+             '[{"class_id": "D40", "box": [1, NaN, 5, 5], "confidence": 0.9}]']
 
 
 def stored(client, headers, raw):
@@ -89,7 +94,8 @@ def test_training_never_approves_or_exports_unreadable_detections(review_client)
     import zipfile
     from roadscan.training_data import TrainingApproval
     client, headers, _ = review_client
-    for raw in ['null', '{broken', '{"D40": true}', '[{}]', '[{"class_id": "LEGACY"}]', None]:
+    for raw in ['null', '{broken', '{"D40": true}', '[{}]', '[{"class_id": "LEGACY"}]', None, '[{"class_id": []}]',
+                '[{"class_id": "D40", "box": [1, 1, 5, 5], "confidence": NaN}]']:
         rid = stored(client, headers, raw)
         response = approve(client, headers, rid, confirm(client, headers, rid), 'legacy')
         assert response.status_code == 409 and 'unreadable' in response.json()['detail'], raw
