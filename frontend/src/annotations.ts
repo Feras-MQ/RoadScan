@@ -17,6 +17,12 @@ export function validAnnotations(detections: ReviewDetection[], width: number, h
   });
 }
 
+/** Edited saves use the API's strict schema; untouched legacy records are never rewritten. */
+export function annotationPayload(detections:ReviewDetection[], width:number, height:number):Detection[] {
+  if (!validAnnotations(detections,width,height)) throw Error('Invalid annotation draft');
+  return detections.map(({class_id,box,confidence})=>({class_id,box:[...box],confidence:confidence!}));
+}
+
 /** Box ordering and object key order do not change a review; duplicates still count.
  * Source is compared conservatively if present in a future/legacy response. */
 export function sameAnnotations(left: ReviewDetection[], right: ReviewDetection[]): boolean {

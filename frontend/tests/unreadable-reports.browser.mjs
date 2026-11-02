@@ -7,9 +7,9 @@ export async function checkUnreadableReports(browser,origin,base,expect) {
     await context.route('**/*',route=>route.request().url().startsWith(origin+'/')?route.continue():route.abort());
     await context.addInitScript(language=>{sessionStorage.setItem('roadscan_token','synthetic-unreadable');localStorage.setItem('roadscan_language',language)},lang);
     const tx=(en,ar)=>lang==='ar'?ar:en;
-    const variants=[['unreadable',null,false],['empty',[],true],['legacy',[{class_id:'D40',box:[1,2,30,40]}],true],['badbox',[{class_id:'D40'}],true]];
+    const variants=[['unreadable',null,false],['empty',[],true],['legacy',[{class_id:'D40',box:[1,2,30,40]}],true],['badbox',[{class_id:'D40'}],true],['extra',[{class_id:'D40',box:[1,2,30,40],confidence:.8,label:'legacy label'}],true],['unreadable-empty',null,false]];
     const rows=variants.map(([name,detections,detections_readable])=>({...base,id:'fixture-'+name,revision:'r0-'+name,detections,detections_readable,score:name==='empty'?null:90,latitude:24.7,longitude:46.7,location_source:'manual'}));
-    let raw='{broken',revision=0;const writes=[],toolCalls=[],errors=[],audits=[];
+    let raw='{broken',revision=0,allowEmpty=false;const writes=[],toolCalls=[],errors=[],audits=new Map();
     const models=['a','b'].map(id=>({id,name:'Synthetic '+id,sha256:id.repeat(64),family:'yolo'}));
     const page=await context.newPage();let accept=false,dialogs=0;
     page.on('dialog',async dialog=>{dialogs++;await (accept?dialog.accept():dialog.dismiss());});
@@ -20,18 +20,20 @@ export async function checkUnreadableReports(browser,origin,base,expect) {
       if(url.pathname==='/api/reports')return route.fulfill({json:{items:rows,total:rows.length}});
       const row=rows.find(r=>url.pathname===`/api/reports/${r.id}` || url.pathname.startsWith(`/api/reports/${r.id}/`));
       if(!row)return route.continue();
-      if(url.pathname.endsWith('/audit'))return route.fulfill({json:{items:row.id===rows[0].id?audits:[]}});
+      if(url.pathname.endsWith('/audit'))return route.fulfill({json:{items:audits.get(row.id)||[]}});
       if(url.pathname.endsWith('/vote')) {
         toolCalls.push('vote');assert.equal(request.postDataJSON().revision,row.revision);
         return route.fulfill({json:{state:'completed',revision:row.revision,width:320,height:240,consensus:[],agreements:[],disagreements:[],models:models.map(m=>({...m,state:'completed',detections:[{class_id:'D40',box:[10,10,40,40],confidence:.7}],elapsed_ms:1})),reason:null}});
       }
-      if(url.pathname.endsWith('/training')) {toolCalls.push('training:'+row.id);return route.fulfill({json:{approved:false,eligible:true,stale:false,capture_group:'',split:'train'}});}
+      if(url.pathname.endsWith('/training')) {assert.equal(request.method(),'GET','training approval is never automatic');toolCalls.push('training:'+row.id);return route.fulfill({json:{approved:false,eligible:true,stale:false,capture_group:'',split:'train'}});}
       if(request.method()==='PATCH') {
         const body=request.postDataJSON();assert.equal(body.revision,row.revision,'save uses latest revision');writes.push({id:row.id,...body});
         if('detections' in body) {
-          assert.ok(body.detections.length,'replacement cannot silently become empty');
-          if(!row.detections_readable){audits.push({actor:'Synthetic reviewer',at:'2026-01-01T00:00:00Z',action:'review',details:{manual_detections:true,previous_detections_unreadable:true}});raw=JSON.stringify(body.detections);}
-          row.detections=body.detections;row.detections_readable=true;row.score=12;
+          assert.ok(body.detections.length || allowEmpty,'replacement cannot silently become empty');
+          if(body.detections.some(d=>Object.keys(d).sort().join(',')!=='box,class_id,confidence')) return route.fulfill({status:422,json:{detail:'Detection requires class_id, box, confidence'}});
+          audits.set(row.id,[{actor:'Synthetic reviewer',at:'2026-01-01T00:00:00Z',action:'review',details:{manual_detections:true,...(!row.detections_readable?{previous_detections_unreadable:true}:{})}}]);
+          if(row.id===rows[0].id && !row.detections_readable) raw=JSON.stringify(body.detections);
+          row.detections=body.detections;row.detections_readable=true;row.score=body.detections.length?12:null;
         }
         row.note=body.note;row.status=body.status;row.revision='saved-'+(++revision);
       }
@@ -75,8 +77,32 @@ export async function checkUnreadableReports(browser,origin,base,expect) {
       await page.locator('.coordinate-inputs input').first().fill('2');await expect(page.locator('.save-row button')).toBeDisabled();await weight.fill('0.7');await save();await expect(page.locator('.annotation-legacy-warning')).toHaveCount(0);
       await open(3);await expect(page.locator('#annotation-data-warning')).toContainText(tx('Annotations not displayable','التحديدات غير قابلة للعرض'));await expect(page.locator('.annotation-row')).toHaveCount(0);
       await page.locator('#inspector-note').fill('Geometry missing');await save();await expect(page.locator('.review-statusbar')).toContainText(tx('Saved report','بلاغ محفوظ'));assert.equal('detections' in writes.at(-1),false);assert.deepEqual(rows[3].detections,[{class_id:'D40'}]);
-      assert.equal(toolCalls.filter(call=>call==='training:fixture-badbox').length,0);assert.deepEqual(errors,[]);
-      console.log(`PASS unreadable reports ${lang}, ${width}px: overview/list/map/detail, raw-preserving status/note saves, explicit replacement/empty guard/cancel/model apply/save/audit, legacy missing confidence, invalid geometry, dirty semantics.`);
+      assert.equal(toolCalls.filter(call=>call==='training:fixture-badbox').length,0);
+      await open(4);await page.locator('#inspector-note').fill('Legacy extra field preserved');await save();await expect(page.locator('.review-statusbar')).toContainText(tx('Saved report','بلاغ محفوظ'));
+      assert.equal('detections' in writes.at(-1),false);assert.equal(rows[4].detections[0].label,'legacy label');
+      await page.locator('.coordinate-inputs input').first().fill('2');await save();await expect(page.locator('.review-statusbar')).toContainText(tx('Saved report','بلاغ محفوظ'));
+      assert.deepEqual(writes.at(-1).detections,[{class_id:'D40',box:[2,2,30,40],confidence:.8}],'edited legacy saves project strict API fields');
+      for(const index of [3,5]) {
+        await open(index);const original=JSON.stringify(rows[index].detections);const before=writes.length;
+        accept=false;await page.locator('#replace-with-no-detections').click();await expect(page.locator('#start-annotation-replacement')).toBeVisible();assert.equal(writes.length,before);assert.equal(JSON.stringify(rows[index].detections),original);
+        await page.locator('#inspector-note').fill('Keep note when cancelling intentional empty');
+        accept=true;await page.locator('#replace-with-no-detections').click();accept=false;
+        await expect(page.locator('#annotation-data-warning')).toContainText(tx('Intentional empty replacement confirmed','تم تأكيد الاستبدال الفارغ المقصود'));
+        await expect(page.locator('.save-row button')).toBeEnabled();await nav('map');await current('reports');assert.equal(JSON.stringify(rows[index].detections),original,'confirmed empty is unsaved until Save');
+        accept=true;await page.locator('#cancel-annotation-replacement').click();accept=false;await expect(page.locator('#inspector-note')).toHaveValue('Keep note when cancelling intentional empty');
+        await save();await expect(page.locator('.review-statusbar')).toContainText(tx('Saved report','بلاغ محفوظ'));assert.equal('detections' in writes.at(-1),false);assert.equal(JSON.stringify(rows[index].detections),original);
+        await page.locator('#start-annotation-replacement').click();await expect(page.locator('.save-row button')).toBeDisabled();
+        accept=true;await page.locator('#replace-with-no-detections').click();accept=false;
+        await page.locator('.annotation-toolbar button').last().click();await page.locator('.annotation-row .icon-button').last().click();await expect(page.locator('.save-row button')).toBeDisabled();
+        accept=true;await page.locator('#replace-with-no-detections').click();accept=false;allowEmpty=true;await save();
+        await expect(page.locator('#annotation-data-warning')).toHaveCount(0);allowEmpty=false;assert.deepEqual(writes.at(-1).detections,[]);assert.equal(writes.at(-1).id,rows[index].id);assert.deepEqual(rows[index].detections,[]);
+        await expect(page.locator('.audit-event')).toContainText(tx('annotations updated','تحديث التحديدات'));
+        if(index===5) await expect(page.locator('.audit-event')).toContainText(tx('unreadable annotations replaced','استبدال تحديدات غير قابلة للقراءة'));
+        await expect(page.locator('.training-approval input[type=checkbox]').first()).not.toBeChecked();
+        await nav('map');await current('map');await nav('reports');
+      }
+      assert.deepEqual(errors,[]);
+      console.log(`PASS unreadable reports ${lang}, ${width}px: overview/list/map/detail, raw-preserving status/note saves, explicit replacement/empty guard/cancel/model apply/save/audit, legacy missing confidence/extra fields, invalid geometry, confirmed empty replacement/cancel/save/audit and dirty semantics.`);
     } finally {await context.close();}
   }
 }

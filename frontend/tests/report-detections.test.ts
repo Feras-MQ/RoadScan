@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {test} from 'node:test';
 import {inspectAnnotations, annotationSummary, reportPriority} from '../src/reportDetections.ts';
-import {sameAnnotations, validAnnotations} from '../src/annotations.ts';
+import {sameAnnotations, validAnnotations, annotationPayload} from '../src/annotations.ts';
 
 test('unreadable and non-displayable annotations never become an empty result or priority',()=>{
   const empty={detections:[],detections_readable:true,score:null};
@@ -28,4 +28,15 @@ test('legacy missing weights display without fabrication and require a weight on
   assert.equal(sameAnnotations(result.boxes!,[{...result.boxes![0],confidence:0}]),false);
   result.boxes![0].box[0]=7;
   assert.equal(stored.detections[0].box[0],1,'draft geometry does not mutate the saved record');
+});
+
+test('edited legacy payloads contain only accepted fields after validation without inventing confidence',()=>{
+  const stored={detections:[{class_id:'D40',box:[1,2,30,40],confidence:.7,label:'legacy label',source:'old-model'}]};
+  const draft=inspectAnnotations(stored).boxes!;
+  draft[0].box[0]=2;
+  assert.deepEqual(annotationPayload(draft,100,100),[{class_id:'D40',box:[2,2,30,40],confidence:.7}]);
+  assert.equal(stored.detections[0].label,'legacy label');
+  assert.equal(stored.detections[0].box[0],1);
+  assert.throws(()=>annotationPayload([{class_id:'D40',box:[1,2,30,40]}],100,100),/Invalid annotation/);
+  assert.deepEqual(annotationPayload([],100,100),[],'intentional empty replacement uses the same strict schema');
 });
