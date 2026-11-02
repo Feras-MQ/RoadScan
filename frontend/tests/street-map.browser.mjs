@@ -160,10 +160,26 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
    await expect(panel.locator('.street-map-partial')).toBeVisible();
    await expect(panel.locator('.leaflet-marker-icon')).toHaveCount(3);
    await expect(panel.locator('.street-map-fallback-note')).toHaveCount(0);
+   if(width===390){
+    // A resize that starts a new tile cycle must not forget the failed tile that is still in view.
+    const failedTile=panel.locator('.leaflet-tile:not(.leaflet-tile-loaded)');
+    await expect(failedTile).toHaveCount(1);
+    const beforeResize=tiles.length;await page.setViewportSize({width:450,height:1000});
+    await expect.poll(()=>tiles.length,{message:'390→450 resize starts a new tile cycle'}).toBeGreaterThan(beforeResize);
+    await page.waitForTimeout(400);
+    await expect(failedTile).toHaveCount(1);await expect(panel.locator('.street-map-partial')).toBeVisible();
+    await page.setViewportSize({width,height:1000});await page.waitForTimeout(400);
+    await expect(panel.locator('.street-map-partial')).toBeVisible();
+   }
    tilePartial=false;await panel.locator('.leaflet-control-zoom-in').click();
-   await expect(panel.locator('.street-map-partial')).toHaveCount(0);
+   await expect(panel.locator('.street-map-partial')).toHaveCount(0);  // the failed tile left the current zoom layer
    await expect(panel.locator('.leaflet-tile-loaded').first()).toBeVisible();
    await expect(panel.locator('.leaflet-tile:not(.leaflet-tile-loaded)')).toHaveCount(0);
+   await panel.locator('.leaflet-control-zoom-out').click();  // the original tile is requested again and loads
+   await expect(panel.locator('.leaflet-tile-loaded').first()).toBeVisible();
+   await expect(panel.locator('.leaflet-tile:not(.leaflet-tile-loaded)')).toHaveCount(0);
+   await expect(panel.locator('.street-map-partial')).toHaveCount(0);
+   await panel.locator('.leaflet-control-zoom-in').click();await expect(panel.locator('.leaflet-tile:not(.leaflet-tile-loaded)')).toHaveCount(0);  // back to the cached level, so the next zoom is uncached
    tileFailure=true;await panel.locator('.leaflet-control-zoom-in').click();
    await expect(panel.locator('.street-map-fallback-note')).toBeVisible();tileFailure=false;await off();
    mode='unreadable';await load();
