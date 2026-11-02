@@ -116,6 +116,22 @@ export async function checkStreetMap(browser,origin,baseReport,expect,artifacts)
     const box=await panel.getByRole('button',{name,exact:true}).boundingBox();
     assert.ok(box&&box.x>=0&&box.x+box.width<=width+1,`${name} is reachable without horizontal clipping at ${width}px`);
    }
+   if(width===390){
+    // Far pan after zooming in: the settle check must wait for GridLayer to schedule the new tiles.
+    await selectorBox.selectOption('pin-one');
+    for(let i=0;i<4;i++){
+     const beforeZoom=tiles.length;await panel.locator('.leaflet-control-zoom-in').click();
+     await expect.poll(()=>tiles.length).toBeGreaterThan(beforeZoom);
+     await expect(panel.locator('.leaflet-tile:not(.leaflet-tile-loaded)')).toHaveCount(0);
+    }
+    const beforePan=tiles.length;await selectorBox.selectOption('pin-outside-page');
+    await expect.poll(()=>tiles.length,{message:'far pin needs new tiles'}).toBeGreaterThan(beforePan);
+    await expect(panel.locator('.leaflet-tile:not(.leaflet-tile-loaded)')).toHaveCount(0);
+    await page.waitForTimeout(300);
+    await expect(panel.locator('.street-map-fallback-note')).toHaveCount(0);
+    await expect(panel.locator('.leaflet-container')).toHaveCount(1);
+    await expect(panel.locator('.leaflet-tile-loaded').first()).toBeVisible();
+   }
    await panel.locator('.street-map-selector select').selectOption('pin-overlap');
    await expect(panel.locator('.street-map-selection')).toContainText(tx('No detections','بلا اكتشافات'));
    await expect(panel.locator('a[href*="map_action=pano"]')).toHaveAttribute('href','https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=24.7%2C46.7');

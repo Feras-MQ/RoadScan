@@ -58,8 +58,6 @@ export default function StreetMapCanvas({pins, lang, simulated, selectedId, labe
     tiles.on('tileload',event=>failedTiles.delete(tileKey(event.coords)));
     tiles.on('tileunload',event=>failedTiles.delete(tileKey(event.coords)));
     tiles.on('load',()=>{window.clearTimeout(deadline);timedOut=false;settle();});
-    // A move that needs no new tiles fires no load event; re-check so a failure that left the view clears.
-    map.on('moveend',()=>{if(settled&&!tiles.isLoading())settle();});
     // Fit observed coordinates only. No default city or inferred location is introduced.
     map.fitBounds(L.latLngBounds(pins.map(pin=>[pin.latitude!,pin.longitude!] as L.LatLngTuple)),{padding:[35,35],maxZoom:16,animate:false});
     for (const [index,pin] of pins.entries()) {
@@ -74,6 +72,10 @@ export default function StreetMapCanvas({pins, lang, simulated, selectedId, labe
       marker.on('remove',()=>element?.removeEventListener('keydown',activate));
     }
     tiles.addTo(map);
+    // A move that needs no new tiles fires no load event; refresh only the partial notice so a failure
+    // that left the view clears. Total failure is decided only at a load or timeout: on a far pan this
+    // handler can run after old tiles are pruned but before GridLayer schedules the new ones.
+    map.on('moveend',()=>{if(settled&&!stopped&&!tiles.isLoading())setPartial(timedOut||hasVisibleFailure());});
     const resize=new ResizeObserver(()=>map.invalidateSize({pan:false}));resize.observe(container.current);
     return()=>{stopped=true;window.clearTimeout(deadline);resize.disconnect();tiles.off();map.remove();markers.current.clear();instance.current=null;};
   },[pins,lang,simulated]);
