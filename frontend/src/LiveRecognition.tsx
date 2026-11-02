@@ -7,6 +7,7 @@ import {frameLoop, frameSize, validRecognition} from './liveFrames';
 import FullVideoAnalysis from './FullVideoAnalysis';
 import type {Recognition} from './liveFrames';
 import './live.css';
+import {useNavigationWork} from './navigationWork';
 
 type Props = {
   lang: string; connected: boolean; ready: boolean; sessionKey: string; autoStart: boolean;
@@ -43,6 +44,7 @@ export default function LiveRecognition(props: Props) {
   const [quality,setQuality]=useState<'balanced'|'detail'>('balanced');
   const [processing,setProcessing]=useState(false);
   const qualityRef=useRef(quality);qualityRef.current=quality;
+  useNavigationWork('live', Boolean(videoURL || processed), opening || running || processing);
 
   const release=useCallback(() => {
     ++epoch.current; loop.current?.stop();

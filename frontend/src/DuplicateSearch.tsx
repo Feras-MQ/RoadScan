@@ -1,10 +1,12 @@
 import {useEffect,useRef,useState} from 'react';
+import {useNavigationWork} from './navigationWork';
 
 type Result={candidate_reports:number;threshold:number;matches:{report_id:string;similarity:number;distance_m:number}[]};
 type Props={lang:string;reportId:string;revision:string;edited:boolean;hasGps:boolean;hasBoxes:boolean;request:(path:string,options?:RequestInit)=>Promise<any>};
 export default function DuplicateSearch({lang,reportId,revision,edited,hasGps,hasBoxes,request}:Props){
   const tx=(en:string,ar:string)=>lang==='ar'?ar:en;
   const [result,setResult]=useState<Result|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState('');
+  useNavigationWork('analysis', false, busy);
   const controller=useRef<AbortController|null>(null);
   useEffect(()=>()=>controller.current?.abort(),[]);
   async function search(){

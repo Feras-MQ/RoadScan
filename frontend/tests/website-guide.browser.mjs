@@ -8,6 +8,7 @@ import path from 'node:path';
 import {checkReportWorkGuard} from './guide-report-work.browser.mjs';
 import {checkVideoNavigation} from './video-navigation.browser.mjs';
 import {checkMapWorkspace} from './map-workspace.browser.mjs';
+import {checkPreciseNavigation} from './navigation-state.browser.mjs';
 const {chromium} = await import(process.env.ROADSCAN_PLAYWRIGHT_MODULE || 'playwright');
 const {expect} = await import(process.env.ROADSCAN_PLAYWRIGHT_EXPECT || 'playwright/test');
 const dist = path.resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
@@ -104,7 +105,6 @@ try {
   await expect(page.locator('.unsaved-review-alert')).toBeVisible();
   await page.getByRole('button', {name: 'Keep editing', exact: true}).click();
   await page.getByLabel('Inspector note', {exact: true}).fill('');
-  page.once('dialog', dialog => dialog.accept());
   await launch(); await topic('Find reports on the map'); await navigate(); await screen('map');
   await page.getByRole('navigation', {name: 'Main navigation'}).getByRole('button', {name: 'Overview', exact: true}).click();
   await expect(page.locator('.website-guide-highlight')).toHaveCount(0);
@@ -114,8 +114,7 @@ try {
   await launch(); await topic('Analyze a video'); await navigate(); await screen('live');
   assert.ok(!requests.some(r => /recognize|video/.test(r.path)), 'guide never starts media analysis');
   await launch(); await topic('Upload and analyze a photo');
-  page.once('dialog', dialog => dialog.dismiss()); await navigate(); await screen('live');
-  page.once('dialog', dialog => dialog.accept()); await navigate(); await screen('dashboard');
+  await navigate(); await screen('dashboard');
   await expect(page.getByAltText('Selected road photo', {exact: true})).toBeVisible();
   await launch(); await topic('Connection and model settings'); await navigate(); await screen('settings');
   await expect(page.locator('#guide-settings')).toHaveClass(/website-guide-highlight/);
@@ -123,11 +122,10 @@ try {
   await guide.getByLabel('What would you like to do?').fill('download the training examples');
   await guide.getByRole('button', {name: 'Find steps'}).click();
   await expect(guide.locator('#website-guide-topic')).toHaveText('Download training examples');
-  page.once('dialog', dialog => dialog.accept()); await navigate(); await screen('learning');
+  await navigate(); await screen('learning');
   await expect(page.locator('#guide-learning')).toHaveClass(/website-guide-highlight/);
   await expect(page.getByRole('button', {name: 'Export approved dataset', exact: true})).toBeEnabled();
   assert.ok(!requests.some(request => request.path.endsWith('/export')), 'the guide opens Learning without downloading');
-  page.once('dialog', dialog => dialog.accept());
   await page.getByRole('navigation', {name: 'Main navigation'}).getByRole('button', {name: 'Settings', exact: true}).click();
   await page.getByRole('button', {name: 'Switch to Arabic'}).click();
   await page.setViewportSize({width: 390, height: 844});
@@ -138,7 +136,6 @@ try {
   await expect(guide.locator('#website-guide-topic')).toHaveText('مقارنة النماذج');
   assert.ok(await guide.evaluate(el => el.scrollWidth <= el.clientWidth + 1), 'mobile panel has no horizontal overflow');
   await page.screenshot({path: path.join(artifacts, 'mobile-ar.png')});
-  page.once('dialog', dialog => dialog.accept());
   await guide.getByRole('button', {name: 'افتح هذه الشاشة'}).click(); await screen('reports');
   await expect(page.locator('#guide-model-vote')).toHaveClass(/website-guide-highlight/);
   await page.getByRole('button', {name: 'دليل الموقع', exact: true}).click();
@@ -183,6 +180,7 @@ try {
     await checkReportWorkGuard(browser, origin, report, expect, mode, width);
     await checkVideoNavigation(browser, origin, expect, mode, width);
   }
+  await checkPreciseNavigation(browser, origin, report, expect);
   await checkMapWorkspace(browser, origin, report, expect, artifacts);
   console.log(JSON.stringify({result: 'PASS', coverage: 'EN/AR desktop/mobile; typed questions; fallback; all destinations; keyboard/focus; back/close/reopen; highlight cleanup; unsaved review guard; existing report-switch guard; pending photo preserved; guide actions do not submit; guard scenarios use explicit mocked vote/video requests', requests: requests.length, artifacts}, null, 2));
   await context.close();

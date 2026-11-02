@@ -17,6 +17,8 @@ import MapWorkspace from './MapWorkspace';
 import WorkspaceEvidence from './WorkspaceEvidence';
 import WebsiteGuide from './WebsiteGuide';
 import type {GuideScreen} from './guideContent';
+import {NavigationWorkContext, workWarning} from './navigationWork';
+import type {WorkRegistry} from './navigationWork';
 import './evidence.css';
 import PriorityExplanation from './PriorityExplanation';
 import DuplicateSearch from './DuplicateSearch';
@@ -38,6 +40,7 @@ const statusArabic: Record<string, string> = {'New': 'جديد', 'Needs Review':
 const displayDate = (s: string, lang: string) => new Date(/[Zz]|[+-]\d\d:\d\d$/.test(s) ? s : s + 'Z').toLocaleString(lang === 'ar' ? 'ar-SA' : 'en-GB');
 
 export default function App() {
+  const navigationWork=useRef<WorkRegistry>(new Map());
   const [lang, setLang] = useState(() => localStorage.getItem('roadscan_language') === 'ar' ? 'ar' : 'en');
   const tx = (en: string, ar: string) => lang === 'ar' ? ar : en;
   const systemReduced = useSyncExternalStore(subscribeMotion, () => window.matchMedia(motionQuery).matches, () => true);
@@ -217,8 +220,11 @@ export default function App() {
   }
   async function chooseReport(id: string, session = sessionGeneration.current, discard = false) {
     if (session !== sessionGeneration.current) return;
+    if ([...navigationWork.current.values()].some(item=>item.running && item.blocking)) {setMessage(tx('Wait for the current save or model update to finish before changing screens.', 'انتظر اكتمال الحفظ أو تحديث النموذج الجاري قبل تغيير الشاشة.'));return;}
     if (batchRunning.current) {setError(tx('Wait for the current photo batch to finish or stop it before opening a report.', 'انتظر اكتمال مجموعة الصور الحالية أو أوقفها قبل فتح بلاغ.')); return}
+    if (!discard && id === selected?.id && section === 'reports') return;
     if (!discard && reviewDirty) {setPendingReport(id);return;}
+    if (!discard) {const blocked=confirmLeavingTools();if(blocked){setMessage(blocked);return;}}
     setPendingReport(null);
     const generation = ++selectionGeneration.current; setBusy(true); setError('');
     try {
@@ -275,14 +281,21 @@ export default function App() {
   const ready = health?.model === 'configured';
   const mapUrl = recordedMapUrl(selected);
   const scoreValue = selected?.score;
-  const reviewDirty = Boolean(selected && (edited || status !== selected.status || note !== (selected.note || '')));
+  const reviewDirty = Boolean(selected && ((edited && JSON.stringify(boxes) !== JSON.stringify(selected.detections)) || status !== selected.status || note !== (selected.note || '')));
+  function confirmLeavingTools():string|null {
+    const work=[...navigationWork.current.values()];
+    if (cameraOpen) work.push({kind:'live',running:true});
+    if (work.some(item=>item.running && item.blocking)) return tx('Wait for the current save or model update to finish before changing screens.', 'انتظر اكتمال الحفظ أو تحديث النموذج الجاري قبل تغيير الشاشة.');
+    const warning=workWarning(work,lang);
+    if (warning && !window.confirm(warning)) return tx('Stayed on this screen. Your unfinished work remains open.', 'بقيت في هذه الشاشة. عملك غير المكتمل ما زال مفتوحاً.');
+    return null;
+  }
   function navigateToScreen(next: GuideScreen): string | null {
     if (next === section) return null;
     if (busy || batchRunning.current) return tx('Wait for the current task to finish before changing screens.', 'انتظر انتهاء المهمة الحالية قبل تغيير الشاشة.');
     if (reviewDirty && next !== 'reports') return tx('You have unsaved review changes. Save your review before leaving. Open Review queue to return to your draft.', 'لديك تغييرات مراجعة غير محفوظة. احفظ المراجعة قبل المغادرة. افتح قائمة المراجعة للعودة إلى المسودة.');
-    // Report tools own jobs, results and drafts that are not reflected in reviewDirty.
-    if (section === 'reports' && selected && !window.confirm(tx('Leaving this report cancels any running model vote and discards comparison results, model choices, and unsaved training settings. Continue to another screen?', 'مغادرة هذا البلاغ تلغي أي تصويت نماذج جارٍ وتتخلص من نتائج المقارنة واختيارات النماذج وإعدادات التدريب غير المحفوظة. هل تريد الانتقال إلى شاشة أخرى؟'))) return tx('Stayed on this report. Your comparison and training work remain open.', 'بقيت في هذا البلاغ. لا يزال عمل المقارنة والتدريب مفتوحًا.');
-    if (['live', 'settings', 'learning'].includes(section) && !window.confirm(tx('Leaving this screen can stop ongoing work or clear selections. Finish any work first. Continue to another screen?', 'قد يؤدي مغادرة هذه الشاشة إلى إيقاف العمل الجاري أو مسح الاختيارات. أنهِ عملك أولًا. هل تريد الانتقال إلى شاشة أخرى؟'))) return tx('Stayed on this screen. Your next action is up to you.', 'بقيت في هذه الشاشة. الإجراء التالي يعود إليك.');
+    const blocked=confirmLeavingTools();
+    if (blocked) return blocked;
     setAutoStartLive(false);
     setSection(next);
     return null;
@@ -294,7 +307,7 @@ export default function App() {
     else if (startCamera) setAutoStartLive(true);
   }
 
-  return <div className="shell" data-motion={playing ? 'full' : 'reduced'}>
+  return <NavigationWorkContext.Provider value={navigationWork.current}><div className="shell" data-motion={playing ? 'full' : 'reduced'}>
     <a className="skip-link" href="#workspace-main">{tx('Skip to workspace', 'انتقل إلى مساحة العمل')}</a>
     <aside className="sidebar">
       <a className="brand" href="#" onClick={e => {e.preventDefault(); navigateFromWorkspace('dashboard')}} aria-label="RoadScan overview"><span className="brand-icon"><ScanLine size={24}/></span><span><strong>RoadScan<span className="brand-period">.</span></strong><small>{tx('ROAD INTELLIGENCE', 'ذكاء الطرق')}</small></span></a>
@@ -315,7 +328,7 @@ export default function App() {
       <div className="content" key={section} data-screen={section}>
         {refreshing && <div className="workspace-progress" role="status"><RefreshCw size={16}/>{tx('Updating your workspace…', 'جارٍ تحديث مساحة العمل…')}</div>}
         {health?.demo && <p className="info">{tx('Presentation workspace · Synthetic reports · Connects automatically. Your real reports are in the separate workspace on port 8000.','مساحة عرض · بلاغات تجريبية · اتصال تلقائي. بلاغاتك الفعلية في مساحة منفصلة على المنفذ 8000.')}</p>}
-        {pendingReport && <div className="alert unsaved-review-alert" role="alert"><span>{tx('You have unsaved review changes. Keep editing or discard them before opening another report.','لديك تعديلات غير محفوظة. تابع التحرير أو تجاهلها قبل فتح بلاغ آخر.')}</span><button onClick={()=>setPendingReport(null)}>{tx('Keep editing','متابعة التحرير')}</button><button disabled={busy || batchRunning.current} onClick={()=>void chooseReport(pendingReport,sessionGeneration.current,true)}>{tx('Discard and open','تجاهل وفتح')}</button></div>}
+        {pendingReport && <div className="alert unsaved-review-alert" role="alert"><span>{tx('You have unsaved review changes. Keep editing, or discard the review and any unfinished report-tool work before opening another report.','لديك تعديلات غير محفوظة. تابع التحرير، أو تجاهل المراجعة وعمل أدوات البلاغ غير المكتمل قبل فتح بلاغ آخر.')}</span><button onClick={()=>setPendingReport(null)}>{tx('Keep editing','متابعة التحرير')}</button><button disabled={busy || batchRunning.current} onClick={()=>void chooseReport(pendingReport,sessionGeneration.current,true)}>{tx('Discard and open','تجاهل وفتح')}</button></div>}
         {batchRunning.current && <div className="info batch-running" role="status"><span>{batchStop.current ? tx('Finishing the current photo, then stopping…', 'جارٍ إكمال الصورة الحالية ثم التوقف…') : tx('Photo batch is running one image at a time.', 'تُعالج مجموعة الصور صورة تلو الأخرى.')}</span><button onClick={() => navigateFromWorkspace('dashboard')}>{tx('Show progress', 'عرض التقدم')}</button><button disabled={batchStop.current} onClick={() => {batchStop.current = true; setMessage(tx('Stopping after the current photo is saved or fails.', 'سيتم التوقف بعد حفظ الصورة الحالية أو فشلها.'))}}>{tx('Stop after current photo', 'توقف بعد الصورة الحالية')}</button></div>}
         {error && <div className="alert error" role="alert"><AlertTriangle size={18}/><span>{error}</span>{!connected && token && <button disabled={busy || refreshing} onClick={() => {setError(''); refresh().catch(e => setError(e.message))}}>{tx('Retry connection', 'إعادة الاتصال')}</button>}<button aria-label={tx('Dismiss error', 'إغلاق الخطأ')} onClick={() => setError('')}><X size={16}/></button></div>}
         {message && <div className="alert success" role="status"><CheckCircle2 size={18}/><span>{message}</span><button aria-label={tx('Dismiss notification', 'إغلاق التنبيه')} onClick={() => setMessage('')}><X size={16}/></button></div>}
@@ -374,5 +387,5 @@ export default function App() {
       </div>
     </main>
     <WebsiteGuide lang={lang} screen={section} hasReport={Boolean(selected)} requestedTopic={guideRequest} onNavigate={navigateToScreen}/>
-  </div>;
+  </div></NavigationWorkContext.Provider>;
 }
