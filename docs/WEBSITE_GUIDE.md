@@ -35,19 +35,28 @@ dismissal, or reopening the guide. The modal supports Escape, a sticky Close
 button, focus containment/return, and Arabic RTL.
 
 Shared screen navigation from the guide, sidebar, brand and other screen buttons
-blocks leaving an unsaved review or an App-level
-busy task. The existing report-switch guard remains in place. Leaving a selected
-report asks for confirmation because its model-vote job/results/choices and
-training fields live in child components, outside the review-dirty flag. Cancel
-keeps those components mounted and their work intact; Continue intentionally
-unmounts them, cancelling a running vote and discarding their local state. This
-guard also asks for a selected report with no child work in progress. Leaving Live
-recognition, Settings, or Learning asks for confirmation because child workflows
-can stop or lose selections on unmount. This is conservative: it also asks when
-those screens are idle. Clicking the current screen is a no-op that preserves
-local state without prompting; idle Overview/Map transitions need no confirmation.
-Explicit workflow handoffs (opening a report or using a captured frame) retain
-their existing behavior. Browser-history routing is not implemented.
+is silent unless leaving would lose or interrupt real work:
+
+- Clicking the current screen does nothing and keeps its local state.
+- A running App-level task or photo batch blocks the change until it finishes.
+- Unsaved review edits block leaving Review queue until they are saved. Boxes,
+  status or note count as edited only when they differ from the saved report;
+  reordered or reverted boxes count as unchanged. An unsaved annotation
+  replacement draft also counts as an edit.
+- Open tools register their own unfinished work only while it exists: model-vote
+  results or changed model choices, unsaved training settings, a processed live
+  frame, unsaved video-analysis results, and a running vote, analysis, live
+  session or dataset export. If any is present, one confirmation lists it;
+  Cancel keeps it, Continue stops or discards it.
+- A training-approval save or model-library update in progress blocks
+  navigation until it finishes.
+- An open camera preview is stopped without asking.
+
+Opening another report with unsaved review edits shows the Keep editing /
+Discard and open banner instead of a dialog; Discard and open skips the
+tool confirmation. Explicit workflow handoffs (opening a report or using a
+captured frame) retain their existing behavior. Browser-history routing is not
+implemented.
 
 The full-video heading and intro reflect the selected sampling rate in both
 languages. The every-frame wording appears only for the Every frame option.
