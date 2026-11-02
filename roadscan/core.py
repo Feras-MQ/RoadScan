@@ -81,10 +81,21 @@ def similar(session, h, current_id, limit=5):
         if sim>=.85: results.append({'report_id':r.id,'similarity':round(sim,4),'method':'dhash','threshold':.85,'threshold_validated':False})
     return sorted(results,key=lambda x:-x['similarity'])[:limit]
 
+def read_detections(raw):
+    """Stored detections as a list, or None when they are not a readable list of known-class entries."""
+    try: value = json.loads(raw)
+    except (TypeError, ValueError): return None
+    # Unreadable legacy data is reported as such, never coerced to [] ("no damage").
+    if not isinstance(value, list) or any(not isinstance(item, dict) or item.get('class_id') not in CLASSES for item in value): return None
+    return value
+
 def annotation_revision(r):
-    data = {'id': r.id, 'image_sha': r.image_sha, 'detections': json.loads(r.detections),
+    detections = read_detections(r.detections)
+    # Readable rows hash exactly as before; unreadable rows hash their raw text so concurrency checks still work.
+    data = {'id': r.id, 'image_sha': r.image_sha, 'detections': detections if detections is not None else {'unreadable': r.detections},
             'status': r.status, 'updated_at': r.updated_at.isoformat() if r.updated_at else None}
     return hashlib.sha256(json.dumps(data, sort_keys=True, separators=(',', ':')).encode()).hexdigest()
 
 def serialize(r):
-    return {'id':r.id,'revision':annotation_revision(r),'created_at':r.created_at.isoformat() if r.created_at else None,'status':r.status,'reviewer':r.reviewer,'image_url':'/api/reports/'+r.id+'/image','source':r.source,'source_metadata':json.loads(r.source_metadata),'latitude':r.latitude,'longitude':r.longitude,'location_source':r.location_source,'model_version':r.model_version,'inference_state':r.inference_state,'detections':json.loads(r.detections),'score':r.score,'score_parts':json.loads(r.score_parts),'duplicates':json.loads(r.duplicates),'note':r.note}
+    detections=read_detections(r.detections)
+    return {'id':r.id,'revision':annotation_revision(r),'created_at':r.created_at.isoformat() if r.created_at else None,'status':r.status,'reviewer':r.reviewer,'image_url':'/api/reports/'+r.id+'/image','source':r.source,'source_metadata':json.loads(r.source_metadata),'latitude':r.latitude,'longitude':r.longitude,'location_source':r.location_source,'model_version':r.model_version,'inference_state':r.inference_state,'detections':detections,'detections_readable':detections is not None,'score':r.score,'score_parts':json.loads(r.score_parts),'duplicates':json.loads(r.duplicates),'note':r.note}
