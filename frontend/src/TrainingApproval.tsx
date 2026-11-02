@@ -1,6 +1,7 @@
 import {useEffect, useState, useRef} from 'react';
 import {GraduationCap, CheckCircle2} from 'lucide-react';
 import './learning.css';
+import {useNavigationWork} from './navigationWork';
 
 type Props={lang:string; reportId:string; revision:string; dirty:boolean; empty:boolean;
   request:(path:string,options?:RequestInit)=>Promise<any>};
@@ -11,8 +12,9 @@ export default function TrainingApproval(props:Props) {
   const [state,setState]=useState<Status|null>(null);const [group,setGroup]=useState('');const [split,setSplit]=useState('train');
   const [rights,setRights]=useState(false);const [negative,setNegative]=useState(false);const [busy,setBusy]=useState(false);const [error,setError]=useState('');
   const task=useRef<AbortController|null>(null);
+  useNavigationWork('training', !state?.approved && (group !== (state?.capture_group || '') || split !== (state?.split || 'train') || rights || negative), busy, true);
   useEffect(()=>{
-    const controller=new AbortController();task.current?.abort();task.current=controller;setState(null);setBusy(false);setError('');setRights(false);setNegative(false);
+    const controller=new AbortController();task.current?.abort();task.current=controller;setState(null);setBusy(false);setError('');setRights(false);setNegative(false);setGroup('');setSplit('train');
     props.request(`/api/reports/${props.reportId}/training`,{signal:controller.signal}).then(data=>{if(!controller.signal.aborted){setState(data);setGroup(data.capture_group);setSplit(data.split)}}).catch(reason=>{if(!controller.signal.aborted)setError(reason.message)});
     return ()=>controller.abort();
   },[props.reportId,props.revision,props.request]);
@@ -23,6 +25,7 @@ export default function TrainingApproval(props:Props) {
         ...(revoke?{}:{headers:{'Content-Type':'application/json'},body:JSON.stringify({revision:props.revision,split,capture_group:group.trim(),rights_confirmed:rights,negative_confirmed:negative})})});
       if(controller.signal.aborted)return;
       if(revoke)setState(old=>old?{...old,approved:false,stale:false}:old);else setState(data);
+      setRights(false);setNegative(false);
     } catch(reason){if(!controller.signal.aborted)setError(reason instanceof Error?reason.message:String(reason))}
     finally{if(!controller.signal.aborted)setBusy(false)}
   }

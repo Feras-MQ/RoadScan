@@ -1,4 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
+import {useNavigationWork} from './navigationWork';
 
 type Analysis = {baseline:number|null;variations:{component:string;multiplier:number;score:number|null;difference:number|null}[]};
 type Props = {lang:string;reportId:string;edited:boolean;request:(path:string,options?:RequestInit)=>Promise<any>};
@@ -7,6 +8,7 @@ export default function PriorityExplanation({lang,reportId,edited,request}:Props
   const tx=(en:string,ar:string)=>lang==='ar'?ar:en;
   const [analysis,setAnalysis]=useState<Analysis|null>(null);
   const [busy,setBusy]=useState(false),[error,setError]=useState('');
+  useNavigationWork('analysis', false, busy);
   const controller=useRef<AbortController|null>(null);
   useEffect(()=>()=>controller.current?.abort(),[]);
   async function compare(){

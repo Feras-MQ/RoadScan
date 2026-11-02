@@ -15,3 +15,17 @@ export function validAnnotations(detections: Detection[], width: number, height:
       x2 > x1 && y2 > y1 && Number.isFinite(d.confidence) && d.confidence >= 0 && d.confidence <= 1;
   });
 }
+
+/** Box ordering and object key order do not change a review; duplicates still count.
+ * Source is compared conservatively if present in a future/legacy response. */
+export function sameAnnotations(left: (Detection & {source?: string})[], right: (Detection & {source?: string})[]): boolean {
+  if (left.length !== right.length) return false;
+  const remaining = [...right];
+  return left.every(a => {
+    const index = remaining.findIndex(b => a.class_id === b.class_id && a.confidence === b.confidence &&
+      a.source === b.source && a.box.length === b.box.length && a.box.every((value, i) => value === b.box[i]));
+    if (index < 0) return false;
+    remaining.splice(index, 1);
+    return true;
+  });
+}

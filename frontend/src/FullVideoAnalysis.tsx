@@ -3,6 +3,7 @@ import type {CSSProperties} from 'react';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {addDamageEvent, validRecognition} from './liveFrames';
 import type {DamageSummary, Recognition} from './liveFrames';
+import {useNavigationWork} from './navigationWork';
 
 type Props={lang:string; connected:boolean; ready:boolean; sessionKey:string;
   request:(path:string,options?:RequestInit)=>Promise<any>; onCapture:(file:File)=>void; onBack:()=>void};
@@ -14,6 +15,7 @@ export default function FullVideoAnalysis(props:Props) {
   const [running,setRunning]=useState(false),[message,setMessage]=useState(''),[error,setError]=useState('');
   const [frame,setFrame]=useState<Frame|null>(null),[count,setCount]=useState(0),[total,setTotal]=useState<number|null>(null),[summary,setSummary]=useState<DamageSummary<Frame>>({events:[],truncated:false});
   const events=summary.events;
+  useNavigationWork('video', Boolean(frame), running);
   const task=useRef<AbortController|null>(null),session=useRef<string|null>(null),pending=useRef(false);
   const latest=useRef(props);latest.current=props;
   const stop=useCallback(()=>{
