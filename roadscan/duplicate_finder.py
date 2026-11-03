@@ -6,7 +6,6 @@ from .feature_embeddings import OfflineEmbedder
 OPEN_STATUSES={'New','Needs Review','Confirmed','Assigned'}
 PREPROCESS='dinov2-vits14-crop-resize518-imagenet-v1'
 MAX_REPORTS=100  # with at most 20 boxes each, this also caps gallery crops at 2000 (about 6 MB of float64 vectors)
-LIMITED='Limited search: no match does not rule out similar reports. Repeat the search to continue; finished crops are cached.'
 
 def search_limits():
     """(new-crop budget, seconds) from ROADSCAN_SIMILARITY_NEW_CROPS / ROADSCAN_SIMILARITY_SECONDS."""
@@ -18,14 +17,15 @@ def search_limits():
 class BudgetExhausted(Exception):pass
 
 class Budget:
-    """Checked before each uncached embedding. An embedding already running is not interrupted, so a search can overrun `seconds` by about one crop."""
+    """Time is checked before every scanned report, examined report and crop (cached or not); new embeddings are also counted.
+    A step already running (an embedding, an image read) is not interrupted, so a search can overrun `seconds` by about one step."""
     def __init__(self,new_crops,seconds,clock):
         self.limit,self.seconds,self.clock=new_crops,seconds,clock;self.start=clock();self.used=0;self.reason=None
+    def check(self):
+        if self.clock()-self.start>=self.seconds:self.reason='time_budget';raise BudgetExhausted
     def spend(self):
-        if self.used>=self.limit:self.reason='new_crop_budget'
-        elif self.clock()-self.start>=self.seconds:self.reason='time_budget'
-        if self.reason:raise BudgetExhausted
-        self.used+=1
+        if self.used>=self.limit:self.reason='new_crop_budget';raise BudgetExhausted
+        self.check();self.used+=1
 
 def comparable_sources(left,right):
     """Manual and device GPS are both recorded locations; simulated only matches simulated; anything else matches nothing."""
@@ -65,6 +65,7 @@ class DuplicateFinder:
         path=Path(report['image']);image_hash=hashlib.sha256(path.read_bytes()).hexdigest()
         vectors=[]
         for box in boxes:
+            if budget:budget.check()
             key=hashlib.sha256(json.dumps([self.fingerprint,PREPROCESS,image_hash,box],allow_nan=False).encode()).hexdigest()
             cache=self.cache/(key+'.json');vector=None
             try:
@@ -81,8 +82,9 @@ class DuplicateFinder:
         return vectors
 
     def search(self,query,reports,radius=50,threshold=.80,mode='nearby',new_crops=None,seconds=None):
-        """nearby: same location source within `radius`. visual: any open report; location is ignored and never required.
-        Candidates are examined in a fixed order (distance, then id) until the new-crop or time budget runs out; the result says whether it was partial."""
+        """nearby: same location source within `radius`, examined nearest first. visual: any open report, examined by report id,
+        so location never decides which reports are covered. Stops at the new-crop or time budget or after 100 examined reports;
+        the result counts what was and was not covered. Reports with unreadable detections are counted as skipped."""
         if mode not in ('nearby','visual'):raise ValueError('Unknown search mode')
         if not math.isfinite(radius) or not 1<=radius<=500:raise ValueError('Radius must be 1–500 metres')
         if not math.isfinite(threshold) or not -1<=threshold<=1:raise ValueError('Invalid similarity threshold')
@@ -92,34 +94,43 @@ class DuplicateFinder:
             budget=Budget(new_crops,seconds,self.clock)
             if mode=='nearby':distance_m(query['gps'],query['gps'])
             crop_boxes(query)
-            candidates=[];skipped=0
-            for row in reports:
-                if row['id']==query['id'] or row['status'] not in OPEN_STATUSES or not row['detections']:continue
-                try:crop_boxes(row)
-                except (ValueError,OSError):skipped+=1;continue  # one bad stored box must not block every search
-                comparable=comparable_sources(row.get('location_source'),query.get('location_source'))
-                try:distance=distance_m(query['gps'],row['gps']) if comparable else None
-                except ValueError:distance=None
-                if mode=='visual':candidates.append((row,distance))
-                elif distance is not None and distance<=radius:candidates.append((row,distance))
-            candidates.sort(key=lambda c:(c[1] is None,c[1] or 0,c[0]['id']))
+            reasons=[];candidates=[];scanned=0
+            try:
+                for row in reports:  # metadata only: images are opened later, and only for reports reached in order
+                    budget.check();scanned+=1
+                    if row['id']==query['id'] or row['status'] not in OPEN_STATUSES or row['detections']==[]:continue
+                    comparable=comparable_sources(row.get('location_source'),query.get('location_source'))
+                    try:distance=distance_m(query['gps'],row['gps']) if comparable else None
+                    except ValueError:distance=None
+                    if mode=='visual' or (distance is not None and distance<=radius):candidates.append((row,distance))
+            except BudgetExhausted:reasons.append('time_budget')
+            candidates.sort(key=(lambda c:c[0]['id']) if mode=='visual' else (lambda c:(c[1],c[0]['id'])))
+            vectors=[];owners=[];examined=skipped=0
+            if candidates and not reasons:
+                try:
+                    queries=self.features(query,budget)
+                    for row,distance in candidates:
+                        if examined==MAX_REPORTS:reasons.append('report_cap');break
+                        budget.check()
+                        if row['detections'] is None:skipped+=1;continue  # unreadable stored detections
+                        try:crop_boxes(row)
+                        except (ValueError,OSError):skipped+=1;continue  # one bad stored box must not block every search
+                        for vector in self.features(row,budget):vectors.append(vector);owners.append((row['id'],distance))
+                        examined+=1
+                except BudgetExhausted:reasons.append(budget.reason)
             if mode=='nearby':
                 result={'mode':mode,'method':'dinov2_vits14_exact_cosine_gps','radius_m':radius,'note':'Experimental threshold; inspect the images. No automatic merge. Simulated and real location sources are kept separate.'}
             else:
                 result={'mode':mode,'method':'dinov2_vits14_exact_cosine','radius_m':None,'note':'Crop-level visual similarity of saved damage boxes only: not whole-image matching and not confirmation of the same physical damage. Location is not used. Experimental threshold; inspect the images. No automatic merge.'}
-            reasons=['report_cap'] if len(candidates)>MAX_REPORTS else []
-            vectors=[];owners=[];examined=0
-            if candidates:
-                try:
-                    queries=self.features(query,budget)
-                    for row,distance in candidates[:MAX_REPORTS]:
-                        for vector in self.features(row,budget):vectors.append(vector);owners.append((row['id'],distance))
-                        examined+=1
-                except BudgetExhausted:reasons.append(budget.reason)
-            result.update(preprocessing=PREPROCESS,threshold=threshold,threshold_validated=False,eligible_reports=len(candidates),examined_reports=examined,
-                          candidate_reports=examined,skipped_reports=skipped,new_crops_used=budget.used,new_crop_budget=new_crops,time_budget_s=seconds,
-                          partial_search=bool(reasons),partial_reasons=reasons,matches=[])
-            if reasons:result['note']+=' '+LIMITED
+            if reasons:
+                result['note']+=' Limited search: no match does not rule out similar reports.'
+                if scanned<len(reports):result['note']+=' Not every open report could be scanned within the time limit.'
+                elif {'new_crop_budget','time_budget'}&set(reasons):result['note']+=' Repeating the search continues from cached crops.'
+                if 'report_cap' in reasons:result['note']+=f' Only the first {MAX_REPORTS} eligible reports in this fixed order were compared; repeating the search will not reach the rest.'
+            result.update(preprocessing=PREPROCESS,threshold=threshold,threshold_validated=False,total_reports=len(reports),scanned_reports=scanned,
+                          unscanned_reports=len(reports)-scanned,eligible_reports=len(candidates),examined_reports=examined,candidate_reports=examined,
+                          skipped_reports=skipped,not_examined_reports=len(candidates)-examined-skipped,new_crops_used=budget.used,new_crop_budget=new_crops,
+                          time_budget_s=seconds,partial_search=bool(reasons),partial_reasons=reasons,matches=[])
             if owners:
                 import numpy as np
                 gallery=np.asarray(vectors,dtype='float64');queries=np.asarray(queries,dtype='float64')

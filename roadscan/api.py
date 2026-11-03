@@ -415,8 +415,8 @@ async def search_duplicates(rid:str,choice:DuplicateSearch,actor:str=Depends(rev
     if query['detections'] is None:raise HTTPException(422,'Stored detections are unreadable; replace them before comparing crops')
     rows=session.query(Report).filter(Report.id!=rid,Report.status.in_(OPEN_STATUSES))
     if choice.mode=='nearby':rows=rows.filter(Report.latitude.isnot(None),Report.longitude.isnot(None))
-    # Unreadable candidates are skipped, never compared as "no damage".
-    candidates=[item for item in map(record,rows.all()) if item['detections']]
+    # Every open row's metadata is loaded (no images); unreadable ones reach the finder so they are counted as skipped, never treated as "no damage".
+    candidates=[record(row) for row in rows.all()]
     try:
         result=await run_in_threadpool(lambda:configured_finder().search(query,candidates,mode=choice.mode))
     except ValueError as exc:raise HTTPException(422,str(exc)) from exc

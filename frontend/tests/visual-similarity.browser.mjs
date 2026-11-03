@@ -10,7 +10,7 @@ export async function checkVisualSimilarity(browser,origin,base,expect) {
     const box=[{class_id:'D40',box:[10,10,60,60],confidence:.8}];
     const rows=[{...base,id:'fixture-no-coordinates',revision:'r-no-gps',detections:box,detections_readable:true,latitude:null,longitude:null,location_source:'not_provided'},
                 {...base,id:'fixture-recorded',revision:'r-gps',detections:box,detections_readable:true,latitude:24.7,longitude:46.7,location_source:'manual'}];
-    const searches=[],errors=[];let fail=false,partial=false;
+    const searches=[],errors=[];let fail=false,partial=false,capped=false;
     const page=await context.newPage();
     page.on('pageerror',error=>errors.push(error.message));
     await page.route(url=>url.pathname==='/api/reports'||url.pathname.startsWith('/api/reports/'),async route=>{
@@ -21,8 +21,9 @@ export async function checkVisualSimilarity(browser,origin,base,expect) {
       if(url.pathname.endsWith('/duplicates/search')) {
         const body=request.postDataJSON();searches.push({id:row.id,...body});
         if(fail)return route.fulfill({status:503,json:{detail:'Duplicate search unavailable or busy; check the configured DINOv2 runtime and try again'}});
-        const complete={skipped_reports:0,new_crop_budget:16,partial_search:false,partial_reasons:[],threshold:.8};
-        if(partial)return route.fulfill({json:{...complete,mode:'visual',eligible_reports:14,examined_reports:9,skipped_reports:1,new_crops_used:16,partial_search:true,partial_reasons:['new_crop_budget'],matches:[]}});
+        const complete={skipped_reports:0,not_examined_reports:0,unscanned_reports:0,new_crop_budget:16,partial_search:false,partial_reasons:[],threshold:.8};
+        if(capped)return route.fulfill({json:{...complete,mode:'visual',eligible_reports:101,examined_reports:100,not_examined_reports:1,new_crops_used:0,partial_search:true,partial_reasons:['report_cap'],matches:[]}});
+        if(partial)return route.fulfill({json:{...complete,mode:'visual',eligible_reports:14,examined_reports:9,skipped_reports:1,not_examined_reports:4,new_crops_used:16,partial_search:true,partial_reasons:['new_crop_budget'],matches:[]}});
         return route.fulfill({json:body.mode==='visual'?{...complete,mode:'visual',eligible_reports:2,examined_reports:2,new_crops_used:3,matches:[{report_id:'fixture-similar-elsewhere',similarity:.931,distance_m:null}]}
                                                        :{...complete,mode:'nearby',eligible_reports:1,examined_reports:1,new_crops_used:0,matches:[{report_id:'fixture-similar-nearby',similarity:.854,distance_m:12.3}]}});
       }
@@ -60,11 +61,16 @@ export async function checkVisualSimilarity(browser,origin,base,expect) {
       await expect(status).toContainText('9/14');await expect(status).toContainText('16/16');
       await expect(status).toContainText(tx('No matches among the reports examined so far.','لا توجد تطابقات بين البلاغات التي فُحصت حتى الآن.'));
       await expect(status).not.toContainText(tx('This does not prove that no duplicate exists.','هذا لا يثبت عدم وجود تكرار.'));
-      partial=false;fail=true;await visual.click();
+      await expect(status.locator('.warning')).toContainText(tx('Search again to continue','ابحث مرة أخرى للمتابعة'));
+      await expect(status).toContainText(tx('not examined: 4','لم تُفحص: 4'));
+      partial=false;capped=true;await visual.click();
+      await expect(status.locator('.warning')).toContainText(tx('searching again will not reach the rest','لن يصل البحث مرة أخرى إلى البقية'));
+      await expect(status.locator('.warning')).not.toContainText(tx('Search again to continue','ابحث مرة أخرى للمتابعة'));
+      capped=false;fail=true;await visual.click();
       await expect(section.getByRole('alert')).toContainText('DINOv2 runtime');await expect(status).toHaveCount(0);
       await expect(visual).toBeEnabled();
-      assert.equal(searches.length,4);assert.deepEqual(errors,[]);
-      console.log(`PASS visual similarity ${lang}, ${width}px: no-coordinate visual search, nearby search with distance, completeness counts, limited-search warning, honest unavailable error.`);
+      assert.equal(searches.length,5);assert.deepEqual(errors,[]);
+      console.log(`PASS visual similarity ${lang}, ${width}px: no-coordinate visual search, nearby search with distance, completeness counts, limited-search warning with reason-specific retry guidance, honest unavailable error.`);
     } finally {await context.close();}
   }
 }

@@ -86,9 +86,9 @@ def test_api_visual_search_works_without_coordinates_and_changes_nothing(searche
     assert result.status_code==200,result.text
     body=result.json()
     assert body['mode']=='visual' and body['threshold_validated'] is False
-    assert body['partial_search'] is False and body['partial_reasons']==[] and body['eligible_reports']==body['examined_reports']==2 and body['new_crop_budget']==16
+    assert body['partial_search'] is False and body['partial_reasons']==[] and body['eligible_reports']==4 and body['examined_reports']==2 and body['not_examined_reports']==0 and body['new_crop_budget']==16
     assert [(m['report_id'],m['distance_m']) for m in body['matches']]==[(same,None)]
-    assert body['candidate_reports']==2 and body['skipped_reports']==1  # unreadable never reaches the finder; box-less legacy row skipped and counted
+    assert body['candidate_reports']==2 and body['skipped_reports']==2  # unreadable and box-less legacy rows are both counted, never dropped silently
     for rid,saved in before.items():
         after=client.get('/api/reports/'+rid,headers=headers).json()
         assert (after['status'],after['duplicates'],after['revision'])==(saved['status'],saved['duplicates'],saved['revision'])
@@ -306,7 +306,7 @@ def test_skips_and_backend_failures_are_accounted_and_release_the_lock(tmp_path)
     finder,embedder,gallery=budget_finder(tmp_path,2)
     query=row(tmp_path,'q','q.png')
     result=finder.search(query,gallery+[row(tmp_path,'bad','c0.png',detections=[{'box':[0,0,99,99]}])],mode='visual',new_crops=16,seconds=60)
-    assert (result['eligible_reports'],result['examined_reports'],result['skipped_reports'],result['partial_search'])==(2,2,1,False)
+    assert (result['eligible_reports'],result['examined_reports'],result['skipped_reports'],result['partial_search'])==(3,2,1,False)
     class Broken:
         def encode(self,path,box):raise OSError('disk failure')
     finder.embedder=Broken()
@@ -322,3 +322,60 @@ def test_limits_come_from_environment_and_reject_bad_values(monkeypatch):
     for crops,seconds in (('0','20'),('many','20'),('16','nan'),('16','0.5'),('501','20'),('16','301')):
         monkeypatch.setenv('ROADSCAN_SIMILARITY_NEW_CROPS',crops);monkeypatch.setenv('ROADSCAN_SIMILARITY_SECONDS',seconds)
         with pytest.raises(RuntimeError):duplicate_finder.search_limits()
+
+
+def test_visual_coverage_does_not_depend_on_coordinates(tmp_path):
+    """Review probe 1: a near nonmatch must not take the last budget slot from a farther match because of its distance."""
+    finder,_=finder_with(tmp_path,{'q.png':MATCH,'match.png':MATCH,'other.png':OTHER})
+    query=row(tmp_path,'q','q.png',gps=(24,46),location_source='manual')
+    far_match=row(tmp_path,'a-match','match.png',gps=(25,46),location_source='manual')
+    near_other=row(tmp_path,'z-other','other.png',gps=(24.0001,46),location_source='manual')
+    with_gps=finder.search(query,[near_other,far_match],mode='visual',new_crops=2,seconds=60)
+    (tmp_path/'cache2').mkdir();finder.cache=tmp_path/'cache2'
+    strip=lambda r:dict(r,gps=(None,None),location_source='not_provided')
+    without=finder.search(strip(query),[strip(near_other),strip(far_match)],mode='visual',new_crops=2,seconds=60)
+    for result in (with_gps,without):
+        assert [m['report_id'] for m in result['matches']]==['a-match'] and result['partial_reasons']==['new_crop_budget']
+    nearby=finder.search(query,[near_other,far_match],new_crops=16,seconds=60)
+    assert nearby['eligible_reports']==1  # nearby still filters and orders by distance
+
+
+def test_report_cap_is_not_advanced_by_repeating_and_says_so(tmp_path):
+    """Review probe 2: the only match sorts last of 101; a warm repeat examines the same 100 and must not promise progress."""
+    finder,_=finder_with(tmp_path,{'q.png':MATCH,'other.png':OTHER,'match.png':MATCH})
+    query=row(tmp_path,'q','q.png')
+    gallery=[row(tmp_path,f'r{i:03d}','other.png') for i in range(100)]+[row(tmp_path,'r999','match.png')]
+    for _ in range(2):
+        result=finder.search(query,gallery,mode='visual',new_crops=16,seconds=60)
+        assert (result['examined_reports'],result['not_examined_reports'],result['partial_reasons'],result['matches'])==(100,1,['report_cap'],[])
+        assert 'will not reach the rest' in result['note'] and 'continues from cached crops' not in result['note']
+
+
+class Ticking:
+    """Clock that advances `step` seconds every time it is read, standing in for slow cached reads or a slow scan."""
+    def __init__(self,step):self.now=0.;self.step=step
+    def __call__(self):self.now+=self.step;return self.now
+
+
+def test_time_budget_applies_to_cached_work_and_scanning(tmp_path):
+    """Review probe 3: a fully cached search with slow reads must stop on time, not report a complete search after 90 s."""
+    finder,embedder,gallery=budget_finder(tmp_path,6)
+    query=row(tmp_path,'q','q.png')
+    finder.search(query,gallery,mode='visual',new_crops=16,seconds=60);calls=embedder.calls
+    finder.clock=Ticking(1.)
+    warm=finder.search(query,gallery,mode='visual',new_crops=16,seconds=5)
+    assert warm['partial_reasons']==['time_budget'] and warm['new_crops_used']==0 and embedder.calls==calls
+    assert warm['examined_reports']<6 and warm['partial_search'] is True and warm['elapsed_s']<=6
+    finder.clock=Ticking(1.)
+    scan=finder.search(query,gallery*3,mode='visual',new_crops=16,seconds=4)
+    assert scan['unscanned_reports']>0 and scan['examined_reports']==0 and scan['partial_reasons']==['time_budget']
+    assert 'Not every open report could be scanned' in scan['note'] and 'continues from cached crops' not in scan['note']
+
+
+def test_images_are_opened_only_for_reports_reached_in_order(tmp_path):
+    finder,_=finder_with(tmp_path,{'q.png':MATCH,'g.png':MATCH})
+    query=row(tmp_path,'q','q.png')
+    gallery=[row(tmp_path,f'r{i:03d}','g.png') for i in range(100)]+[row(tmp_path,f's{i:03d}','missing.png') for i in range(50)]
+    result=finder.search(query,gallery,mode='visual',new_crops=16,seconds=60)
+    # Unreached reports with missing images are never opened, so they are "not examined", not "skipped".
+    assert (result['eligible_reports'],result['examined_reports'],result['skipped_reports'],result['not_examined_reports'])==(150,100,0,50)
