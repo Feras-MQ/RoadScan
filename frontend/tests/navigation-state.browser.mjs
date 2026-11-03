@@ -40,6 +40,8 @@ export async function checkPreciseNavigation(browser,origin,base,expect) {
       await helpToMap();await screen('reports');await expect(page.getByRole('dialog').getByRole('alert')).toContainText(tx('unsaved review changes','تغييرات مراجعة غير محفوظة'));
       await page.keyboard.press('Escape');assert.equal(prompts.length,0,'review guard blocks inline without a second confirm');
       await page.getByRole('button',{name:tx('Save review','حفظ المراجعة'),exact:true}).click();await expect(page.locator('.review-statusbar')).toContainText(tx('Saved report','بلاغ محفوظ'));
+      // The app stays busy through its post-save refresh and refuses navigation until idle.
+      await expect(page.locator('.save-row button')).toHaveText(tx('Save review','حفظ المراجعة'));await expect(page.locator('.save-row button')).toBeEnabled();
       await nav('map');await screen('map');assert.equal(prompts.length,0,'saved edits no longer warn');
 
       await openReport();const group=page.getByLabel(tx('Training capture group','مجموعة تصوير التدريب'),{exact:true});
