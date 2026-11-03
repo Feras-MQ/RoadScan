@@ -12,6 +12,7 @@ import {checkMapWorkspace} from './map-workspace.browser.mjs';
 import {checkStreetMap} from './street-map.browser.mjs';
 import {checkNavigationMedia} from './navigation-media.browser.mjs';
 import {checkPreciseNavigation} from './navigation-state.browser.mjs';
+import {checkVisualSimilarity} from './visual-similarity.browser.mjs';
 const {chromium} = await import(process.env.ROADSCAN_PLAYWRIGHT_MODULE || 'playwright');
 const {expect} = await import(process.env.ROADSCAN_PLAYWRIGHT_EXPECT || 'playwright/test');
 const dist = path.resolve(fileURLToPath(new URL('../dist/', import.meta.url)));
@@ -214,6 +215,7 @@ try {
   await checkNavigationMedia(browser, origin, expect);
   await checkMapWorkspace(browser, origin, report, expect, artifacts);
   await checkStreetMap(browser, origin, report, expect, artifacts);
+  await checkVisualSimilarity(browser, origin, report, expect);
   console.log(JSON.stringify({result: 'PASS', coverage: 'EN/AR desktop/mobile; typed questions; fallback; all destinations; keyboard/focus; back/close/reopen; highlight cleanup; unsaved review guard; existing report-switch guard; pending photo preserved; guide actions do not submit; guard scenarios use explicit mocked vote/video requests', requests: requests.length, artifacts}, null, 2));
   await context.close();
 } finally {await browser?.close(); await new Promise(resolve => server.close(resolve));}

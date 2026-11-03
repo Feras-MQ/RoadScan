@@ -23,8 +23,7 @@ def test_gps_distance_and_invalid_inputs():
     for point in [(None,0),(91,0),(0,float('nan'))]:
         with pytest.raises(ValueError):distance_m(point,(0,0))
 
-def test_faiss_crops_exclude_closed_distant_and_simulated_reports(tmp_path):
-    pytest.importorskip('faiss')
+def test_nearby_crops_exclude_closed_distant_and_simulated_reports(tmp_path):
     from PIL import Image
     image=tmp_path/'image.png';Image.new('RGB',(10,10)).save(image)
     checkpoint=tmp_path/'weights';checkpoint.write_bytes(b'test-only')

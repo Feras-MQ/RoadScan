@@ -1,15 +1,48 @@
-"""Damage-crop DINOv2 + exact FAISS search inside a GPS radius; advisory only."""
+"""Damage-crop DINOv2 + exact cosine search, nearby (GPS radius) or visual-only (any location); advisory only."""
 from pathlib import Path
-import hashlib,json,math,os,threading
+import hashlib,json,math,os,threading,time
 from .feature_embeddings import OfflineEmbedder
 
 OPEN_STATUSES={'New','Needs Review','Confirmed','Assigned'}
 PREPROCESS='dinov2-vits14-crop-resize518-imagenet-v1'
+MAX_REPORTS=100  # with at most 20 boxes each, this also caps gallery crops at 2000 (about 6 MB of float64 vectors)
+
+def search_limits():
+    """(new-crop budget, seconds) from ROADSCAN_SIMILARITY_NEW_CROPS / ROADSCAN_SIMILARITY_SECONDS."""
+    try:new_crops=int(os.getenv('ROADSCAN_SIMILARITY_NEW_CROPS','16'));seconds=float(os.getenv('ROADSCAN_SIMILARITY_SECONDS','20'))
+    except ValueError as exc:raise RuntimeError('Invalid similarity search limits') from exc
+    if not 1<=new_crops<=500 or not math.isfinite(seconds) or not 1<=seconds<=300:raise RuntimeError('Invalid similarity search limits')
+    return new_crops,seconds
+
+class BudgetExhausted(Exception):pass
+
+class Budget:
+    """Time is checked before every scanned report, examined report and crop (cached or not); new embeddings are also counted.
+    A step already running (an embedding, an image read) is not interrupted, so a search can overrun `seconds` by about one step."""
+    def __init__(self,new_crops,seconds,clock):
+        self.limit,self.seconds,self.clock=new_crops,seconds,clock;self.start=clock();self.used=0;self.reason=None
+    def check(self):
+        if self.clock()-self.start>=self.seconds:self.reason='time_budget';raise BudgetExhausted
+    def spend(self):
+        if self.used>=self.limit:self.reason='new_crop_budget';raise BudgetExhausted
+        self.check();self.used+=1
 
 def comparable_sources(left,right):
     """Manual and device GPS are both recorded locations; simulated only matches simulated; anything else matches nothing."""
     recorded={'manual','device_gps'}
     return (left in recorded and right in recorded) or left==right=='simulated'
+
+def crop_boxes(report):
+    """The report's 1–20 damage boxes, each a finite rectangle inside its image; ValueError says why it cannot be compared."""
+    boxes=[d.get('box') for d in report['detections']]
+    if not boxes:raise ValueError('Save at least one damage box before comparing crops')
+    if len(boxes)>20:raise ValueError('Duplicate search supports at most 20 damage boxes per report')
+    from PIL import Image
+    with Image.open(report['image']) as image:width,height=image.size
+    for box in boxes:
+        if not isinstance(box,list) or len(box)!=4 or any(type(v) not in (int,float) or not math.isfinite(v) for v in box):raise ValueError('Damage boxes must be four finite numbers')
+        if not (0<=box[0]<box[2]<=width and 0<=box[1]<box[3]<=height):raise ValueError('A damage box lies outside its image')
+    return boxes
 
 def distance_m(left,right):
     for point in (left,right):
@@ -25,15 +58,14 @@ class DuplicateFinder:
         self.fingerprint=hashlib.sha256(path.read_bytes()).hexdigest()
         self.cache=Path(cache_dir);self.cache.mkdir(parents=True,exist_ok=True)
         self.embedder=embedder or OfflineEmbedder('dinov2_vits14',path)
-        self.lock=threading.Lock()
+        self.lock=threading.Lock();self.clock=time.monotonic
 
-    def features(self,report):
-        boxes=[d['box'] for d in report['detections']]
-        if not boxes:raise ValueError('Save at least one damage box before comparing crops')
-        if len(boxes)>20:raise ValueError('Duplicate search supports at most 20 damage boxes per report')
+    def features(self,report,budget=None):
+        boxes=crop_boxes(report)
         path=Path(report['image']);image_hash=hashlib.sha256(path.read_bytes()).hexdigest()
         vectors=[]
         for box in boxes:
+            if budget:budget.check()
             key=hashlib.sha256(json.dumps([self.fingerprint,PREPROCESS,image_hash,box],allow_nan=False).encode()).hexdigest()
             cache=self.cache/(key+'.json');vector=None
             try:
@@ -41,6 +73,7 @@ class DuplicateFinder:
                 if isinstance(candidate,list) and len(candidate)==384 and all(type(v) in (int,float) and math.isfinite(v) for v in candidate) and sum(v*v for v in candidate)>0:vector=candidate
             except (OSError,ValueError):pass
             if vector is None:
+                if budget:budget.spend()
                 vector=self.embedder.encode(path,box)
                 if len(vector)!=384 or not all(math.isfinite(v) for v in vector) or sum(v*v for v in vector)<=0:raise ValueError('Invalid DINOv2 embedding')
                 temporary=cache.with_suffix('.tmp')
@@ -48,39 +81,71 @@ class DuplicateFinder:
             vectors.append(vector)
         return vectors
 
-    def search(self,query,reports,radius=50,threshold=.80):
+    def search(self,query,reports,radius=50,threshold=.80,mode='nearby',new_crops=None,seconds=None):
+        """nearby: same location source within `radius`, examined nearest first. visual: any open report, examined by report id,
+        so location never decides which reports are covered. Stops at the new-crop or time budget or after 100 examined reports;
+        the result counts what was and was not covered. Reports with unreadable detections are counted as skipped."""
+        if mode not in ('nearby','visual'):raise ValueError('Unknown search mode')
         if not math.isfinite(radius) or not 1<=radius<=500:raise ValueError('Radius must be 1–500 metres')
         if not math.isfinite(threshold) or not -1<=threshold<=1:raise ValueError('Invalid similarity threshold')
+        if new_crops is None or seconds is None:new_crops,seconds=search_limits()
         if not self.lock.acquire(blocking=False):raise RuntimeError('Another duplicate search is running; try again shortly')
         try:
-            distance_m(query['gps'],query['gps'])
-            if not query['detections']:raise ValueError('Save at least one damage box before comparing crops')
-            candidates=[]
-            for row in reports:
-                if row['id']==query['id'] or row['status'] not in OPEN_STATUSES or not row['detections']:continue
-                if not comparable_sources(row.get('location_source'),query.get('location_source')):continue
-                if any(v is None for v in row['gps']):continue
-                distance=distance_m(query['gps'],row['gps'])
-                if distance<=radius:candidates.append((row,distance))
-            if len(candidates)>100:raise ValueError('More than 100 nearby reports; narrow the search radius')
-            result={'method':'dinov2_vits14_faiss_gps','preprocessing':PREPROCESS,'radius_m':radius,'threshold':threshold,'threshold_validated':False,'candidate_reports':len(candidates),'matches':[],'note':'Experimental threshold; inspect the images. No automatic merge. Simulated and real location sources are kept separate.'}
-            if not candidates:return result
-            import numpy as np
-            import faiss
-            vectors=[];owners=[]
-            for row,distance in candidates:
-                for vector in self.features(row):vectors.append(vector);owners.append((row['id'],distance))
-            gallery=np.asarray(vectors,dtype='float32');queries=np.asarray(self.features(query),dtype='float32')
-            if not np.isfinite(gallery).all() or not np.isfinite(queries).all():raise ValueError('Embedding exceeds numeric range')
-            faiss.normalize_L2(gallery);faiss.normalize_L2(queries)
-            index=faiss.IndexFlatIP(gallery.shape[1]);index.add(gallery)
-            scores,indices=index.search(queries,len(owners));best={}
-            for row_scores,row_indices in zip(scores,indices):
-                for similarity,position in zip(row_scores,row_indices):
-                    if not 0<=int(position)<len(owners) or not math.isfinite(float(similarity)):continue
-                    ident,distance=owners[int(position)];similarity=float(max(-1,min(1,similarity)))
-                    if similarity>=threshold and similarity>best.get(ident,{}).get('similarity',-2):best[ident]={'report_id':ident,'similarity':similarity,'distance_m':round(distance,1)}
-            result['matches']=sorted(best.values(),key=lambda x:(-x['similarity'],x['report_id']))[:5]
+            budget=Budget(new_crops,seconds,self.clock)
+            if mode=='nearby':distance_m(query['gps'],query['gps'])
+            crop_boxes(query)
+            reasons=[];candidates=[];scanned=0
+            try:
+                for row in reports:  # metadata only: images are opened later, and only for reports reached in order
+                    budget.check();scanned+=1
+                    if row['id']==query['id'] or row['status'] not in OPEN_STATUSES or row['detections']==[]:continue
+                    comparable=comparable_sources(row.get('location_source'),query.get('location_source'))
+                    try:distance=distance_m(query['gps'],row['gps']) if comparable else None
+                    except ValueError:distance=None
+                    if mode=='visual' or (distance is not None and distance<=radius):candidates.append((row,distance))
+            except BudgetExhausted:reasons.append('time_budget')
+            candidates.sort(key=(lambda c:c[0]['id']) if mode=='visual' else (lambda c:(c[1],c[0]['id'])))
+            vectors=[];owners=[];examined=skipped=0
+            if candidates and not reasons:
+                try:
+                    queries=self.features(query,budget)
+                    for row,distance in candidates:
+                        if examined==MAX_REPORTS:reasons.append('report_cap');break
+                        budget.check()
+                        if row['detections'] is None:skipped+=1;continue  # unreadable stored detections
+                        try:crop_boxes(row)
+                        except (ValueError,OSError):skipped+=1;continue  # one bad stored box must not block every search
+                        for vector in self.features(row,budget):vectors.append(vector);owners.append((row['id'],distance))
+                        examined+=1
+                except BudgetExhausted:reasons.append(budget.reason)
+            if mode=='nearby':
+                result={'mode':mode,'method':'dinov2_vits14_exact_cosine_gps','radius_m':radius,'note':'Experimental threshold; inspect the images. No automatic merge. Simulated and real location sources are kept separate.'}
+            else:
+                result={'mode':mode,'method':'dinov2_vits14_exact_cosine','radius_m':None,'note':'Crop-level visual similarity of saved damage boxes only: not whole-image matching and not confirmation of the same physical damage. Location is not used. Experimental threshold; inspect the images. No automatic merge.'}
+            if reasons:
+                result['note']+=' Limited search: no match does not rule out similar reports.'
+                if scanned<len(reports):result['note']+=' Not every open report could be scanned within the time limit.'
+                elif {'new_crop_budget','time_budget'}&set(reasons):result['note']+=' Repeating the search continues from cached crops.'
+                if 'report_cap' in reasons:result['note']+=f' Only the first {MAX_REPORTS} eligible reports in this fixed order were compared; repeating the search will not reach the rest.'
+            result.update(preprocessing=PREPROCESS,threshold=threshold,threshold_validated=False,total_reports=len(reports),scanned_reports=scanned,
+                          unscanned_reports=len(reports)-scanned,eligible_reports=len(candidates),examined_reports=examined,candidate_reports=examined,
+                          skipped_reports=skipped,not_examined_reports=len(candidates)-examined-skipped,new_crops_used=budget.used,new_crop_budget=new_crops,
+                          time_budget_s=seconds,partial_search=bool(reasons),partial_reasons=reasons,matches=[])
+            if owners:
+                import numpy as np
+                gallery=np.asarray(vectors,dtype='float64');queries=np.asarray(queries,dtype='float64')
+                if not np.isfinite(gallery).all() or not np.isfinite(queries).all():raise ValueError('Embedding exceeds numeric range')
+                # Exact cosine over every examined crop (what a flat inner-product index computes).
+                norms=[np.linalg.norm(m,axis=1,keepdims=True) for m in (gallery,queries)]
+                if not all(np.isfinite(n).all() and (n>0).all() for n in norms):raise ValueError('Embedding exceeds numeric range')
+                gallery/=norms[0];queries/=norms[1]
+                best={}
+                for row_scores in queries@gallery.T:
+                    for (ident,distance),similarity in zip(owners,row_scores):
+                        similarity=float(max(-1,min(1,similarity)))
+                        if similarity>=threshold and similarity>best.get(ident,{}).get('similarity',-2):best[ident]={'report_id':ident,'similarity':similarity,'distance_m':None if distance is None else round(distance,1)}
+                result['matches']=sorted(best.values(),key=lambda x:(-x['similarity'],x['report_id']))[:5]
+            result['elapsed_s']=round(self.clock()-budget.start,3)
             return result
         finally:self.lock.release()
 

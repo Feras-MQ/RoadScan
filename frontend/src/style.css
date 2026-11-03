@@ -14,3 +14,4 @@
 .annotation-data-warning h3{margin:0 0 10px}
 .annotation-data-warning p{margin:10px 0}
 .annotation-data-warning button{max-width:100%;white-space:normal}
+.similarity-actions{display:flex;gap:9px;flex-wrap:wrap;margin:8px 0}

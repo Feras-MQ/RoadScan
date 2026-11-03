@@ -11,6 +11,7 @@ from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Depends, Hea
 from fastapi.responses import FileResponse
 from starlette.background import BackgroundTask
 from fastapi.staticfiles import StaticFiles
+from typing import Literal
 from pydantic import BaseModel, Field
 from .core import *
 from .inference import LocalDetector
@@ -400,6 +401,7 @@ def sensitivity(rid: str, actor: str = Depends(read_access), session=Depends(db)
 
 class DuplicateSearch(BaseModel):
     revision:str=Field(min_length=64,max_length=64)
+    mode:Literal['nearby','visual']='nearby'
 
 @app.post('/api/reports/{rid}/duplicates/search')
 async def search_duplicates(rid:str,choice:DuplicateSearch,actor:str=Depends(review_access),session=Depends(db)):
@@ -408,11 +410,15 @@ async def search_duplicates(rid:str,choice:DuplicateSearch,actor:str=Depends(rev
     if not report:raise HTTPException(404,'Not found')
     if choice.revision!=annotation_revision(report):raise HTTPException(409,'Report changed; reload before searching')
     def record(row):
-        return {'id':row.id,'status':row.status,'gps':(row.latitude,row.longitude),'location_source':row.location_source,'image':str(STORAGE/Path(row.image_ref).name),'detections':json.loads(row.detections)}
+        return {'id':row.id,'status':row.status,'gps':(row.latitude,row.longitude),'location_source':row.location_source,'image':str(STORAGE/Path(row.image_ref).name),'detections':read_detections(row.detections)}
     query=record(report)
-    candidates=[record(row) for row in session.query(Report).filter(Report.id!=rid,Report.status.in_(OPEN_STATUSES),Report.latitude.isnot(None),Report.longitude.isnot(None)).all()]
+    if query['detections'] is None:raise HTTPException(422,'Stored detections are unreadable; replace them before comparing crops')
+    rows=session.query(Report).filter(Report.id!=rid,Report.status.in_(OPEN_STATUSES))
+    if choice.mode=='nearby':rows=rows.filter(Report.latitude.isnot(None),Report.longitude.isnot(None))
+    # Every open row's metadata is loaded (no images); unreadable ones reach the finder so they are counted as skipped, never treated as "no damage".
+    candidates=[record(row) for row in rows.all()]
     try:
-        result=await run_in_threadpool(lambda:configured_finder().search(query,candidates))
+        result=await run_in_threadpool(lambda:configured_finder().search(query,candidates,mode=choice.mode))
     except ValueError as exc:raise HTTPException(422,str(exc)) from exc
     except (RuntimeError,ImportError,OSError):raise HTTPException(503,'Duplicate search unavailable or busy; check the configured DINOv2 runtime and try again')
     session.expire_all()
