@@ -86,6 +86,7 @@ def test_api_visual_search_works_without_coordinates_and_changes_nothing(searche
     assert result.status_code==200,result.text
     body=result.json()
     assert body['mode']=='visual' and body['threshold_validated'] is False
+    assert body['partial_search'] is False and body['partial_reasons']==[] and body['eligible_reports']==body['examined_reports']==2 and body['new_crop_budget']==16
     assert [(m['report_id'],m['distance_m']) for m in body['matches']]==[(same,None)]
     assert body['candidate_reports']==2 and body['skipped_reports']==1  # unreadable never reaches the finder; box-less legacy row skipped and counted
     for rid,saved in before.items():
@@ -115,6 +116,10 @@ def test_api_unavailable_dino_and_backend_failures_are_honest(searcher,tmp_path)
     monkeypatch.setenv('ROADSCAN_DINO_WEIGHTS',str(tmp_path/'missing.pth'))
     response=search(query,'visual')
     assert response.status_code==503 and 'DINOv2' in response.json()['detail']
+    monkeypatch.setattr(duplicate_finder,'configured_finder',lambda:DuplicateFinder(tmp_path/'w',tmp_path/'cache',fake))
+    monkeypatch.setenv('ROADSCAN_SIMILARITY_NEW_CROPS','0')  # misconfigured limits are an honest 503, never an unbounded search
+    assert search(query,'visual').status_code==503 and fake.calls==0
+    monkeypatch.delenv('ROADSCAN_SIMILARITY_NEW_CROPS')
     def no_torch():raise RuntimeError('Install compatible torch and torchvision offline')
     monkeypatch.setattr(duplicate_finder,'configured_finder',no_torch)
     assert search(query,'visual').status_code==503
@@ -216,9 +221,104 @@ def test_nearby_radius_and_source_rules_are_unchanged_while_visual_crosses_them(
     assert all(distance.get(k) is None for k in ('simulated-10m','unknown-10m','no-gps'))  # never a cross-source distance
 
 
+class Clock:
+    """Fake monotonic clock; each embedding takes `step` seconds."""
+    def __init__(self):self.now=0.
+    def __call__(self):return self.now
+
+
+def budget_finder(tmp_path,count,step=0.,checkpoint=b'test-only'):
+    """Query q.png plus candidates c0..c{count-1}, each a distinct image, so every crop is a new embedding until cached."""
+    (tmp_path/'w').write_bytes(checkpoint);clock=Clock()
+    class Embedder:
+        calls=0
+        def encode(self,path,box):Embedder.calls+=1;clock.now+=step;return MATCH
+    for i,name in enumerate(['q.png']+[f'c{i}.png' for i in range(count)]):Image.new('RGB',(10,10),(i,0,0)).save(tmp_path/name)
+    finder=DuplicateFinder(tmp_path/'w',tmp_path/'cache',Embedder());finder.clock=clock
+    return finder,Embedder,[row(tmp_path,f'c{i:02d}',f'c{i}.png') for i in range(count)]
+
+
+def test_new_crop_budget_counts_the_query_and_stops_deterministically(tmp_path):
+    finder,embedder,gallery=budget_finder(tmp_path,6)
+    query=row(tmp_path,'q','q.png')
+    first=finder.search(query,gallery,mode='visual',new_crops=4,seconds=60)
+    assert (first['eligible_reports'],first['examined_reports'],first['new_crops_used'],first['new_crop_budget'])==(6,3,4,4)  # query took 1 of 4
+    assert first['partial_search'] is True and first['partial_reasons']==['new_crop_budget'] and 'Limited search' in first['note']
+    assert [m['report_id'] for m in first['matches']]==['c00','c01','c02']  # fixed order: no distance, then id
+    second=finder.search(query,list(reversed(gallery)),mode='visual',new_crops=4,seconds=60)  # warm cache: earlier crops are free
+    assert (second['examined_reports'],second['new_crops_used'],second['partial_search'])==(6,3,False)
+    assert second['partial_reasons']==[] and 'Limited search' not in second['note'] and embedder.calls==7
+    warm=finder.search(query,gallery,mode='visual',new_crops=1,seconds=60)
+    assert (warm['examined_reports'],warm['new_crops_used'],warm['partial_search'])==(6,0,False) and embedder.calls==7
+
+
+def test_budget_boundary_exact_fit_is_exhaustive_and_one_short_is_partial(tmp_path):
+    finder,_,gallery=budget_finder(tmp_path,3)
+    query=row(tmp_path,'q','q.png')
+    short=finder.search(query,gallery,mode='visual',new_crops=3,seconds=60)
+    assert (short['examined_reports'],short['partial_search'])==(2,True)
+    fresh=tmp_path/'fresh';fresh.mkdir()
+    finder2,_,gallery2=budget_finder(fresh,3)
+    exact=finder2.search(row(fresh,'q','q.png'),gallery2,mode='visual',new_crops=4,seconds=60)
+    assert (exact['examined_reports'],exact['new_crops_used'],exact['partial_search'],exact['partial_reasons'])==(3,4,False,[])
+
+
+def test_query_crops_alone_can_exhaust_the_budget_without_an_exhaustive_claim(tmp_path):
+    finder,embedder,gallery=budget_finder(tmp_path,2)
+    query=row(tmp_path,'q','q.png',detections=[{'box':[0,0,8,8]},{'box':[1,1,9,9]},{'box':[2,2,10,10]}])
+    result=finder.search(query,gallery,mode='visual',new_crops=2,seconds=60)
+    assert (result['examined_reports'],result['eligible_reports'],result['new_crops_used'],result['matches'])==(0,2,2,[])
+    assert result['partial_search'] is True and 'no match does not rule out' in result['note']
+    again=finder.search(query,gallery,mode='visual',new_crops=2,seconds=60)  # the two finished query crops are cached
+    assert (again['examined_reports'],again['new_crops_used'],again['partial_search'])==(1,2,True) and embedder.calls==4
+
+
+def test_time_budget_is_checked_between_embeddings(tmp_path):
+    finder,embedder,gallery=budget_finder(tmp_path,6,step=1.)
+    result=finder.search(row(tmp_path,'q','q.png'),gallery,mode='visual',new_crops=50,seconds=2.5)
+    # Checks at t=0,1,2 pass; the check at t=3 stops. The third embedding ran past 2.5 s: no hard cancellation.
+    assert (result['new_crops_used'],result['examined_reports'],result['partial_reasons'])==(3,2,['time_budget']) and embedder.calls==3
+    assert result['elapsed_s']==3
+
+
+def test_cache_is_invalidated_by_box_and_checkpoint_changes(tmp_path):
+    finder,embedder,gallery=budget_finder(tmp_path,2)
+    query=row(tmp_path,'q','q.png')
+    finder.search(query,gallery,mode='visual',new_crops=16,seconds=60);assert embedder.calls==3
+    moved=[gallery[0],dict(gallery[1],detections=[{'box':[1,1,9,9]}])]
+    assert finder.search(query,moved,mode='visual',new_crops=16,seconds=60)['new_crops_used']==1
+    other,other_embedder,_=budget_finder(tmp_path,2,checkpoint=b'other-weights')  # same cache directory, different checkpoint
+    assert other.search(query,gallery,mode='visual',new_crops=16,seconds=60)['new_crops_used']==3 and other_embedder.calls==3
+
+
 @pytest.mark.parametrize('mode',['nearby','visual'])
-def test_more_than_100_candidates_is_refused_before_any_embedding(tmp_path,mode):
+def test_report_cap_examines_the_first_100_in_fixed_order_and_says_partial(tmp_path,mode):
     finder,embedder=finder_with(tmp_path,{'g.png':MATCH})
     query=row(tmp_path,'q','g.png',gps=(24,46),location_source='manual')
-    with pytest.raises(ValueError,match='More than 100'):finder.search(query,[dict(query,id=f'r{i}') for i in range(101)],mode=mode)
-    assert embedder.calls==0
+    gallery=[dict(query,id=f'r{i:03d}') for i in range(101)]
+    result=finder.search(query,gallery,mode=mode,new_crops=16,seconds=60)
+    assert (result['eligible_reports'],result['examined_reports'],result['partial_reasons'])==(101,100,['report_cap'])
+    assert embedder.calls==1  # identical crops: cache hits still count toward the 100-report limit
+    assert [m['report_id'] for m in result['matches']]==['r000','r001','r002','r003','r004']
+
+
+def test_skips_and_backend_failures_are_accounted_and_release_the_lock(tmp_path):
+    finder,embedder,gallery=budget_finder(tmp_path,2)
+    query=row(tmp_path,'q','q.png')
+    result=finder.search(query,gallery+[row(tmp_path,'bad','c0.png',detections=[{'box':[0,0,99,99]}])],mode='visual',new_crops=16,seconds=60)
+    assert (result['eligible_reports'],result['examined_reports'],result['skipped_reports'],result['partial_search'])==(2,2,1,False)
+    class Broken:
+        def encode(self,path,box):raise OSError('disk failure')
+    finder.embedder=Broken()
+    with pytest.raises(OSError):finder.search(query,gallery+[row(tmp_path,'new','c0.png',detections=[{'box':[1,1,9,9]}])],mode='visual',new_crops=16,seconds=60)
+    assert finder.lock.acquire(blocking=False);finder.lock.release()
+
+
+def test_limits_come_from_environment_and_reject_bad_values(monkeypatch):
+    for name in ('ROADSCAN_SIMILARITY_NEW_CROPS','ROADSCAN_SIMILARITY_SECONDS'):monkeypatch.delenv(name,raising=False)
+    assert duplicate_finder.search_limits()==(16,20.)
+    monkeypatch.setenv('ROADSCAN_SIMILARITY_NEW_CROPS','40');monkeypatch.setenv('ROADSCAN_SIMILARITY_SECONDS','45')
+    assert duplicate_finder.search_limits()==(40,45.)
+    for crops,seconds in (('0','20'),('many','20'),('16','nan'),('16','0.5'),('501','20'),('16','301')):
+        monkeypatch.setenv('ROADSCAN_SIMILARITY_NEW_CROPS',crops);monkeypatch.setenv('ROADSCAN_SIMILARITY_SECONDS',seconds)
+        with pytest.raises(RuntimeError):duplicate_finder.search_limits()
