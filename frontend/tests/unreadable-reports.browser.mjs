@@ -40,7 +40,8 @@ export async function checkUnreadableReports(browser,origin,base,expect) {
       return route.fulfill({json:row});
     });
     const nav=screen=>page.getByRole('navigation').getByRole('button',{name:screen==='reports'?new RegExp(tx('Review queue','قائمة المراجعة')):tx('Map & results','الخريطة والنتائج'),exact:screen!=='reports'}).click();
-    const save=()=>page.locator('.save-row button').click();
+    // save() keeps the app busy through its post-save refresh; wait for its own idle state before navigating.
+    const save=async()=>{const button=page.locator('.save-row button');await button.click();await expect(button).toHaveText(tx('Save review','حفظ المراجعة'));await expect(button).toBeEnabled();};
     const current=screen=>expect(page.locator('[data-screen]')).toHaveAttribute('data-screen',screen);
     async function open(index){await page.locator('.report-item').nth(index).click();await expect(page.locator('#report-image')).toBeVisible();}
     try {
