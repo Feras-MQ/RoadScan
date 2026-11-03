@@ -40,7 +40,7 @@ export async function checkVisualSimilarity(browser,origin,base,expect) {
       await visual.click();
       const status=section.getByRole('status');
       await expect(status).toContainText(tx('open reports compared by appearance only','بلاغات مفتوحة قورنت حسب المظهر فقط'));
-      await expect(status).toContainText(tx('Visually similar is not a confirmed duplicate','التشابه البصري ليس تكرارًا مؤكدًا'));
+      await expect(status).toContainText(tx('not whole photos. Similar-looking damage does not confirm the same physical damage','لا الصور كاملة. تشابه مظهر الضرر لا يؤكد أنه الضرر نفسه'));
       await expect(status).toContainText('93.1%');await expect(status).not.toContainText(/\d m\b/);
       await expect(section).toContainText(tx('Experimental similarity threshold 0.80','حد التشابه التجريبي 0.80'));
       assert.deepEqual(searches.at(-1),{id:'fixture-no-coordinates',revision:'r-no-gps',mode:'visual'});
@@ -48,7 +48,7 @@ export async function checkVisualSimilarity(browser,origin,base,expect) {
       await page.locator('.report-item').nth(1).click();
       await expect(nearby).toBeEnabled();await nearby.click();
       await expect(status).toContainText(tx('nearby open reports checked','بلاغات مفتوحة قريبة تم فحصها'));
-      await expect(status).toContainText('12.3 m');await expect(status).not.toContainText(tx('not a confirmed duplicate','ليس تكرارًا مؤكدًا'));
+      await expect(status).toContainText('12.3 m');await expect(status).not.toContainText(tx('not whole photos','لا الصور كاملة'));
       assert.deepEqual(searches.at(-1),{id:'fixture-recorded',revision:'r-gps',mode:'nearby'});
 
       fail=true;await visual.click();

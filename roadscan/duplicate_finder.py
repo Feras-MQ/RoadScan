@@ -11,6 +11,18 @@ def comparable_sources(left,right):
     recorded={'manual','device_gps'}
     return (left in recorded and right in recorded) or left==right=='simulated'
 
+def crop_boxes(report):
+    """The report's 1–20 damage boxes, each a finite rectangle inside its image; ValueError says why it cannot be compared."""
+    boxes=[d.get('box') for d in report['detections']]
+    if not boxes:raise ValueError('Save at least one damage box before comparing crops')
+    if len(boxes)>20:raise ValueError('Duplicate search supports at most 20 damage boxes per report')
+    from PIL import Image
+    with Image.open(report['image']) as image:width,height=image.size
+    for box in boxes:
+        if not isinstance(box,list) or len(box)!=4 or any(type(v) not in (int,float) or not math.isfinite(v) for v in box):raise ValueError('Damage boxes must be four finite numbers')
+        if not (0<=box[0]<box[2]<=width and 0<=box[1]<box[3]<=height):raise ValueError('A damage box lies outside its image')
+    return boxes
+
 def distance_m(left,right):
     for point in (left,right):
         if len(point)!=2 or any(type(v) not in (int,float) or not math.isfinite(v) for v in point):raise ValueError('Both reports need GPS coordinates')
@@ -28,9 +40,7 @@ class DuplicateFinder:
         self.lock=threading.Lock()
 
     def features(self,report):
-        boxes=[d['box'] for d in report['detections']]
-        if not boxes:raise ValueError('Save at least one damage box before comparing crops')
-        if len(boxes)>20:raise ValueError('Duplicate search supports at most 20 damage boxes per report')
+        boxes=crop_boxes(report)
         path=Path(report['image']);image_hash=hashlib.sha256(path.read_bytes()).hexdigest()
         vectors=[]
         for box in boxes:
@@ -56,10 +66,12 @@ class DuplicateFinder:
         if not self.lock.acquire(blocking=False):raise RuntimeError('Another duplicate search is running; try again shortly')
         try:
             if mode=='nearby':distance_m(query['gps'],query['gps'])
-            if not query['detections']:raise ValueError('Save at least one damage box before comparing crops')
-            candidates=[]
+            crop_boxes(query)
+            candidates=[];skipped=0
             for row in reports:
                 if row['id']==query['id'] or row['status'] not in OPEN_STATUSES or not row['detections']:continue
+                try:crop_boxes(row)
+                except (ValueError,OSError):skipped+=1;continue  # one bad stored box must not block every search
                 comparable=comparable_sources(row.get('location_source'),query.get('location_source'))
                 try:distance=distance_m(query['gps'],row['gps']) if comparable else None
                 except ValueError:distance=None
@@ -69,8 +81,8 @@ class DuplicateFinder:
             if mode=='nearby':
                 result={'mode':mode,'method':'dinov2_vits14_exact_cosine_gps','radius_m':radius,'note':'Experimental threshold; inspect the images. No automatic merge. Simulated and real location sources are kept separate.'}
             else:
-                result={'mode':mode,'method':'dinov2_vits14_exact_cosine','radius_m':None,'note':'Visual similarity of damage crops only, not a confirmed duplicate; location is not used. Experimental threshold; inspect the images. No automatic merge.'}
-            result.update(preprocessing=PREPROCESS,threshold=threshold,threshold_validated=False,candidate_reports=len(candidates),matches=[])
+                result={'mode':mode,'method':'dinov2_vits14_exact_cosine','radius_m':None,'note':'Crop-level visual similarity of saved damage boxes only: not whole-image matching and not confirmation of the same physical damage. Location is not used. Experimental threshold; inspect the images. No automatic merge.'}
+            result.update(preprocessing=PREPROCESS,threshold=threshold,threshold_validated=False,candidate_reports=len(candidates),skipped_reports=skipped,matches=[])
             if not candidates:return result
             import numpy as np
             vectors=[];owners=[]
@@ -79,7 +91,9 @@ class DuplicateFinder:
             gallery=np.asarray(vectors,dtype='float64');queries=np.asarray(self.features(query),dtype='float64')
             if not np.isfinite(gallery).all() or not np.isfinite(queries).all():raise ValueError('Embedding exceeds numeric range')
             # Exact cosine over every crop (what a flat inner-product index computes); at most 100 reports x 20 boxes.
-            gallery/=np.linalg.norm(gallery,axis=1,keepdims=True);queries/=np.linalg.norm(queries,axis=1,keepdims=True)
+            norms=[np.linalg.norm(m,axis=1,keepdims=True) for m in (gallery,queries)]
+            if not all(np.isfinite(n).all() and (n>0).all() for n in norms):raise ValueError('Embedding exceeds numeric range')
+            gallery/=norms[0];queries/=norms[1]
             best={}
             for row_scores in queries@gallery.T:
                 for (ident,distance),similarity in zip(owners,row_scores):
