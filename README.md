@@ -4,6 +4,8 @@
 
 By Feras Alyamani, Ahmed Salamah and Ahmed Alhejaili.
 
+**Try the downloadable demo:** [Public demo guide](demo/README.md). On Windows, start Docker Desktop and double-click **Start-Public-Demo.cmd**. Includes 14 synthetic workflow reports and 10 simulated Madinah pins in a separate workspace. Original private demo media and model binaries are excluded; [model downloads](demo/MODELS.md) are separate.
+
 **Watch RoadScan:** [22-second product trailer](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Product-Trailer.mp4) · [Trailer credits and photo attribution](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Trailer-Credits.txt) · [5:55 walkthrough — earlier version](https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/RoadScan-Walkthrough.mp4). The trailer is voice-free with original sound design; the earlier walkthrough includes narration and captions.
 
 *The earlier walkthrough was recorded on 31 October 2026 in an isolated synthetic workspace. Human annotations are labeled; setup and token entry use reference cards. Voting and camera/video chapters are orientation only, not physical-device or model-voting acceptance tests.*

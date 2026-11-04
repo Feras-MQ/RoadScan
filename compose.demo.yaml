@@ -1,0 +1,40 @@
+name: roadscan-public-demo
+
+x-demo: &demo
+  image: roadscan-public-demo:local
+  build:
+    context: .
+    args:
+      ROADSCAN_WITH_DETECTOR: ${ROADSCAN_DEMO_WITH_DETECTOR:-0}
+  environment:
+    ROADSCAN_API_KEY: ${ROADSCAN_API_KEY:?Create demo/.env first; see demo/README.md}
+    ROADSCAN_YOLO_WEIGHTS: ""
+    ROADSCAN_YOLO_SHA256: ""
+  volumes:
+    - public_demo_data:/data
+
+services:
+  seed:
+    <<: *demo
+    command: ["python", "/demo/seed_demo.py", "--data-dir", "/data"]
+    volumes:
+      - public_demo_data:/data
+      - ./demo:/demo:ro
+    restart: "no"
+
+  roadscan:
+    <<: *demo
+    depends_on:
+      seed:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:18010:8000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  public_demo_data:

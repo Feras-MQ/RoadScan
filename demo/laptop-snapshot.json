@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "inspected_at_utc": "2026-11-04T07:51:46.058605+00:00",
+  "scope": "Inspection metadata only. The original laptop demo database, media, caches and backups are not published. The public demo is independently generated synthetic data, not a copy of the original predictions or evidence.",
+  "recorded_application_commit": "0964ed24ba1c3dd483377e910c8d26b5637768d9",
+  "current_database": {
+    "report_count": 17,
+    "statuses": {
+      "Needs Review": 9,
+      "Confirmed": 6,
+      "Assigned": 1,
+      "Resolved": 1
+    },
+    "locations": {
+      "simulated": 10,
+      "not_provided": 6,
+      "manual": 1
+    },
+    "inference_states": {
+      "completed": 14,
+      "manual_review": 3
+    }
+  },
+  "prepared_showcase_subset": {
+    "selection": "The first 14 stored reports, reflecting their state at inspection; not an immutable historical backup.",
+    "report_count": 14,
+    "statuses": {
+      "Needs Review": 8,
+      "Confirmed": 4,
+      "Assigned": 1,
+      "Resolved": 1
+    },
+    "locations": {
+      "simulated": 10,
+      "not_provided": 4
+    },
+    "inference_states": {
+      "completed": 12,
+      "manual_review": 2
+    }
+  },
+  "later_reports": {
+    "count": 3,
+    "publication": "Excluded. One later row uses a manual location; no manually entered coordinates are included in this snapshot."
+  },
+  "simulated_locations": {
+    "report_count": 10,
+    "distinct_positions": 8,
+    "qualification": "Staged demonstration positions on public-road geometry in Madinah, not image capture locations or evidence of defects on those roads.",
+    "attribution": "OpenStreetMap contributors",
+    "source_url": "https://api.openstreetmap.org/api/0.6/map?bbox=39.600,24.466,39.613,24.478",
+    "license_url": "https://www.openstreetmap.org/copyright"
+  },
+  "models": {
+    "catalog_count": 9,
+    "published_release_count": 7,
+    "metadata_only_count": 2,
+    "active_sha256": "78f5e2afb82d5145f30de9957cb51f167241e377ed0b5775f71be1c5e80ac87d",
+    "verification": "Matched local catalog hashes to the repository public model inventory. No model binaries were uploaded or newly evaluated for this snapshot.",
+    "items": [
+      {
+        "name": "Main YOLO26s (1024)",
+        "sha256": "9f940caa92229f503eef1171010c13ee8fd74d7b69300e959357d6a8d14be434",
+        "bytes": 20414080,
+        "family": "yolo",
+        "inference_size": 1024,
+        "active_at_inspection": false,
+        "availability": "published_release",
+        "public_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/9f940caa9222-main_yolo26s_1024.pt",
+        "remaining_conditions": []
+      },
+      {
+        "name": "Road v2b YOLO26s (1024, experimental)",
+        "sha256": "0caef4521c82a944cfe4b6e5022914eeabab9c69864967db17a9915f4fdc7500",
+        "bytes": 20447626,
+        "family": "yolo",
+        "inference_size": 1024,
+        "active_at_inspection": false,
+        "availability": "published_release",
+        "public_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/0caef4521c82-main_yolo26s_1024_road_v2b.pt",
+        "remaining_conditions": []
+      },
+      {
+        "name": "YOLO26n (640, size experiment)",
+        "sha256": "3be62681e3ecc306fd4fbbbcbd40f805fcdd092d03cd57373695ca0453b1aaf8",
+        "bytes": 5463296,
+        "family": "yolo",
+        "inference_size": 640,
+        "active_at_inspection": false,
+        "availability": "published_release",
+        "public_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/3be62681e3ec-e2_yolo26n_640.pt",
+        "remaining_conditions": []
+      },
+      {
+        "name": "YOLO11s (800, RDD2022)",
+        "sha256": "e1937609619f0172b0765d676cd0b8167adbda979cb4d3cabeaf61e6395b7758",
+        "bytes": 19219610,
+        "family": "yolo",
+        "inference_size": 800,
+        "active_at_inspection": false,
+        "availability": "metadata_only",
+        "public_url": null,
+        "remaining_conditions": [
+          "Original trainer confirms the recorded stock package/version was unmodified, or supplies the actual modifications and terms."
+        ]
+      },
+      {
+        "name": "Road v1 YOLO26s (1024, experimental)",
+        "sha256": "78f5e2afb82d5145f30de9957cb51f167241e377ed0b5775f71be1c5e80ac87d",
+        "bytes": 20444878,
+        "family": "yolo",
+        "inference_size": 1024,
+        "active_at_inspection": true,
+        "availability": "published_release",
+        "public_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/78f5e2afb82d-main_yolo26s_1024_road.pt",
+        "remaining_conditions": []
+      },
+      {
+        "name": "Road A YOLO26s (1024, experimental)",
+        "sha256": "00794102e39e621f1268e31f43b3743daae17309b5eaf90feef1077f0bf0991b",
+        "bytes": 20446971,
+        "family": "yolo",
+        "inference_size": 1024,
+        "active_at_inspection": false,
+        "availability": "published_release",
+        "public_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/00794102e39e-main_yolo26s_1024_road_v2.pt",
+        "remaining_conditions": []
+      },
+      {
+        "name": "Original YOLO11n baseline (640)",
+        "sha256": "2bb146ad53a3ddd149320aae3be67b2b1d50ccf0fdbc909edd749538055a2551",
+        "bytes": 5536234,
+        "family": "yolo",
+        "inference_size": 640,
+        "active_at_inspection": false,
+        "availability": "published_release",
+        "public_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/2bb146ad53a3-roadscan_baseline_best.pt",
+        "remaining_conditions": []
+      },
+      {
+        "name": "YOLO26s (640, size experiment)",
+        "sha256": "31b518ed36ec022fcadb0768268d4b6686a4c327bec3a9cd4fe5fc722ee4cc83",
+        "bytes": 20318592,
+        "family": "yolo",
+        "inference_size": 640,
+        "active_at_inspection": false,
+        "availability": "published_release",
+        "public_url": "https://github.com/Feras-MQ/RoadScan/releases/download/model-resources-2026-10-28/31b518ed36ec-e2_yolo26s_640.pt",
+        "remaining_conditions": []
+      },
+      {
+        "name": "RT-DETR L (800, RDD2022)",
+        "sha256": "b636269a303539174ab208d125ab60de149fe832c4fda7aa4c25c8f109b45b60",
+        "bytes": 263739370,
+        "family": "rtdetr",
+        "inference_size": 800,
+        "active_at_inspection": false,
+        "availability": "metadata_only",
+        "public_url": null,
+        "remaining_conditions": [
+          "Original trainer confirms the recorded stock package/version was unmodified, or supplies the actual modifications and terms."
+        ]
+      }
+    ]
+  },
+  "omissions": [
+    "Original photos and derived thumbnails: public redistribution rights were not established by the demo kit.",
+    "Original video, saved reports, screenshots, training exports, audit history, caches and backups remain local.",
+    "Local file paths, report identifiers, manually entered location coordinates and credentials are omitted.",
+    "The two models marked metadata_only have unresolved source confirmation requirements; use the existing release assets for the other seven."
+  ]
+}

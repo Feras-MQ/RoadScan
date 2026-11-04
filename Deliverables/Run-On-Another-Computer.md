@@ -1,5 +1,7 @@
 # Run RoadScan on another computer
 
+**Want sample reports already loaded?** Use the [public demo](../demo/README.md): on Windows run **Start-Public-Demo.cmd** from the repository root. It creates a separate workspace on port 18010 with 14 synthetic reports and 10 simulated Madinah pins. The instructions below start the ordinary empty application workspace.
+
 **Need:** Docker with Linux containers, an internet connection for the first build, and about 4 GB of Docker memory. No GPU or host Python is required. Keep at least 10 GB free for Docker images and builds; extra models need more space.
 
 ## New installation — public source download
