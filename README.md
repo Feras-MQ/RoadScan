@@ -3,7 +3,7 @@
 **Road damage recognition. Human review. A controlled learning workflow.**
 
 By Feras Alyamani, Ahmed Salamah and Ahmed Alhejaili.
-This is High Quality Project the main job is to find problems in our Road and this model trained on SA roads 
+RoadScan helps reviewers identify and document possible road damage. Its performance on Saudi roads has not yet been established in a [labeled field evaluation](Deliverables/Validation-Status.md).
  
 
 **Try the downloadable demo:** [Public demo guide](demo/README.md). On Windows, start Docker Desktop and double-click **Start-Public-Demo.cmd**. Includes 14 synthetic workflow reports and 10 simulated Madinah pins in a separate workspace. Original private demo media and model binaries are excluded; [model downloads](demo/MODELS.md) are separate.
